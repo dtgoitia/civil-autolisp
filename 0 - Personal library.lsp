@@ -1,3 +1,67 @@
+(defun c:ha45 ()
+	(garden_block_paving "0.45")
+  ; v0.0 - 2016.03.29 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.03.29
+)
+(defun c:ha60 ()
+	(garden_block_paving "0.60")
+  ; v0.0 - 2016.03.29 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.03.29
+)
+(defun garden_block_paving ( slab_size / *error* ss i ent ent_name VL_ent_name)
+  ; automatic gardn block pave hatching
+  ; This function selects the polylines within the selection set,
+  ; closes them and creates an individual associative hatch for each polyline
+  ;
+	; SET - Error handling function
+  (defun *error* ( msg )
+    (if (not (member msg '("Function cancelled" "quit / exit abort")))
+      (princ (strcat "\nError: " msg))
+    )
+    ; RESET system variables
+    (setvar "osmode" oldosmode)
+    (princ)
+  )
+
+  ; SAVE and CHANGE system variables
+  (setq oldosmode (getvar "osmode"))
+  (setvar "osmode" 33)
+
+  ; Load VLA
+  (vl-load-com)
+
+  ; INPUT - Select objects and keep just polylines
+  (setq ss (ssget '((-4 . "<OR") (0 . "LWPOLYLINE") (0 . "POLYLINE") (-4 . "OR>"))))
+
+  ; OPERATION - Loop to close
+  (setq i 0)
+  (while (< i (sslength ss) )
+    (setq
+      ent_name (ssname ss i)
+      VL_ent_name (vlax-ename->vla-object ent_name)
+			ang (* -180 (/ (getangle "\nSelect slabs orientation: ") 3.141592653))
+    )
+		(if (= :vlax-false (vla-get-closed VL_ent_name)) (vla-put-closed VL_ent_name :vlax-true)) ; close if opened
+    ;(command "-hatch" "P" "SLABS" slab_size "" "A" "A" "Y" "" "S" ent_name "" "")             ; add hatch
+		(command "-hatch" "P" "SLABS" slab_size "" "A" "A" "Y" "" "S" ent_name "" "")
+		(command "-hatchedit" "L" "" "" "" ang)
+		(command "-hatchedit" "L" "O" "S" pause "N" "")
+		;(command "O" "S" pause "N" "")             ; add hatch
+
+    (setq i (+ i 1))                                                                          ; continue to next polyline
+  ); END while
+
+	; RESET system variables
+	(setvar "osmode" oldosmode)
+
+	(princ)
+
+	; v0.0 - 2016.03.29 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.03.29
+)
 (defun fbi ( blk )
 ;Fast Block Insert
 	(command "-insert" blk pause 1 1 pause)
