@@ -402,9 +402,17 @@
 (defun TODAY ( / d yr mo day)
   (setq
     d (rtos (getvar "CDATE") 2 6)
-    yr (substr d 3 2)
+    yr (substr d 1 4)
 	  mo (substr d 5 2)
 	  day (substr d 7 2)
 	); END setq
-  (strcat day "." mo ".20" yr)
+  (strcat day "." mo "." yr)
+)
+(defun fbi ( blk )
+;Fast Block Insert
+	(command "-insert" blk pause 1 1 pause)
+	(princ)
+  ; v0.0 - 2016.03.29 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.03.29
 )

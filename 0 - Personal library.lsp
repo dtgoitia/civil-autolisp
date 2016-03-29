@@ -71,11 +71,6 @@
   ; Author: David Torralba
   ; Last revision: 2016.03.29
 )
-(defun fbi ( blk )
-;Fast Block Insert
-	(command "-insert" blk pause 1 1 pause)
-	(princ)
-)
 (defun c:gate ()
   (command "-insert" "Access Gate" pause 0.001 0.001 pause)
 )
