@@ -60,7 +60,7 @@
     old_clayer (getvar "clayer")
     old_cmdecho (getvar "cmdecho")
   )
-  (setvar "osmode" 4) ; Was 679 before
+  (setvar "osmode" 132) ; Was 679 before
   (setvar "cmdecho" 0)
   (command "-layer" "M" "e-psd" "")
   (command "line")
@@ -85,7 +85,7 @@
     old_clayer (getvar "clayer")
     old_cmdecho (getvar "cmdecho")
   )
-  (setvar "osmode" 4) ; Was 679 before
+  (setvar "osmode" 132) ; Was 679 before
   (setvar "cmdecho" 0)
   (command "-layer" "M" "e-pfd" "")
   (command "line")
