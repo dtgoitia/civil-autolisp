@@ -15,6 +15,9 @@
   '("0 - Title Block Update.lsp" "TBU")
   '("RT.lsp" "RT")
 
+  ;; CIVILS
+  '("CIVIL - Load blocks and insertion routines.lsp" "--")
+
   ;; STRUCTURALS
   '("STRUCTURAL - Create building blocks.lsp" "BB")
   )
