@@ -46,6 +46,56 @@
   (fbi2 "e-psd-rwp")
   (setvar "osmode" old_osmode)
 )
+; Storm - Private Storm Drainage line
+(defun c:psd( / *error* old_osmode old_clayer)
+  (defun *error* ( msg )
+    (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
+    (setvar "osmode" old_osmode)
+    (setvar "clayer" old_clayer)
+    (setvar "cmdecho" old_cmdecho)
+    (princ)
+  )
+  (setq
+    old_osmode (getvar "osmode")
+    old_clayer (getvar "clayer")
+    old_cmdecho (getvar "cmdecho")
+  )
+  (setvar "osmode" 4) ; Was 679 before
+  (setvar "cmdecho" 0)
+  (command "-layer" "M" "e-psd" "")
+  (command "line")
+  (while (> (getvar "CMDACTIVE") 0) (command pause))
+
+  (setvar "osmode" old_osmode)
+  (setvar "clayer" old_clayer)
+  (setvar "cmdecho" old_cmdecho)
+  (princ)
+)
+; Foul - Private Foul Drainage line
+(defun c:pfd( / *error* old_osmode old_clayer)
+  (defun *error* ( msg )
+    (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
+    (setvar "osmode" old_osmode)
+    (setvar "clayer" old_clayer)
+    (setvar "cmdecho" old_cmdecho)
+    (princ)
+  )
+  (setq
+    old_osmode (getvar "osmode")
+    old_clayer (getvar "clayer")
+    old_cmdecho (getvar "cmdecho")
+  )
+  (setvar "osmode" 4) ; Was 679 before
+  (setvar "cmdecho" 0)
+  (command "-layer" "M" "e-pfd" "")
+  (command "line")
+  (while (> (getvar "CMDACTIVE") 0) (command pause))
+
+  (setvar "osmode" old_osmode)
+  (setvar "clayer" old_clayer)
+  (setvar "cmdecho" old_cmdecho)
+  (princ)
+)
 ; v0.0 - 2016.03.30 - First issue
 ; Author: David Torralba
 ; Last revision: 2016.03.30
