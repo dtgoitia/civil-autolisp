@@ -49,7 +49,7 @@
   ; Last revision: 2016.03.29
 )
 (defun title_block_insert ( blk /  )
-  (command "-insert" blk "-1000,0" 1 1 0 "" "" "" "" "" "" (title_block_date) "" "" "" "" "PRELIMINARY" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "")
+  (command "-insert" blk "-0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) "" "" "" "" "PRELIMINARY" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "")
   ; v0.0 - 2016.03.29 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.03.29
@@ -62,8 +62,16 @@
 (defun c:MJA_A1_Portrait () (title_block_insert "A1-Portrait") (princ))
 (defun c:MJA_A2_Portrait () (title_block_insert "A2-Portrait") (princ))
 (defun c:MJA_A3_Portrait () (title_block_insert "A3-Portrait") (princ))
-(defun c:MJA_A4_landscape () (command "-insert" "A4-Landscape" "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "") (princ))
-(defun c:MJA_A4_landscape () (command "-insert" "A4-Portrait" "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "") (princ))
+(defun c:MJA_A4_landscape ()
+  (command "-insert" "A4-Landscape" "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) )
+  (while (> (getvar "CMDACTIVE") 0) (command ""))
+  (princ)
+)
+(defun c:MJA_A4_portrait ()
+  (command "-insert" "A4-Portrait" "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) )
+  (while (> (getvar "CMDACTIVE") 0) (command ""))
+  (princ)
+)
 ; v0.0 - 2016.03.29 - First issue
 ; Author: David Torralba
 ; Last revision: 2016.03.29
