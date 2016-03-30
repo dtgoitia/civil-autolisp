@@ -22,30 +22,38 @@
 )
 
 ;; Drainage block insertion routines
-; Foul - SVP
-(defun c:svp( / *error* old_osmode)
+; Drainage block insertion master routine
+(defun DT:drainage_block ( block lay osm )
   (defun *error* ( msg )
     (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
     (setvar "osmode" old_osmode)
+    (setvar "clayer" old_clayer)
+    (setvar "cmdecho" old_cmdecho)
     (princ)
   )
-  (setq old_osmode (getvar "osmode"))
-  (setvar "osmode" 6)
-  (fbi2 "e-pfd-svp")
-  (setvar "osmode" old_osmode)
-)
-; Storm - Rainwater pipe
-(defun c:rwp( / *error* old_osmode)
-  (defun *error* ( msg )
-    (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
-    (setvar "osmode" old_osmode)
-    (princ)
+  (setq
+    old_osmode (getvar "osmode")
+    old_clayer (getvar "clayer")
+    old_cmdecho (getvar "cmdecho")
   )
-  (setq old_osmode (getvar "osmode"))
-  (setvar "osmode" 4)
-  (fbi2 "e-psd-rwp")
+  (setvar "osmode" osm)
+  (setvar "cmdecho" 0)
+  (command "-layer" "M" lay "")
+  (fbi2 block)
   (setvar "osmode" old_osmode)
+  (setvar "clayer" old_clayer)
+  (setvar "cmdecho" old_cmdecho)
+  (princ)
 )
+; Private foul blocks
+(defun c:svp()    (DT:drainage_block "e-pfd-svp"                      "e-pfd" 4)) ; SVP
+(defun c:svp300() (DT:drainage_block "Private-Square300-Foul-Manhole" "e-pfd" 4)) ; Private Square 300 Foul Manhole
+(defun c:svp475() (DT:drainage_block "Private-Square475-Foul-Manhole" "e-pfd" 4)) ; Private Square 475 Foul Manhole
+
+; Private storm blocks
+(defun c:rwp() (DT:drainage_block "e-psd-rwp"                    "e-psd" 4)) ; RWP
+(defun c:rwp2() (DT:drainage_block "Private-Round-Storm-Manhole" "e-psd" 4)) ; Private round storm manhole
+
 ; Storm - Private Storm Drainage line
 (defun c:psd( / *error* old_osmode old_clayer)
   (defun *error* ( msg )
