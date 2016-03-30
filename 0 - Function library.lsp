@@ -409,12 +409,20 @@
   (strcat day "." mo "." yr)
 )
 (defun fbi ( blk )
-;Fast Block Insert
+;Fast Block Insert: point + rotation
 	(command "-insert" blk pause 1 1 pause)
 	(princ)
   ; v0.0 - 2016.03.29 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.03.29
+)
+(defun fbi2 ( blk )
+;Fast Block Insert: point
+	(command "-insert" blk pause 1 1 0)
+	(princ)
+  ; v0.0 - 2016.03.30 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.03.30
 )
 (defun DT:input_string_or_point ( / in number ch pt)
   (prompt "\nSelect a level or type it: ")
