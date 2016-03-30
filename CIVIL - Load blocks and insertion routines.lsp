@@ -22,8 +22,8 @@
 )
 
 ;; Drainage block insertion routines
-; Drainage block insertion master routine
-(defun DT:drainage_block ( block lay osm )
+; Private block insertion - Master routine
+(defun DT:drainage_block ( block lay osm / *error* old_osmode old_clayer old_cmdecho)
   (defun *error* ( msg )
     (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
     (setvar "osmode" old_osmode)
@@ -45,17 +45,17 @@
   (setvar "cmdecho" old_cmdecho)
   (princ)
 )
-; Private foul blocks
+; Private blocks - Foul
 (defun c:svp()    (DT:drainage_block "e-pfd-svp"                      "e-pfd" 4)) ; SVP
 (defun c:svp300() (DT:drainage_block "Private-Square300-Foul-Manhole" "e-pfd" 4)) ; Private Square 300 Foul Manhole
 (defun c:svp475() (DT:drainage_block "Private-Square475-Foul-Manhole" "e-pfd" 4)) ; Private Square 475 Foul Manhole
 
-; Private storm blocks
-(defun c:rwp() (DT:drainage_block "e-psd-rwp"                    "e-psd" 4)) ; RWP
-(defun c:rwp2() (DT:drainage_block "Private-Round-Storm-Manhole" "e-psd" 4)) ; Private round storm manhole
+; Private blocks - Storm
+(defun c:rwp()    (DT:drainage_block "e-psd-rwp"                      "e-psd" 4)) ; RWP
+(defun c:rwp2()   (DT:drainage_block "Private-Round-Storm-Manhole"    "e-psd" 4)) ; Private round storm manhole
 
-; Storm - Private Storm Drainage line
-(defun c:psd( / *error* old_osmode old_clayer)
+; Private sewer - Master routine
+(defun DT:drainage_line ( lay osm / *error* old_osmode old_clayer old_cmdecho)
   (defun *error* ( msg )
     (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
     (setvar "osmode" old_osmode)
@@ -68,9 +68,9 @@
     old_clayer (getvar "clayer")
     old_cmdecho (getvar "cmdecho")
   )
-  (setvar "osmode" 132) ; Was 679 before
+  (setvar "osmode" osm) ; Was 679 before
   (setvar "cmdecho" 0)
-  (command "-layer" "M" "e-psd" "")
+  (command "-layer" "M" lay "")
   (command "line")
   (while (> (getvar "CMDACTIVE") 0) (command pause))
 
@@ -79,31 +79,10 @@
   (setvar "cmdecho" old_cmdecho)
   (princ)
 )
-; Foul - Private Foul Drainage line
-(defun c:pfd( / *error* old_osmode old_clayer)
-  (defun *error* ( msg )
-    (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
-    (setvar "osmode" old_osmode)
-    (setvar "clayer" old_clayer)
-    (setvar "cmdecho" old_cmdecho)
-    (princ)
-  )
-  (setq
-    old_osmode (getvar "osmode")
-    old_clayer (getvar "clayer")
-    old_cmdecho (getvar "cmdecho")
-  )
-  (setvar "osmode" 132) ; Was 679 before
-  (setvar "cmdecho" 0)
-  (command "-layer" "M" "e-pfd" "")
-  (command "line")
-  (while (> (getvar "CMDACTIVE") 0) (command pause))
-
-  (setvar "osmode" old_osmode)
-  (setvar "clayer" old_clayer)
-  (setvar "cmdecho" old_cmdecho)
-  (princ)
-)
+; Private sewer - Foul
+(defun c:pfd() (DT:drainage_line "e-pfd" 132))
+; Private sewer - Storm
+(defun c:psd() (DT:drainage_line "e-psd" 132))
 ; v0.0 - 2016.03.30 - First issue
 ; Author: David Torralba
 ; Last revision: 2016.03.30
