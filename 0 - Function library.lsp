@@ -432,7 +432,7 @@
   )
   (cond
     ((= 3 (car in)) ; Point input
-      (setq pt (cadr in))
+      (cadr in)
     )
     ((= 2 (car in)) ; String input
       (while (and (= 2 (car in))  (and (/= 13 (cadr in)) (/= 32 (cadr in))))
@@ -451,7 +451,6 @@
     )
     (t (princ "\nNew case detected. Speak with David.")(princ))
   )
-	(princ)
   ; v0.0 - 2016.03.30 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.03.30
