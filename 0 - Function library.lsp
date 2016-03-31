@@ -59,7 +59,7 @@
   )
 )
 (defun DT:input_string_or_point ( / in number ch pt)
-  (prompt "\nSelect a level or type it: ")
+  (princ "\nSelect a level or type it: ")
   (setq
     in (grread)
     number ""
@@ -78,9 +78,10 @@
             )
             (princ ch)
           )
-          (progn
+          (progn ; if the key is "delete"
             (setq
-              ch (chr (cadr in))        ; convert input key (chr) in to a character (ch)
+              ch (chr (cadr in))                              ; convert input key (chr) in to a character (ch)
+              number (substr number 1 (- (strlen number) 1 )) ; remove last character from the string
             )
             (princ ch)
           )
@@ -95,6 +96,7 @@
     )
     (t (princ "\nNew case detected. Speak with David.")(princ))
   )
+  ; v0.1 - 2016.03.31 - Add possibily to remove typed characters.
   ; v0.0 - 2016.03.30 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.03.30
