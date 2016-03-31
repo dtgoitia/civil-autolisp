@@ -58,6 +58,47 @@
     )
   )
 )
+(defun DT:input_string_or_point ( / in number ch pt)
+  (prompt "\nSelect a level or type it: ")
+  (setq
+    in (grread)
+    number ""
+  )
+  (cond
+    ((= 3 (car in)) ; Point input
+      (cadr in)
+    )
+    ((= 2 (car in)) ; String input
+      (while (and (= 2 (car in))  (and (/= 13 (cadr in)) (/= 32 (cadr in))))
+        (if (/= 8 (cadr in))
+          (progn ; if the key is not "delete"
+            (setq
+              ch (chr (cadr in))        ; convert input key (chr) in to a character (ch)
+              number (strcat number ch) ; join it with the previous string and store it
+            )
+            (princ ch)
+          )
+          (progn
+            (setq
+              ch (chr (cadr in))        ; convert input key (chr) in to a character (ch)
+            )
+            (princ ch)
+          )
+        )
+        (setq in (grread))
+      )
+      (setq number number)
+    )
+    ((= 25 (car in))
+      (princ "noting selected.")
+      (c:INPUT)
+    )
+    (t (princ "\nNew case detected. Speak with David.")(princ))
+  )
+  ; v0.0 - 2016.03.30 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.03.30
+)
 (defun DT:destripar_txt ( / nent )
   ; Return the string of any atribute or text, regardless of how deep nested is it
   (setq nent nil)
@@ -420,37 +461,6 @@
 ;Fast Block Insert: point
 	(command "-insert" blk pause 1 1 0)
 	(princ)
-  ; v0.0 - 2016.03.30 - First issue
-  ; Author: David Torralba
-  ; Last revision: 2016.03.30
-)
-(defun DT:input_string_or_point ( / in number ch pt)
-  (prompt "\nSelect a level or type it: ")
-  (setq
-    in (grread)
-    number ""
-  )
-  (cond
-    ((= 3 (car in)) ; Point input
-      (cadr in)
-    )
-    ((= 2 (car in)) ; String input
-      (while (and (= 2 (car in))  (and (/= 13 (cadr in)) (/= 32 (cadr in))))
-        (setq
-          ch (chr (cadr in))        ; convertir tecla introducida (chr) a un caracter normal (ch)
-          number (strcat number ch) ; almacenarlo y unirlo con lo anterior
-        )
-        (princ ch)
-        (setq in (grread))
-      )
-      (setq number number)
-    )
-    ((= 25 (car in))
-      (princ "noting selected.")
-      (c:INPUT)
-    )
-    (t (princ "\nNew case detected. Speak with David.")(princ))
-  )
   ; v0.0 - 2016.03.30 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.03.30
