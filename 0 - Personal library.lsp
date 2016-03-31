@@ -1,3 +1,4 @@
+(vl-load-com)
 (defun c:RTM ()
 	; RT and move together
 	(C:RT)
