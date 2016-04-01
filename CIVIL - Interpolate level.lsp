@@ -81,6 +81,10 @@
     reference_circle2 ( _Reference_Circle p2 radius)
   )
 
+  ; OPERATION - Calculate gradient and print it
+  (setq d12 (distance p1 p2))                ; Distance 1-2
+  (princ "\nGradient = 1/")(princ (itoa (LM:Round (abs (/ d12 (- z2 z1))))))
+
   ; INPUT - Choose action: pick, find, lowpoint
   (initget "Pick Find Lowpoint")
   (setq mode (getkword "\nSelect what to do [Pick/Find/Lowpoint] points <Pick>: "))
@@ -95,7 +99,6 @@
         (setq p3 (getpoint "\nSelect point to get level (or press Esc to exit): "))
         (if (not p3) (exit))
         (setq
-          d12 (distance p1 p2)                ; Distance 1-2
           d13 (distance p1 p3)                ; Distance 1-3
           ang12 (angle p1 p2)                 ; Angle 1-2
           ang13 (angle p1 p3)                 ; Angle 1-3
@@ -118,7 +121,6 @@
         (setq z3 (getreal "\nIntroduce level to get point (or press Esc to exit): "))
         (if (not z3) (exit))
         (setq
-          d12 (distance p1 p2)                ; Distance 1-2
           p1 (list (car p1) (cadr p1) z1 )    ; Convert p1 to 3D point
           p2 (list (car p2) (cadr p2) z2 )    ; Convert p2 to 3D point
           u0 (- (car p2) (car p1))            ; Unit vector u
@@ -174,6 +176,7 @@
   (princ)
 
   ; v0.6 - 2016.04.01 - Change level input function.
+  ;                   - Show gradient between two selected points
   ; v0.5 - 2016.03.22 - Optimize code.
   ;                   - Fix minor bugs.
   ;                   - Translate into English
