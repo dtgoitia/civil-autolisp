@@ -188,9 +188,8 @@
     ; Other
     (t
       ;(alert "case 7")
-      (princ (strcat "\nNo standard format detected. Verify you want to select " txt "m level."))
       (initget "Yes No")
-      (setq ans (getkword (strcat "\nNo standard format detected. Verify you want to select " txt "m level.[Yes/No] <No>:")))
+      (setq ans (getkword (strcat "\nNo standard format. Verify " txt "m level. [Yes/No] <No>:")))
       (if (= ans "Yes")
         (atof txt)
         (exit)
