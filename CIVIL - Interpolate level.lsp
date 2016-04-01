@@ -38,8 +38,8 @@
   ; OPERATION - Check if function library is loaded. If not, exit.
   (princ "\nLooking for function library... ")
   (if (and
-        (= (eval DT:destripar_txt) nil)
-        (= (eval DT:level_detection) nil)
+        (= (eval DT:input_string_or_point) nil)
+        (= (eval DT:clic_or_type_level) nil)
       );END and
     (progn
       (princ "required library not found.\nPlease, load function library and run command again.")
@@ -58,7 +58,7 @@
 
   ; INPUT - Point 1 and its level
   (setq p1 (getpoint "\nSelect point A: "))
-  (setq z1 (DT:level_detection))
+  (setq z1 (DT:clic_or_type_level))
   (princ "\nLevel A = ")(princ z1)(princ "m")
 
   ; OPERATION - Create auxiliary data and objects
@@ -72,7 +72,7 @@
 
   ; INPUT - Point 2 and its level
   (setq p2 (getpoint "\nSelect point B: "))
-  (setq z2 (DT:level_detection))
+  (setq z2 (DT:clic_or_type_level))
   (princ "\nLevel B = ")(princ z2)(princ "m")
 
   ; OPERATION - Create auxiliary data and objects
@@ -173,6 +173,7 @@
   ; End without double messages
   (princ)
 
+  ; v0.6 - 2016.04.01 - Change level input function.
   ; v0.5 - 2016.03.22 - Optimize code.
   ;                   - Fix minor bugs.
   ;                   - Translate into English
@@ -184,5 +185,5 @@
   ; v0.1 - 2016.03.14 - Loop added to select multiple points to interpolate
   ; v0.0 - 2015.12.14 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.03.22
+  ; Last revision: 2016.04.01
 )

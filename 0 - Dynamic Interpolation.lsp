@@ -39,9 +39,8 @@
   ; OPERATION - Check if function library is loaded. If not, exit.
   (princ "\nLooking for function library... ")
   (if (and
-        (= (eval DT:destripar_txt) nil)
-        (= (eval DT:level_detection) nil)
-        (= (evak DT:clic_or_type_level) nil)
+        (= (eval DT:input_string_or_point) nil)
+        (= (eval DT:clic_or_type_level) nil)
       );END and
     (progn
       (princ "required library not found.\nPlease, load function library and run command again.")
