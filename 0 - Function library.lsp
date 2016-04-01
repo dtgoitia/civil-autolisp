@@ -170,7 +170,7 @@
     ; Private mahole
     ( (and
         (or (= "S" (substr txt 1 1)) (= "F" (substr txt 1 1)))
-        (and (< (ascii (substr txt 2 1)) 97) (> (ascii (substr txt 2 1)) 122))
+        (and (>= (ascii (substr txt 2 1)) 48) (<= (ascii (substr txt 2 1)) 57))
         (> (strlen txt) 5)
       )
       ;(setq cota (atof (substr txt 4 9)))
