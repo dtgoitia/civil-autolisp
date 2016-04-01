@@ -41,6 +41,7 @@
   (if (and
         (= (eval DT:destripar_txt) nil)
         (= (eval DT:level_detection) nil)
+        (= (evak DT:clic_or_type_level) nil)
       );END and
     (progn
       (princ "required library not found.\nPlease, load function library and run command again.")
@@ -65,7 +66,8 @@
   )
 
   ; INPUT - Ask starting level
-  (setq z0 (DT:level_detection))
+  ;(setq z0 (DT:level_detection))
+  (setq z0 (DT:clic_or_type_level))
 
   ; OPERATION - Show selected level
   (princ (strcat " level = " (rtos z0 2 3) "m"))

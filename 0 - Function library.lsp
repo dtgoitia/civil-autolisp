@@ -101,7 +101,7 @@
   ; Author: David Torralba
   ; Last revision: 2016.03.30
 )
-(defun DT:destripar_txt ( / nent )
+(defun DT:destripar_txt ( / nent VL_ent_name )
   ; Return the string of any atribute or text, regardless of how deep nested is it
   (setq nent nil)
   (while (not nent)
@@ -120,6 +120,83 @@
       ); END progn1
     ); END if1
   )
+)
+(defun DT:clic_or_type_level(/ in nent txt VL_ent_name)
+  ; Clic on any atribute or text with a level and return its text, or type it in
+  (setq in (DT:input_string_or_point))
+  (cond
+    ((= 'LIST (type in)) ; it's a point
+      (setq nent (nentselp in))
+      (if (not nent)
+        (princ "nothing selected.\n")
+        (progn
+          (setq VL_ent_name (vlax-ename->vla-object (car nent)))
+          (if (vlax-property-available-p VL_ent_name 'TextString)
+            (setq txt (vlax-get-property VL_ent_name 'TextString))
+            (progn
+              (setq nent nil)
+              (princ "no text found.")
+            ); END progn2
+          ); END if2
+        ); END progn1
+      ); END if1
+    )
+    ((= 'STR (type in)) ; it's a string
+    (setq txt in)
+    )
+  )
+  ; Analize the input text
+  (cond
+    ; Normal number: adoptable manholes, PI_DAVID block
+    ( (and (< (strlen txt) 8) (> (strlen txt) 4) (/= "S" (substr txt 1 1)) (/= "F" (substr txt 1 1)))
+      ;(alert "case 1")
+      (atof txt)
+    )
+    ; FFL
+    ( (and (= "FFL " (substr txt 1 4)) (= 4 (- (strlen txt) (vl-string-search "." txt))) )
+      ;(alert "case 2")
+      (atof (substr txt 5))
+    )
+    ; Road level
+    ( (and (= "%%U" (substr txt 1 3)) (= 3 (- (strlen txt) (vl-string-search "." txt))))
+      ;(alert "case 3")
+      (atof (substr txt 4 10))
+    )
+    ; Plot level
+    ( (and (= "%%U" (substr txt 1 3)) (= 4 (- (strlen txt) (vl-string-search "." txt))))
+      ;(alert "case 4")
+      (atof (substr txt 4 9))
+    )
+    ; Private mahole
+    ( (and
+        (or (= "S" (substr txt 1 1)) (= "F" (substr txt 1 1)))
+        (and (< (ascii (substr txt 2 1)) 97) (> (ascii (substr txt 2 1)) 122))
+        (> (strlen txt) 5)
+      )
+      ;(setq cota (atof (substr txt 4 9)))
+      ;(alert "case 5")
+      (atof (substr txt 2))
+    )
+    ; Non number
+    ( (and
+        (= (atof txt) 0)
+        (or (< (ascii (substr txt 2 1)) 97) (> (ascii (substr txt 2 1)) 122))
+      )
+      ;(alert "case 6")
+      (getreal "\nNumber format not understood. Please, introduce level: ")
+    )
+    ; Other
+    (t
+      ;(alert "case 7")
+      (princ (strcat "\nNo standard format detected. Verify you want to select " txt "m level."))
+      (initget "Yes No")
+      (setq ans (getkword (strcat "\nNo standard format detected. Verify you want to select " txt "m level.[Yes/No] <No>:")))
+      (if (= ans "Yes")
+        (atof txt)
+        (exit)
+      )
+    );END cond4
+  ); END cond
 )
 (defun DT:level_detection ( / txt )
   (setq txt (DT:destripar_txt))
