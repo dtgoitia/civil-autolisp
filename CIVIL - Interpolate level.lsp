@@ -56,10 +56,8 @@
   (if (/= reference_circle1 nil) (vla-delete (vlax-ename->vla-object reference_circle1)))
   (if (/= reference_circle2 nil) (vla-delete (vlax-ename->vla-object reference_circle2)))
 
-  ; INPUT - Point 1 and its level
+  ; INPUT - Point 1
   (setq p1 (getpoint "\nSelect point A: "))
-  (setq z1 (DT:clic_or_type_level))
-  (princ "\nLevel A = ")(princ z1)(princ "m")
 
   ; OPERATION - Create auxiliary data and objects
   (setq
@@ -70,16 +68,22 @@
     reference_circle1 ( _Reference_Circle p1 radius)
   )
 
-  ; INPUT - Point 2 and its level
+  ;INPIUT - Point 1 level
+  (setq z1 (DT:clic_or_type_level))
+  (princ "\nLevel A = ")(princ z1)(princ "m")
+
+  ; INPUT - Point 2
   (setq p2 (getpoint "\nSelect point B: "))
-  (setq z2 (DT:clic_or_type_level))
-  (princ "\nLevel B = ")(princ z2)(princ "m")
 
   ; OPERATION - Create auxiliary data and objects
   (setq
     set_line ( _Set_Line p1 p2)
     reference_circle2 ( _Reference_Circle p2 radius)
   )
+
+  ; INPUT - Point 2 level
+  (setq z2 (DT:clic_or_type_level))
+  (princ "\nLevel B = ")(princ z2)(princ "m")
 
   ; OPERATION - Calculate gradient and print it
   (setq d12 (distance p1 p2))                ; Distance 1-2
