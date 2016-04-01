@@ -56,6 +56,9 @@
   ;(setq z0 (DT:level_detection))
   (setq z0 (DT:clic_or_type_level))
 
+  ; OPERATION - Show selected level
+  (princ (strcat "\nz0 = " (rtos z0 2 3) "m"))
+
   ; INPUT - Ask starting point
   (setq p0 (getpoint "\nIntroduce starting point: ") )
 
@@ -67,9 +70,6 @@
 
     reference_circle1 ( _Reference_Circle p0 radius)
   )
-
-  ; OPERATION - Show selected level
-  (princ (strcat " level = " (rtos z0 2 3) "m"))
 
   ; INPUT - Ask to fix slope or IL
   (initget 1 "Slope Level")
