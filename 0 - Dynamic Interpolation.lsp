@@ -113,8 +113,8 @@
     ); END cond "Slope"
     ((= answer "Level")
       ; ASK - level
-      (setq z1 (DT:level_detection))
-
+      (setq z1 (DT:clic_or_type_level))
+      (princ (strcat "\nz0 = " (rtos z0 2 3) "   zf = " (rtos z1 2 3)))
       ; OPERATION - Calculate and print slope
       (while (= 5 (car (setq gr (grread 't 13 0))))
         (setq p1 (cadr gr)
