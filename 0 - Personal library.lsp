@@ -212,3 +212,20 @@
   ; Author: David Torralba
   ; Last revision: 2016.03.22
 )
+(defun c:get_CG ( /
+									ent obj centroid
+								)
+	; It finds the gravity center of a closed polyline
+	(setq ent (car (entsel "\nSelect closed polyline: ")))
+	(command "region" ent "")
+	(setq ent (entlast))
+	(setq obj (vlax-ename->vla-object ent))
+	(setq centroid (vlax-safearray->list (vlax-variant-value (vla-get-centroid obj))))
+	(command "undo" "")
+	(princ centroid)
+	;(command "circle" centroid "0.3")
+	(princ)
+  ; v0.0 - 2016.04.05 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.04.05
+)
