@@ -26,9 +26,6 @@
     (princ)
   )
 
-  ; OPERATION - Borrar datos auxiliares, por si existen
-  (setq set_line nil)
-
   ; SAVE CURRENT SETTINGS - Current layer, OSMODE and CMDECHO
   (setq oldosmode (getvar "osmode")
         oldcmdecho (getvar "cmdecho")
@@ -48,7 +45,7 @@
     (princ "loaded.")
   )
 
-  ;turn off the system echo
+  ; OPERATION - Turn off the system echo
   (setvar "cmdecho" 0)
 
   ; OPERATION - Delete auxiliary data, if any
@@ -68,7 +65,7 @@
     reference_circle1 ( _Reference_Circle p1 radius)
   )
 
-  ;INPIUT - Point 1 level
+  ;INPUT - Point 1 level
   (setq z1 (DT:clic_or_type_level))
   (princ "\nLevel A = ")(princ z1)(princ "m")
 
