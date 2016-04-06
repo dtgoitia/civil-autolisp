@@ -94,7 +94,7 @@
       (princ "noting selected.")
       (c:INPUT)
     )
-    (t (princ "\nNew case detected. Speak with David.")(princ))
+    (t (alert "IMPORTANT!\nNew case detected. Please, report to David inmediatly what did you do before this pop up appeared to improve the routine.")(princ))
   )
   ; v0.1 - 2016.03.31 - Add possibily to remove typed characters.
   ; v0.0 - 2016.03.30 - First issue
@@ -181,6 +181,7 @@
     ( (and
         (= (atof txt) 0)
         (or (< (ascii (substr txt 2 1)) 97) (> (ascii (substr txt 2 1)) 122))
+        (/= (ascii (substr txt 1 1)) 48)
       )
       ;(alert "case 6")
       (getreal "\nNumber format not understood. Please, introduce level: ")
@@ -189,8 +190,8 @@
     (t
       ;(alert "case 7")
       (initget "Yes No")
-      (setq ans (getkword (strcat "\nNo standard format. Verify " txt "m level. [Yes/No] <No>:")))
-      (if (= ans "Yes")
+      (setq ans (getkword (strcat "\nNo standard format. Verify " txt "m level. [Yes/No] <Yes>:")))
+      (if (or (not ans) (= ans "Yes"))
         (atof txt)
         (exit)
       )
