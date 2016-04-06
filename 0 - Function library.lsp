@@ -518,7 +518,48 @@
   (eval (list 'defun 'LM:acapp 'nil (vlax-get-acad-object)))
   (LM:acapp)
 )
-(princ)
+(defun invm ( m / c f p r )
+;; Matrix Inverse  -  gile & Lee Mac
+;; Uses Gauss-Jordan Elimination to return the inverse of a non-singular nxn matrix.
+;; Args: m - nxn matrix
+
+    (defun f ( p m )
+        (mapcar '(lambda ( x ) (mapcar '(lambda ( a b ) (- a (* (car x) b))) (cdr x) p)) m)
+    )
+    (setq  m (mapcar 'append m (imat (length m))))
+    (while m
+        (setq c (mapcar '(lambda ( x ) (abs (car x))) m))
+        (repeat (vl-position (apply 'max c) c)
+            (setq m (append (cdr m) (list (car m))))
+        )
+        (if (equal 0.0 (caar m) 1e-14)
+            (setq m nil
+                  r nil
+            )
+            (setq p (mapcar '(lambda ( x ) (/ (float x) (caar m))) (cdar m))
+                  m (f p (cdr m))
+                  r (cons p (f p r))
+            )
+        )
+    )
+    (reverse r)
+)
+(defun imat ( n / i j l m )
+;; Identity Matrix  -  Lee Mac
+;; Args: n - matrix dimension
+    (repeat (setq i n)
+        (repeat (setq j n)
+            (setq l (cons (if (= i j) 1.0 0.0) l)
+                  j (1- j)
+            )
+        )
+        (setq m (cons l m)
+              l nil
+              i (1- i)
+        )
+    )
+    m
+)
 (defun TODAY ( / d yr mo day)
   (setq
     d (rtos (getvar "CDATE") 2 6)
@@ -544,3 +585,4 @@
   ; Author: David Torralba
   ; Last revision: 2016.03.30
 )
+(princ)
