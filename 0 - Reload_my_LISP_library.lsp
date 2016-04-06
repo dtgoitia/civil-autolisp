@@ -17,6 +17,9 @@
 
   ;; CIVILS
   '("CIVIL - Load blocks and insertion routines.lsp" "--")
+  '("CIVIL - Interpolate level.lsp" "INT")
+  '("CIVIL - Interpolate level 3D.lsp" "INT3D")
+
 
   ;; STRUCTURALS
   '("STRUCTURAL - Create building blocks.lsp" "BB")
