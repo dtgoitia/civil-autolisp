@@ -11,19 +11,49 @@
     (princ "function loaded.")
   )
   ; OPERATION - Import blocks from master drawing, and explode and remove them TODO
-
-
-
   (princ)
-
   ; v0.0 - 2016.03.?????? - First issue
   ; Author: David Torralba
   ; Last revision: 2016.03.29
 )
 
+;; External block insertion routines
+; Block checking and loading routine
+(defun DT:load_block( block_name drawing_name )
+  (cond
+    ((= (tblsearch "block" block_name) nil)
+      (command "-insert" drawing_name "0,0" 1 1 0)
+      (command "erase" "L" "")
+    )
+    (t (princ "\nBlock loaded."))
+  )
+  (princ)
+) ; Shed
+
+; External works block insertion - Master routine
+(defun DT:lay_block_rotate ( block lay / *error* old_osmode old_clayer old_cmdecho)
+  (defun *error* ( msg )
+    (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
+    (setvar "clayer" old_clayer)
+    (setvar "cmdecho" old_cmdecho)
+    (princ)
+  )
+  (setq
+    old_clayer (getvar "clayer")
+    old_cmdecho (getvar "cmdecho")
+  )
+  (setvar "cmdecho" 0)
+  (command "-layer" "M" lay "")
+  (fbi block)
+  (setvar "clayer" old_clayer)
+  (setvar "cmdecho" old_cmdecho)
+  (princ)
+)
+(defun c:shed() (DT:load_block "shed" "zshed") (DT:lay_block_rotate "shed" "e-external-works-shed")(princ)) ; Shed
+
 ;; Drainage block insertion routines
 ; Private block insertion - Master routine
-(defun DT:drainage_block ( block lay osm / *error* old_osmode old_clayer old_cmdecho)
+(defun DT:lay_block ( block lay osm / *error* old_osmode old_clayer old_cmdecho)
   (defun *error* ( msg )
     (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
     (setvar "osmode" old_osmode)
@@ -46,13 +76,15 @@
   (princ)
 )
 ; Private blocks - Foul
-(defun c:svp()    (DT:drainage_block "e-pfd-svp"                      "e-pfd" 4)) ; SVP
-(defun c:svp300() (DT:drainage_block "Private-Square300-Foul-Manhole" "e-pfd" 4)) ; Private Square 300 Foul Manhole
-(defun c:svp475() (DT:drainage_block "Private-Square475-Foul-Manhole" "e-pfd" 4)) ; Private Square 475 Foul Manhole
+(defun c:svp()    (DT:lay_block "e-pfd-svp"                      "e-pfd" 4)) ; SVP
+(defun c:svp300() (DT:lay_block "Private-Square300-Foul-Manhole" "e-pfd" 4)) ; Private Square 300 Foul Manhole
+(defun c:svp475() (DT:lay_block "Private-Square475-Foul-Manhole" "e-pfd" 4)) ; Private Square 475 Foul Manhole
 
 ; Private blocks - Storm
-(defun c:rwp()    (DT:drainage_block "e-psd-rwp"                      "e-psd" 4)) ; RWP
-(defun c:rwp2()   (DT:drainage_block "Private-Round-Storm-Manhole"    "e-psd" 4)) ; Private round storm manhole
+(defun c:rwp()    (DT:lay_block "e-psd-rwp"                      "e-psd" 4)) ; RWP
+(defun c:rwp2()   (DT:lay_block "Private-Round-Storm-Manhole"    "e-psd" 4)) ; Private round storm manhole
+(defun c:reye()   (DT:lay_block_rotate "Rodding-Eye"           "e-psd")) ; Rodding eye
+(defun c:krwp()   (c:rwp) (c:psd))                                           ; Combo: RWP + PSD
 
 ; Private sewer - Master routine
 (defun DT:drainage_line ( lay osm / *error* old_osmode old_clayer old_cmdecho)
@@ -80,7 +112,7 @@
   (princ)
 )
 ; Private sewer - Foul
-(defun c:pfd() (DT:drainage_line "e-pfd" 132))
+(defun c:pfd() (DT:drainage_line "e-pfd" 4))
 ; Private sewer - Storm
 (defun c:psd() (DT:drainage_line "e-psd" 132))
 ; v0.0 - 2016.03.30 - First issue
