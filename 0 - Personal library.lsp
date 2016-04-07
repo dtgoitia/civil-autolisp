@@ -1,4 +1,12 @@
 (vl-load-com)
+(defun c:co()
+	(command "copy")
+	(princ)
+)
+(defun c:ci()
+	(command "circle")
+	(princ)
+)
 (defun c:RTM ()
 	; RT and move together
 	(C:RT)
