@@ -72,14 +72,14 @@
   )
 
   ; INPUT - Ask to fix Gradient or IL
-  (initget 1 "Gradient Level")
+  (initget 1 "Slope Gradient Level")
   (setq answer (getkword "\nChoose to fix [Gradient/Level]: "))
 
   ; SET - Real text height
   (setq real_text_height 0.03)
 
   (cond
-    ((= answer "Gradient")
+    ( (or (= answer "Slope") (= answer "Gradient"))
       ; ASK - Gradient
       (setq grad (getreal "\nIntroduce gradient = 1/"))
 
