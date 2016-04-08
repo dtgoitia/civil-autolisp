@@ -124,6 +124,7 @@
   ; Fast audit and safe
   (command "audit" "Yes")
   (command "qsave")
+	(princ "\nDrawing audited and saved.")
   (princ)
 
   ; v0.0 - 2016.03.18 - First issue
