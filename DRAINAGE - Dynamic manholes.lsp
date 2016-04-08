@@ -282,8 +282,12 @@
     ; LEVEL
     ((= answer "Level")
       ; ASK - level
-      (setq IL2 (getreal "\nIntroduce finish level: "))
-
+      (setq IL2 nil)
+      (while (not grad)
+        (setq IL2 (getreal "\nIntroduce finish level: "))
+        (if (not IL2) (princ " ... what?\nMate, read the instructions before running please."))
+      ); END while
+      
       ; OPERATION - Alertar de una tuberia plana
       (if (= IL2 IL1)
         (progn
