@@ -1,5 +1,5 @@
 (vl-load-com)
-(defun c:co()
+(defun c:c()
 	(command "copy")
 	(princ)
 )
