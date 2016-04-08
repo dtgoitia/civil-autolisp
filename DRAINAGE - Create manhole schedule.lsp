@@ -235,7 +235,7 @@
   (setvar "cmdecho" 0)
 
   ; INPUT - Seleccionar el schedule
-	;(setq ent (entsel "\nSelect a schedule block: "))
+	(princ "\nLooking for existing Manhole Schedule blocks... ")
   (setq ss (ssget))
   (setq n (sslength ss))
   (setq i 0)
