@@ -30,7 +30,7 @@
   (princ)
 ) ; Shed
 
-; External works block insertion - Master routine
+; Block insertion with rotation - Master routine
 (defun DT:lay_block_rotate ( block lay / *error* old_osmode old_clayer old_cmdecho)
   (defun *error* ( msg )
     (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))

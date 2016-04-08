@@ -263,6 +263,38 @@
 ;; Returns: [str] Value of Visibility Parameter, else nil
     (LM:getdynpropvalue blk (LM:getvisibilityparametername blk))
 )
+(defun LM:SetVisibilityState ( blk val / vis )
+;; Set Dynamic Block Visibility State  -  Lee Mac
+;; Sets the Visibility Parameter of a Dynamic Block (if present) to a specific value (if allowed)
+;; blk - [vla] VLA Dynamic Block Reference object
+;; val - [str] Visibility State Parameter value
+;; Returns: [str] New value of Visibility Parameter, else nil
+    (if
+        (and
+            (setq vis (LM:getvisibilityparametername blk))
+            (member (strcase val) (mapcar 'strcase (LM:getdynpropallowedvalues blk vis)))
+        )
+        (LM:setdynpropvalue blk vis val)
+    )
+);; Effective Block Name  -  Lee Mac
+;; obj - [vla] VLA Block Reference object
+(defun LM:effectivename ( obj )
+    (vlax-get-property obj
+        (if (vlax-property-available-p obj 'effectivename)
+            'effectivename
+            'name
+        )
+    )
+)
+(defun get_block_att ( obj IL )
+  (vl-some '(lambda ( att )
+              (if (= IL (strcase (vla-get-tagstring att)))
+                (vla-get-textstring att)
+              ) ; END if
+            )
+          (vlax-invoke obj 'getattributes)
+        )
+)
 (defun LM:getvisibilityparametername ( blk / vis )
 ;; Get Visibility Parameter Name  -  Lee Mac
 ;; Returns the name of the Visibility Parameter of a Dynamic Block (if present)
@@ -310,6 +342,17 @@
         (vlax-invoke blk 'getdynamicblockproperties)
     )
 )
+(defun LM:getdynpropallowedvalues ( blk prp )
+;; Get Dynamic Block Property Allowed Values  -  Lee Mac
+;; Returns the allowed values for a specific Dynamic Block property.
+;; blk - [vla] VLA Dynamic Block Reference object
+;; prp - [str] Dynamic Block property name (case-insensitive)
+;; Returns: [lst] List of allowed values for property, else nil if no restrictions
+    (setq prp (strcase prp))
+    (vl-some '(lambda ( x ) (if (= prp (strcase (vla-get-propertyname x))) (vlax-get x 'allowedvalues)))
+        (vlax-invoke blk 'getdynamicblockproperties)
+    )
+)
 (defun LM:vl-setattributevalue ( blk tag val )
   ;; Set Attribute Value  -  Lee Mac
   ;; Sets the value of the first attribute with the given tag found within the block, if present.
@@ -325,6 +368,26 @@
             )
         )
         (vlax-invoke blk 'getattributes)
+    )
+)
+(defun LM:setdynpropvalue ( blk prp val )
+;; Set Dynamic Block Property Value  -  Lee Mac
+;; Modifies the value of a Dynamic Block property (if present)
+;; blk - [vla] VLA Dynamic Block Reference object
+;; prp - [str] Dynamic Block property name (case-insensitive)
+;; val - [any] New value for property
+;; Returns: [any] New value if successful, else nil
+    (setq prp (strcase prp))
+    (vl-some
+       '(lambda ( x )
+            (if (= prp (strcase (vla-get-propertyname x)))
+                (progn
+                    (vla-put-value x (vlax-make-variant val (vlax-variant-type (vla-get-value x))))
+                    (cond (val) (t))
+                )
+            )
+        )
+        (vlax-invoke blk 'getdynamicblockproperties)
     )
 )
 (defun get_block_att ( obj attribute )

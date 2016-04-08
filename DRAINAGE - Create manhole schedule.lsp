@@ -1,142 +1,7 @@
-﻿(defun LM:vl-setattributevalue ( blk tag val )
-;; Set Attribute Value  -  Lee Mac
-;; Sets the value of the first attribute with the given tag found within the block, if present.
-;; blk - [vla] VLA Block Reference Object
-;; tag - [str] Attribute TagString
-;; val - [str] Attribute Value
-;; Returns: [str] Attribute value if successful, else nil.
-    (setq tag (strcase tag))
-    (vl-some
-       '(lambda ( att )
-            (if (= tag (strcase (vla-get-tagstring att)))
-                (progn (vla-put-textstring att val) val)
-            )
-        )
-        (vlax-invoke blk 'getattributes)
-    )
-)
-(defun LM:getdynpropvalue ( blk prp )
-;; Get Dynamic Block Property Value  -  Lee Mac
-;; Returns the value of a Dynamic Block property (if present)
-;; blk - [vla] VLA Dynamic Block Reference object
-;; prp - [str] Dynamic Block property name (case-insensitive)
-    (setq prp (strcase prp))
-    (vl-some '(lambda ( x ) (if (= prp (strcase (vla-get-propertyname x))) (vlax-get x 'value)))
-        (vlax-invoke blk 'getdynamicblockproperties)
-    )
-)
-(defun LM:getdynpropallowedvalues ( blk prp )
-;; Get Dynamic Block Property Allowed Values  -  Lee Mac
-;; Returns the allowed values for a specific Dynamic Block property.
-;; blk - [vla] VLA Dynamic Block Reference object
-;; prp - [str] Dynamic Block property name (case-insensitive)
-;; Returns: [lst] List of allowed values for property, else nil if no restrictions
-    (setq prp (strcase prp))
-    (vl-some '(lambda ( x ) (if (= prp (strcase (vla-get-propertyname x))) (vlax-get x 'allowedvalues)))
-        (vlax-invoke blk 'getdynamicblockproperties)
-    )
-)
-(defun LM:setdynpropvalue ( blk prp val )
-;; Set Dynamic Block Property Value  -  Lee Mac
-;; Modifies the value of a Dynamic Block property (if present)
-;; blk - [vla] VLA Dynamic Block Reference object
-;; prp - [str] Dynamic Block property name (case-insensitive)
-;; val - [any] New value for property
-;; Returns: [any] New value if successful, else nil
-    (setq prp (strcase prp))
-    (vl-some
-       '(lambda ( x )
-            (if (= prp (strcase (vla-get-propertyname x)))
-                (progn
-                    (vla-put-value x (vlax-make-variant val (vlax-variant-type (vla-get-value x))))
-                    (cond (val) (t))
-                )
-            )
-        )
-        (vlax-invoke blk 'getdynamicblockproperties)
-    )
-)
-(defun LM:getvisibilityparametername ( blk / vis )  
-;; Get Visibility Parameter Name  -  Lee Mac
-;; Returns the name of the Visibility Parameter of a Dynamic Block (if present)
-;; blk - [vla] VLA Dynamic Block Reference object
-;; Returns: [str] Name of Visibility Parameter, else nil
-    (if
-        (and
-            (vlax-property-available-p blk 'effectivename)
-            (setq blk
-                (vla-item
-                    (vla-get-blocks (vla-get-document blk))
-                    (vla-get-effectivename blk)
-                )
-            )
-            (= :vlax-true (vla-get-isdynamicblock blk))
-            (= :vlax-true (vla-get-hasextensiondictionary blk))
-            (setq vis
-                (vl-some
-                   '(lambda ( pair )
-                        (if
-                            (and
-                                (= 360 (car pair))
-                                (= "BLOCKVISIBILITYPARAMETER" (cdr (assoc 0 (entget (cdr pair)))))
-                            )
-                            (cdr pair)
-                        )
-                    )
-                    (dictsearch
-                        (vlax-vla-object->ename (vla-getextensiondictionary blk))
-                        "ACAD_ENHANCEDBLOCK"
-                    )
-                )
-            )
-        )
-        (cdr (assoc 301 (entget vis)))
-    )
-)
-(defun LM:getvisibilitystate ( blk )
-;; Get Dynamic Block Visibility State  -  Lee Mac
-;; Returns the value of the Visibility Parameter of a Dynamic Block (if present)
-;; blk - [vla] VLA Dynamic Block Reference object
-;; Returns: [str] Value of Visibility Parameter, else nil
-    (LM:getdynpropvalue blk (LM:getvisibilityparametername blk))
-)
-(defun LM:SetVisibilityState ( blk val / vis )
-;; Set Dynamic Block Visibility State  -  Lee Mac
-;; Sets the Visibility Parameter of a Dynamic Block (if present) to a specific value (if allowed)
-;; blk - [vla] VLA Dynamic Block Reference object
-;; val - [str] Visibility State Parameter value
-;; Returns: [str] New value of Visibility Parameter, else nil
-    (if
-        (and
-            (setq vis (LM:getvisibilityparametername blk))
-            (member (strcase val) (mapcar 'strcase (LM:getdynpropallowedvalues blk vis)))
-        )
-        (LM:setdynpropvalue blk vis val)
-    )
-)
-(defun get_block_att ( obj IL )
-  (vl-some '(lambda ( att )
-              (if (= IL (strcase (vla-get-tagstring att)))
-                (vla-get-textstring att)
-              ) ; END if
-            )
-          (vlax-invoke obj 'getattributes)
-        )
-)
-(defun LM:effectivename ( obj )
-;; Effective Block Name  -  Lee Mac
-;; obj - [vla] VLA Block Reference object
-  (vlax-get-property obj
-    (if (vlax-property-available-p obj 'effectivename)
-      'effectivename
-      'name
-    )
-  )
-)
 (defun get_manhole_att ( txt_msg )
   ; (Re)load VLISP
   (vl-load-com)
-  
+
   ; INPUT - Select object
   (setq block_effective_name nil)
   (while (and (/= block_effective_name "FW-Manhole") (/= block_effective_name "SW-Manhole") )
@@ -163,10 +28,10 @@
       ); END progn
     ); END if
   ); END while
-  
+
   ; get visibility state
   (setq vis_sta (LM:getvisibilitystate VL_ent_name))
-  
+
   ; Comprobar si el metodo 'getattributes es aplicable
   (if (vlax-method-applicable-p VL_ent_name 'getattributes) ; Condition
     (progn                                                ; True. Se puede aplicar el método
@@ -190,7 +55,7 @@
             txt_IL3 (get_block_att VL_ent_name "IL3") IL3 (atof txt_IL3) txt_IL3 (rtos IL3 2 3)
             txt_IL4 (get_block_att VL_ent_name "IL4") IL4 (atof txt_IL4) txt_IL4 (rtos IL4 2 3)
       )
-      
+
       ; Imprimir los recogido:
       (princ (strcat "\nID = " ID "\nCL = " CL "\nIL1 = " txt_IL1 "\nIL2 = " txt_IL2 "\nIL3 = " txt_IL3 "\nIL4 = " txt_IL4 ))   ; multilinea
       ;(princ (strcat "\nIL1=" txt_IL1 "   IL2=" txt_IL2 "   IL3=" txt_IL3 "   IL4=" txt_IL4 ))   ; línea única
@@ -201,7 +66,7 @@
 )
 (defun c:MSC (/ oldlayer oldosmode oldcmdecho)
 ;(defun c:MSC (/ oldlayer oldosmode oldcmdecho p_ins p_ins2 IL0 IL1 IL2 IL3 IL4 txt_IL0 txt_IL1 txt_IL2 txt_IL3 txt_IL4 ID CL)
-   
+
   ; SET - Error handling function
   (defun *error* ( msg )
     (if (not (member msg '("Function cancelled" "quit / exit abort")))
@@ -213,29 +78,29 @@
     (setvar "cmdecho" oldcmdecho)
     (princ)
   )
-  
+
   ; SAVE CURRENT SETTINGS - Current layer, OSMODE and CMDECHO
   (setq oldlayer (getvar "clayer")
         oldosmode (getvar "osmode")
         oldcmdecho (getvar "cmdecho")
   )
-  
+
   ; CHANGE INITIAL SETTINGS - "osmode" and "cmdecho"
   (setvar "osmode" 0)
   (setvar "cmdecho" 0)
-  
+
   ; INPUT - Seleccionar el manhole
 	(get_manhole_att "\nSelect a manhole:")  ; Extraigo los atributos a las correspondientes variables (ver funcion mas arriba)
-  
+
   ; OPERATION - Activar referencias
   (setvar "osmode" 1)
-  
+
   ; INPUT - Seleccionar el punto de inserción del bloque
   (setq p_ins (getpoint "\nSelect point to insert schedule: ") )
-  
+
   ; OPERATION - Desactivar referencias
   (setvar "osmode" 0)
-  
+
   ; OPERATION - Asignar al IL de salida (IL0) el menor de los IL disponible diferente de 0
     ; procesar valores igual a cero para que sean descomunales
     (if (= IL1 0) (setq IL1 9999.999))
@@ -256,7 +121,7 @@
     (princ "\nIL3 = ")(princ IL3)
     (princ "\nIL4 = ")(princ IL4)
     (princ "\nIL0 = ")(princ IL0)
-  
+
     ; OPERATION - Crear y/o cambiar capa para insertar el bloque ------------------------------------------------------------------- CONTINUAR
     ; Comprobar que la capa e-manhole-schedule existe
     (princ "\nBuscando capa e-manhole-schedule...")
@@ -272,7 +137,7 @@
         (princ "\nCapa e-manhole-schedule creada.")
       ) ; END FALSE si NO encuentra la capa e-manhole-schedule
     ) ;END if
-  
+
   (princ "\n")(princ "p_ins = ")(princ p_ins)
   (princ "\n")(princ "ID = ")(princ ID)
   (princ "\n")(princ "CL = ")(princ CL)
@@ -285,7 +150,7 @@
   (princ "\n")(princ "txt_N_coord = ")(princ txt_N_coord)
   ; OPERATION - Insertar el bloque
   (command "._insert" "ManScheduleBody" p_ins "1" "1" "0" ID CL "" "" "" txt_IL1 txt_IL2 txt_IL3 txt_IL4 txt_IL0 "" "" "" "" "" "" "" "" "" "" txt_E_coord txt_N_coord)
-    
+
   ; OPERATION - Sincronizar ambos estados de visibilidad
     ; seleccionar ultimo objeto creado
     (setq last_ent (entlast))
@@ -293,12 +158,12 @@
     (setq VL_last_ent (vlax-ename->vla-object last_ent))
     ; cambiar el estado de visibilidad
     (LM:SetVisibilityState VL_last_ent vis_sta)
-  
+
   ; OPERATION - Insertar el bloque del esquema
   (setq p_ins2 (polar p_ins 0 121.5) )
-  (setq p_ins2 (polar p_ins2 (* -0.5 pi) 8.25) ) 
+  (setq p_ins2 (polar p_ins2 (* -0.5 pi) 8.25) )
   (command "._insert" "ManDetail" p_ins2 "1" "1" "0")
-  
+
   ; OPERATION - Sincronizar el estado de visibilidad del bloque del esquema
     ; seleccionar ultimo objeto creado
     (setq last_ent (entlast))
@@ -306,7 +171,7 @@
     (setq VL_last_ent (vlax-ename->vla-object last_ent))
     ; cambiar el estado de visibilidad
     (LM:SetVisibilityState VL_last_ent vis_sta)
-  
+
   ; CLEAN VARIABLES
   (setq
     IL0 nil
@@ -330,15 +195,15 @@
     VL_last_ent nil
     vis_sta nil
   )
-  
+
   ; RESTORE PREVIOUS SETTINGS
   (setvar "clayer" oldlayer)
   (setvar "osmode" oldosmode)
   (setvar "cmdecho" oldcmdecho)
-  
+
   ; End without double messages
   (princ)
-  
+
   ; v0.0 - 2016.02.23
   ; Author: David Torralba
   ; Last revision: 2016.02.23
@@ -355,20 +220,20 @@
     (setvar "cmdecho" oldcmdecho)
     (princ)
   )
-  
+
   ; SAVE CURRENT SETTINGS - Current layer, OSMODE and CMDECHO
   (setq oldlayer (getvar "clayer")
         oldosmode (getvar "osmode")
         oldcmdecho (getvar "cmdecho")
   )
-  
+
   ; (Re)load VLISP
   (vl-load-com)
-  
+
   ; CHANGE INITIAL SETTINGS - "osmode" and "cmdecho"
   (setvar "osmode" 0)
   (setvar "cmdecho" 0)
-  
+
   ; INPUT - Seleccionar el schedule
 	;(setq ent (entsel "\nSelect a schedule block: "))
   (setq ss (ssget))
@@ -377,13 +242,13 @@
   (while (< i n)
     ; OPERATION - get the entity and entity name
     (setq ent_name (ssname ss i))
-    
+
     ;convert to vl object
     (setq VL_ent_name (vlax-ename->vla-object ent_name))
-    
+
     ; get visibility state
     (setq vis_sta (LM:getvisibilitystate VL_ent_name))
-    
+
     ; Comprobar si el metodo 'getattributes es aplicable
     (if (and (vlax-method-applicable-p VL_ent_name 'getattributes))  ; Condition
       (progn                                                ; True. Se puede aplicar el método
@@ -404,7 +269,7 @@
       )
       (princ "\nThis object is not a manhole.")         ; False. No se puede aplicar el método
     ); END if
-    
+
     ; OPERATION - Calcular IL + DN segun estado de visibilidad
     (setq
       top0 (+ IL0 P0)
@@ -413,7 +278,7 @@
       top3 (+ IL3 P3)
       top4 (+ IL4 P4)
     )
-    
+
     ; OPERATION - Hallar en punto mas alto
     (cond
       ((or (= vis_sta "0") (= vis_sta "1")) (setq top_level (max top0 top1) ) )   ; 1 IL used
@@ -421,7 +286,7 @@
       ((= vis_sta "3") (setq top_level (max top0 top1 top2 top3) ) )              ; 3 IL used
       ((= vis_sta "4") (setq top_level (max top0 top1 top2 top3 top4) ) )         ; 4 IL used
     )
-    
+
     ; OPERATION - Hallar la tubería más grande
     (cond
       ((or (= vis_sta "0") (= vis_sta "1")) (setq biggest_pipe (max P0 P1) ) )    ; 1 IL used
@@ -437,16 +302,16 @@
       ((and (> biggest_pipe 0.700) (< biggest_pipe 0.900)) (LM:vl-setattributevalue VL_ent_name "CS" "DN1800"))             ; 700 < Dmax < 900
       ((> biggest_pipe 0.9)                                (LM:vl-setattributevalue VL_ent_name "CS" "Consult Undertaker")) ; 900 < Dmax
     ); END cond
-    
+
     ; OPERATION - Calcular DTS ("depth to soffit")
     (setq
       DTS (- CL top_level)
       txt_DTS (rtos DTS 2 3)
     )
-    
+
     ; OPERATION - Cambiar el attributo SOFFIT del bloque
     (LM:vl-setattributevalue VL_ent_name "SOFFIT" txt_DTS)
-    
+
     ; OPERATION - Calcular el tipo de manhole y cambiar el attributo MT del bloque
     (cond
       ((and (<= 3 DTS)(<= DTS 6))
@@ -470,11 +335,11 @@
         (princ "\nDTS = ")(princ DTS)(princ " > 6m")
       )
     )
-    
+
     ; OPERATION - Preparar contador para la siguiente vuelta
     (setq i (+ i 1))
   ) ; END while
-  
+
     ; CLEAN VARIABLES
   (setq
     ss nil
@@ -515,12 +380,12 @@
     DTS nil
     txt_DTS nil
   )
-  
+
   ; RESTORE PREVIOUS SETTINGS
   (setvar "clayer" oldlayer)
   (setvar "osmode" oldosmode)
   (setvar "cmdecho" oldcmdecho)
-  
+
   ; End without double messages
   (princ)
   ; v0.3 - 2016.03.10 - Feature added: chamber size is now calculated based on pipe sizes
