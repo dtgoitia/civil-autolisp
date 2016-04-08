@@ -110,7 +110,23 @@
   (princ "\nSelected IL: ")(princ IL)
   (princ)
 )
-(defun c:DM (/ oldlayer oldosmode oldcmdecho)
+(defun c:DM (/
+              ; LOCAL VARIABLES
+              oldlayer oldosmode oldcmdecho
+              answer
+              real_text_height text_height
+              manhole_layer MNH1_capa capa
+              IL IL1 IL2 txt_ID txt_IL2
+              p_ins point p0 p1 pm
+              cursor_text_L1 cursor_text_L2 cursor_line
+              grad txt_grad
+              dist txt_dist
+              dif
+              ang ang_grados
+              diam txt_diam
+              pl_wid
+              label ancho_caja
+            )
   ; Dynamic Manhole
 
   ; SET - Error handling function
@@ -277,17 +293,17 @@
         ;(princ (strcat "\nL = " txt_dist "m     IL = " txt_IL2))
       ) ; END while
       (setq txt_grad (itoa (LM:Round grad))) ; ------------------------------ COMPROBAR QUE ESTO NO SOBRA
-    )
+    ); END cond grad
 
     ; LEVEL
     ((= answer "Level")
       ; ASK - level
       (setq IL2 nil)
-      (while (not grad)
+      (while (not IL2)
         (setq IL2 (getreal "\nIntroduce finish level: "))
         (if (not IL2) (princ " ... what?\nMate, read the instructions before running please."))
       ); END while
-      
+
       ; OPERATION - Alertar de una tuberia plana
       (if (= IL2 IL1)
         (progn
@@ -308,23 +324,23 @@
         )
 
         ; OPERATION - Borrar objetos del cursor, si existen
-        (if (/= cursor_text_L1 nil) (vla-delete (vlax-ename->vla-object cursor_text_L1) text_height))
-        (if (/= cursor_text_L2 nil) (vla-delete (vlax-ename->vla-object cursor_text_L2) text_height))
+        (if (/= cursor_text_L1 nil) (vla-delete (vlax-ename->vla-object cursor_text_L1)))
+        (if (/= cursor_text_L2 nil) (vla-delete (vlax-ename->vla-object cursor_text_L2)))
         (if (/= cursor_line nil) (vla-delete (vlax-ename->vla-object cursor_line)))
 
         ; OPERATION - Calcular
         (setq text_height (* real_text_height (getvar "viewsize")))
 
         ; OPERATION - Crear datos del cursor
-        (setq cursor_text_L1 ( _CursorText_L1 p1 (strcat "p = 1/" txt_grad)))
-        (setq cursor_text_L2 ( _CursorText_L2 p1 (strcat "L = " txt_dist "m")))
+        (setq cursor_text_L1 ( _CursorText_L1 p1 (strcat "p = 1/" txt_grad) text_height))
+        (setq cursor_text_L2 ( _CursorText_L2 p1 (strcat "L = " txt_dist "m") text_height))
         (setq cursor_line ( _Set_Line p0 p1 ))
 
         ;(princ (strcat "\nL = " txt_dist "m     grad = 1/" txt_grad))
       ) ; END while
-      (setq txt_IL2 (rtos dist 2 3)) ; ------------------------------ COMPROBAR QUE ESTO NO SOBRA
-    )
-  )
+      (setq txt_IL2 (rtos IL2 2 3)) ; ------------------------------ COMPROBAR QUE ESTO NO SOBRA
+    ); END cond Level
+  );END cond
 
   ; INPUT - Ask new manhole name
   (setq txt_ID2 (getstring "\nIntroduce new manhole name: "))
@@ -413,7 +429,8 @@
   ; End without double messages
   (princ)
 
-  ; v0.1 - 2016.03.02 - Fuente del texto del cursor ("Style") actualizada a Arial.
+  ; v0.2 - 2016.04.08 - Bug fixed when setting finish level.
+  ; v0.1 - 2016.03.02 - Cursor text font updated to Arial style.
   ; v0.0 - 2016.03.01
   ; Author: David Torralba
   ; Last revision: 2016.03.01
