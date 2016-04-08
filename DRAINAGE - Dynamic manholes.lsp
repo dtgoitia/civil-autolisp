@@ -236,7 +236,11 @@
     ; Gradient
     ((= answer "Gradient")
       ; ASK - Gradient
-      (setq grad (getreal "\nIntroduce gradient = 1/"))
+      (setq grad nil)
+      (while (not grad)
+        (setq grad (getreal "\nIntroduce gradient = 1/"))
+        (if (not grad) (princ " ... what?\nMate, read the instructions before running please."))
+      ); END while
 
       ; OPERATION - Alertar de una tuberia plana
       (if (= grad 0)
