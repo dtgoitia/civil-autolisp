@@ -11,8 +11,8 @@
       (princ (strcat "\nError: " msg))
     )
     ; PRINC LAST INTERPOLATION DATA
-    (if (and (/= z0 nil) (/= z1 nil) (/= txt_dist nil) (/= txt_slope nil))
-      (princ (strcat "\nz0 = " (rtos z0 2 3) "   zf = " (rtos z1 2 3) "   -->   " txt_dist "m @ 1/" txt_slope ))
+    (if (and (/= z0 nil) (/= z1 nil) (/= txt_dist nil) (/= txt_grad nil))
+      (princ (strcat "\nz0 = " (rtos z0 2 3) "   zf = " (rtos z1 2 3) "   -->   " txt_dist "m @ 1/" txt_grad ))
     ) ; END if
 
     ; CLEAN VARIABLES
@@ -71,27 +71,27 @@
     reference_circle1 ( _Reference_Circle p0 radius)
   )
 
-  ; INPUT - Ask to fix slope or IL
-  (initget 1 "Slope Level")
-  (setq answer (getkword "\nChoose to fix [Slope/Level]: "))
+  ; INPUT - Ask to fix Gradient or IL
+  (initget 1 "Gradient Level")
+  (setq answer (getkword "\nChoose to fix [Gradient/Level]: "))
 
   ; SET - Real text height
   (setq real_text_height 0.03)
 
   (cond
-    ((= answer "Slope")
-      ; ASK - Slope
-      (setq slope (getreal "\nIntroduce slope = 1/"))
+    ((= answer "Gradient")
+      ; ASK - Gradient
+      (setq grad (getreal "\nIntroduce gradient = 1/"))
 
       ; OPERATION - Calculate and print level
       (while (= 5 (car (setq gr (grread 't 13 0))))
         (setq p1 (cadr gr)
               dist (distance p0 p1)
               txt_dist (rtos dist 2 1)
-              dif (/ dist slope)
+              dif (/ dist grad)
               z1 (+ z0 dif)
               txt_z1 (rtos z1 2 3)
-              txt_slope (itoa (LM:Round slope))
+              txt_grad (itoa (LM:Round grad))
         )
         ; OPERATION - Delete auxiliary data, if any
         (if (/= reference_circle1 nil) (vla-delete (vlax-ename->vla-object reference_circle1)))
@@ -110,19 +110,19 @@
           cursor_line ( _Set_Line p0 p1 )
         ); END setq
       ); END while
-    ); END cond "Slope"
+    ); END cond "gradient"
     ((= answer "Level")
       ; ASK - level
       (setq z1 (DT:clic_or_type_level))
       (princ (strcat "\nz0 = " (rtos z0 2 3) "   zf = " (rtos z1 2 3)))
-      ; OPERATION - Calculate and print slope
+      ; OPERATION - Calculate and print gradient
       (while (= 5 (car (setq gr (grread 't 13 0))))
         (setq p1 (cadr gr)
               dist (distance p0 p1)
               txt_dist (rtos dist 2 1)
               dif (- z1 z0)
-              slope (/ dist dif)
-              txt_slope (itoa (LM:Round slope))
+              grad (/ dist dif)
+              txt_grad (itoa (LM:Round grad))
         )
 
         ; OPERATION - Delete auxiliary data, if any
@@ -138,7 +138,7 @@
         ; OPERATION - Create auxiliary data
         (setq
           reference_circle1 ( _Reference_Circle p0 radius)
-          cursor_text_L1 ( _CursorText_L1 p1 (strcat "p = 1/" txt_slope) text_height)
+          cursor_text_L1 ( _CursorText_L1 p1 (strcat "p = 1/" txt_grad) text_height)
           cursor_text_L2 ( _CursorText_L2 p1 (strcat "L = " txt_dist "m") text_height)
           cursor_line ( _Set_Line p0 p1 )
         ); END setq
@@ -147,7 +147,7 @@
   )
 
   ; PRINC LAST INTERPOLATION DATA
-  (princ (strcat "\nz0 = " (rtos z0 2 3) "   zf = " (rtos z1 2 3) "   -->   " txt_dist "m @ 1/" txt_slope ))
+  (princ (strcat "\nz0 = " (rtos z0 2 3) "   zf = " (rtos z1 2 3) "   -->   " txt_dist "m @ 1/" txt_grad ))
 
   ; OPERATION - Delete auxiliary data, if any
   (if (/= reference_circle1 nil) (vla-delete (vlax-ename->vla-object reference_circle1)))
@@ -170,7 +170,7 @@
   ;                   - Code optimized and comments translated into English.
   ; v0.4 - 2016.03.17 - Auxliary dashed line added from the initial point to the cursor position
   ;                   - Level extraction functions moved to library
-  ; v0.3 - 2016.03.08 - Final level, slope and distance printed at prompt when clic
+  ; v0.3 - 2016.03.08 - Final level, gradient and distance printed at prompt when clic
   ; v0.2 - 2016.03.02 - Text size updated proportionaly with the zoom ("viewsize" system variable)
   ; v0.1 - 2016.02.29 - Data prompt removed from command-line, and put next to the mouse cross.
   ; v0.0 - 2016.02.26
