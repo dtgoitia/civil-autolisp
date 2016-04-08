@@ -1,14 +1,3 @@
-(defun _CursorLine ( pa pb )
-  (entmakex
-    (list (cons 0 "LINE")
-      (cons 10 pa)                                            ; Punto de inicial
-      (cons 11 pb)                                            ; Punto de final
-      (cons 62 8)                                             ; Color de la línea
-      (cons 6 "DASHED")                                       ; Tipo de línea discontínua
-      (cons 48 0.06)                                          ; Escala de línea
-    )
-  )
-)
 (defun get_IL ( obj IL )
   (vl-some '(lambda ( att )
               (if (= IL (strcase (vla-get-tagstring att)))
@@ -279,7 +268,7 @@
         ; OPERATION - Crear datos del cursor
         (setq cursor_text_L1 ( _CursorText_L1 p1 (strcat "IL = " txt_IL2) text_height))
         (setq cursor_text_L2 ( _CursorText_L2 p1 (strcat "L = " txt_dist "m") text_height))
-        (setq cursor_line ( _CursorLine p0 p1 ))
+        (setq cursor_line ( _Set_Line p0 p1 ))
 
         ;(princ (strcat "\nL = " txt_dist "m     IL = " txt_IL2))
       ) ; END while
@@ -321,7 +310,7 @@
         ; OPERATION - Crear datos del cursor
         (setq cursor_text_L1 ( _CursorText_L1 p1 (strcat "p = 1/" txt_grad)))
         (setq cursor_text_L2 ( _CursorText_L2 p1 (strcat "L = " txt_dist "m")))
-        (setq cursor_line ( _CursorLine p0 p1 ))
+        (setq cursor_line ( _Set_Line p0 p1 ))
 
         ;(princ (strcat "\nL = " txt_dist "m     grad = 1/" txt_grad))
       ) ; END while
