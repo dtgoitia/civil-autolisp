@@ -4,7 +4,10 @@
 
   ; INPUT - Select object
   (setq block_effective_name nil)
-  (while (and (/= block_effective_name "FW-Manhole") (/= block_effective_name "SW-Manhole") )
+  (while  (and
+            (/= block_effective_name "FW-Manhole")
+            (/= block_effective_name "SW-Manhole")
+          )
     (setq ent (entsel txt_msg))
     (if (not ent)
       (princ "\nNothing selected. Try again, please.\n") ; True
@@ -64,18 +67,25 @@
   ); END if
   (princ)
 )
-(defun c:MSC (/ oldlayer oldosmode oldcmdecho)
-;(defun c:MSC (/ oldlayer oldosmode oldcmdecho p_ins p_ins2 IL0 IL1 IL2 IL3 IL4 txt_IL0 txt_IL1 txt_IL2 txt_IL3 txt_IL4 ID CL)
-
+(defun c:MSC (/
+              oldlayer oldosmode oldcmdecho oldattdia oldattreq
+              ID CL
+              IL0 IL1 IL2 IL3 IL4 txt_IL0 txt_IL1 txt_IL2 txt_IL3 txt_IL4
+              p_ins p_ins2
+              last_ent VL_last_ent ent ent_name VL_ent_name
+              vis_sta
+              )
   ; SET - Error handling function
   (defun *error* ( msg )
     (if (not (member msg '("Function cancelled" "quit / exit abort")))
       (princ (strcat "\nError: " msg))
     )
-    ; Restore previous settings
+    ; RESTORE PREVIOUS SETTINGS
     (setvar "clayer" oldlayer)
     (setvar "osmode" oldosmode)
     (setvar "cmdecho" oldcmdecho)
+    (setvar "attdia" oldattdia)
+    (setvar "attreq" oldattreq)
     (princ)
   )
 
@@ -83,11 +93,15 @@
   (setq oldlayer (getvar "clayer")
         oldosmode (getvar "osmode")
         oldcmdecho (getvar "cmdecho")
+        oldattdia (getvar "attdia")
+        oldattreq (getvar "attreq")
   )
 
-  ; CHANGE INITIAL SETTINGS - "osmode" and "cmdecho"
+  ; SET INITIAL SETTINGS
   (setvar "osmode" 0)
   (setvar "cmdecho" 0)
+  (setvar "attdia" 0)
+  (setvar "attreq" 1)
 
   ; INPUT - Seleccionar el manhole
 	(get_manhole_att "\nSelect a manhole:")  ; Extraigo los atributos a las correspondientes variables (ver funcion mas arriba)
@@ -172,41 +186,21 @@
     ; cambiar el estado de visibilidad
     (LM:SetVisibilityState VL_last_ent vis_sta)
 
-  ; CLEAN VARIABLES
-  (setq
-    IL0 nil
-    IL1 nil
-    IL2 nil
-    IL3 nil
-    IL4 nil
-    txt_IL0 nil
-    txt_IL1 nil
-    txt_IL2 nil
-    txt_IL3 nil
-    txt_IL4 nil
-    ID nil
-    CL nil
-    p_ins nil
-    p_ins2 nil
-    last_ent nil
-    ent nil
-    ent_name nil
-    VL_ent_name nil
-    VL_last_ent nil
-    vis_sta nil
-  )
-
   ; RESTORE PREVIOUS SETTINGS
   (setvar "clayer" oldlayer)
   (setvar "osmode" oldosmode)
   (setvar "cmdecho" oldcmdecho)
+  (getvar "attdia" oldattdia)
+  (getvar "attreq" oldattreq)
 
   ; End without double messages
   (princ)
 
+  ; v0.1 - 2016.04.09 - Code tidy up
+  ;                   - Change and reset ATTDIA and ATTREQ system variables
   ; v0.0 - 2016.02.23
   ; Author: David Torralba
-  ; Last revision: 2016.02.23
+  ; Last revision: 2016.04.09
 )
 (defun c:MSCS (/ oldlayer oldosmode oldcmdecho)
   ; SET - Error handling function
@@ -385,6 +379,9 @@
   (setvar "clayer" oldlayer)
   (setvar "osmode" oldosmode)
   (setvar "cmdecho" oldcmdecho)
+  (setvar "attdia" oldattdia)
+  (setvar "attreq" oldattreq)
+  (princ)
 
   ; End without double messages
   (princ)
