@@ -61,8 +61,7 @@
 
       ; Imprimir los recogido:
       (princ (strcat "\nID = " ID "\nCL = " CL "\nIL1 = " txt_IL1 "\nIL2 = " txt_IL2 "\nIL3 = " txt_IL3 "\nIL4 = " txt_IL4 ))   ; multilinea
-      ;(princ (strcat "\nIL1=" txt_IL1 "   IL2=" txt_IL2 "   IL3=" txt_IL3 "   IL4=" txt_IL4 ))   ; línea única
-    )
+    ); END progn true
     (princ "\nThis object is not a manhole.")         ; False. No se puede aplicar el método
   ); END if
   (princ)
@@ -137,21 +136,20 @@
     (princ "\nIL4 = ")(princ IL4)
     (princ "\nIL0 = ")(princ IL0)
 
-    ; OPERATION - Crear y/o cambiar capa para insertar el bloque ------------------------------------------------------------------- CONTINUAR
-    ; Comprobar que la capa e-manhole-schedule existe
-    (princ "\nBuscando capa e-manhole-schedule...")
+    ; OPERATION - Create and/or change current layer to insert block
+    (princ "\nLooking for e-manhole-schedule layer...")
     (if (/= (tblsearch "LAYER" "e-manhole-schedule") nil)
-      (progn  ; START TRUE si encuentra la capa e-manhole-schedule
-        (princ " encontrada.")
+      (progn
+        (princ " found.")
         (command "._layer" "S" "e-manhole-schedule" "C" "7" "" nil)
-      ) ; END TRUE si encuentra la capa e-manhole-schedule
-      (progn  ; START FALSE si NO encuentra la capa e-manhole-schedule
-        (princ " no encontrada.")
-        ; Crear capa e-manhole-schedule
+      ) ; END progn true
+      (progn
+        (princ " not found.")
+        ; Create "e-manhole-schedule" layer
         (command "._-layer" "N" "e-manhole-schedule" "S" "e-manhole-schedule" "C" "7" "" nil)
-        (princ "\nCapa e-manhole-schedule creada.")
-      ) ; END FALSE si NO encuentra la capa e-manhole-schedule
-    ) ;END if
+        (princ "\n\"e-manhole-schedule\" layer created.")
+      ) ; END progn false
+    ) ; END if
 
   (princ "\n")(princ "p_ins = ")(princ p_ins)
   (princ "\n")(princ "ID = ")(princ ID)
@@ -174,30 +172,31 @@
     ; cambiar el estado de visibilidad
     (LM:SetVisibilityState VL_last_ent vis_sta)
 
-  ; OPERATION - Insertar el bloque del esquema
-  (setq p_ins2 (polar p_ins 0 121.5) )
-  (setq p_ins2 (polar p_ins2 (* -0.5 pi) 8.25) )
+  ; OPERATION - Insert ManDetail block
+  (setq
+    p_ins2 (polar p_ins   0 121.5)
+    p_ins2 (polar p_ins2 (* -0.5 pi) 8.25)
+  )
   (command "._insert" "ManDetail" p_ins2 "1" "1" "0")
 
-  ; OPERATION - Sincronizar el estado de visibilidad del bloque del esquema
-    ; seleccionar ultimo objeto creado
-    (setq last_ent (entlast))
-    ; traducir su nombre VLA
-    (setq VL_last_ent (vlax-ename->vla-object last_ent))
-    ; cambiar el estado de visibilidad
-    (LM:SetVisibilityState VL_last_ent vis_sta)
+  ; OPERATION - Sync ManDetail block visibility state
+  (setq
+    last_ent (entlast)                            ; select last object's name
+    VL_last_ent (vlax-ename->vla-object last_ent) ; get last object's VL name
+  )
+  (LM:SetVisibilityState VL_last_ent vis_sta)     ; change ManDetail block visibility state
 
   ; RESTORE PREVIOUS SETTINGS
   (setvar "clayer" oldlayer)
   (setvar "osmode" oldosmode)
   (setvar "cmdecho" oldcmdecho)
-  (getvar "attdia" oldattdia)
-  (getvar "attreq" oldattreq)
+  (setvar "attdia" oldattdia)
+  (setvar "attreq" oldattreq)
 
   ; End without double messages
   (princ)
 
-  ; v0.1 - 2016.04.09 - Code tidy up
+  ; v0.1 - 2016.04.09 - Code tidy up and translation
   ;                   - Change and reset ATTDIA and ATTREQ system variables
   ; v0.0 - 2016.02.23
   ; Author: David Torralba
