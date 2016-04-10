@@ -415,7 +415,7 @@
   ; End without double messages
   (princ)
 
-  ; v0.3 - 2016.04.10 - Code tidy up.
+  ; v0.3 - 2016.04.10 - Code tidy up and translation.
   ;                   - Reformat typed levels.
   ;                   - getkword variables renamed to avoid possible errors.
   ;                   - Fix angle calculation bug.
