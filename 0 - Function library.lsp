@@ -8,14 +8,15 @@
       (cons 10 pa)                                            ; Object primary point: line initial point
       (cons 11 pb)                                            ; Line final point
       (cons 62 8)                                             ; Line color
-      (cons 6 "DASHED")                                       ; Line type: dashed
+      (if (not (tblsearch "LTYPE" "DASHED")) (cons 6 "CONTINUOUS") (cons 6 "DASHED"))  ; Line type: dashed, if possible
       (cons 48 0.06)                                          ; Line type scale
     )
   )
+  ; v0.2 - 2016.04.10 - Linetype style check.
   ; v0.1 - 2016.03.21 - Translate into English
   ; v0.0 - 2016.03.18 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.03.25
+  ; Last revision: 2016.04.10
 )
 (defun _Reference_Circle ( pc rd )
   ; pc - Circle center point
@@ -42,9 +43,14 @@
       (cons 50 0)                                             ; Text rotation
       (cons 62 251)                                           ; Text color
       (cons 1 txt1)                                           ; Text content
-      (cons 7 "ARIAL")                                        ; Text style
+      (if (not (tblsearch "style" "ARIAL")) (cons 7 "standard") (cons 7 "ARIAL")) ; Text style: ARIAL, if possible
     )
   )
+  ; v0.2 - 2016.04.10 - Text style check.
+  ; v0.1 - 2016.03.21 - Translate into English
+  ; v0.0 - 2016.03.18 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.04.10
 )
 (defun _CursorText_L2 ( p txt2 textsize )
   (entmakex
@@ -54,9 +60,14 @@
       (cons 50 0)                                             ; Text rotation
       (cons 62 251)                                           ; Text color
       (cons 1 txt2)                                           ; Text content
-      (cons 7 "ARIAL")                                        ; Text style
+      (if (not (tblsearch "style" "ARIAL")) (cons 7 "standard") (cons 7 "ARIAL")) ; Text style: ARIAL, if possible
     )
   )
+  ; v0.2 - 2016.04.10 - Text style check.
+  ; v0.1 - 2016.03.21 - Translate into English
+  ; v0.0 - 2016.03.18 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.04.10
 )
 (defun DT:input_string_or_point ( / in number ch pt)
   (princ "\nSelect a level or type it: ")
