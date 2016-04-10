@@ -300,7 +300,7 @@
     ; OPERATION - Calcular DTS ("depth to soffit")
     (setq
       DTS (- CL top_level)
-      txt_DTS (rtos DTS 2 3)
+      txt_DTS (LM:rtos DTS 2 3)
     )
 
     ; OPERATION - Cambiar el attributo SOFFIT del bloque
@@ -385,6 +385,7 @@
 
   ; End without double messages
   (princ)
+  ; v0.4 - 2016.04.10 - Fix depth to soffit value return bug.
   ; v0.3 - 2016.03.10 - Feature added: chamber size is now calculated based on pipe sizes
   ;                   - Feature added: cuando vas a elegir el manhole, si no seleccionas nada te avisa y te deja volver a intentarlo
   ;                   - Feature added: cuando vas a elegir el manhole, si seleccionas otra cosa que no es un bloque de manhole te avisa y te deja volver a intentarlo
@@ -392,5 +393,5 @@
   ; v0.1 - 2016.03.01 - DTS<1m and DTS>6m added (out of rank conditions)
   ; v0.0 - 2016.02.24
   ; Author: David Torralba
-  ; Last revision: 2016.03.10
+  ; Last revision: 2016.04.10
 )
