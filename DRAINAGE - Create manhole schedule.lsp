@@ -1,3 +1,15 @@
+(defun get_ID ( VL_ent_name )
+  (vl-some '(lambda ( att )
+              (if (= "ID" (strcase (vla-get-tagstring att)))
+                (vla-get-textstring att)
+              ) ; END if
+            )
+          (vlax-invoke VL_ent_name 'getattributes)
+        )
+  ; v0.0 - 2016.04.10 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.04.10
+)
 (defun get_manhole_att ( txt_msg )
   ; (Re)load VLISP
   (vl-load-com)
@@ -201,12 +213,12 @@
   ; Last revision: 2016.04.09
 )
 ;(DT:autoMSC (entsel) (getpoint))
-(defun DT:autoMSC (ent pt /
+(defun DT:autoMSC (ent_name pt /
               oldlayer oldosmode oldcmdecho oldattdia oldattreq
               ID CL
               IL0 IL1 IL2 IL3 IL4 txt_IL0 txt_IL1 txt_IL2 txt_IL3 txt_IL4
               p_ins p_ins2
-              last_ent VL_last_ent ent_name VL_ent_name
+              last_ent VL_last_ent VL_ent_name
               vis_sta
               )
   ; SET - Error handling function
@@ -240,7 +252,6 @@
 
   ; OPERATION - Get Manhole visibility state
   (setq
-    ent_name (car ent)
     VL_ent_name (vlax-ename->vla-object ent_name)
     vis_sta (LM:getvisibilitystate VL_ent_name)
   )
@@ -366,6 +377,102 @@
   ; v0.0 - 2016.02.23
   ; Author: David Torralba
   ; Last revision: 2016.04.09
+)
+(defun c:autoMSC(
+							/
+							ss
+              storm_ID_list storm_data_list sorted_storm_ID_list sorted_storm_data_list
+              foul_ID_list foul_data_list sorted_foul_ID_list sorted_foul_data_list
+              pS0 pF0 pS pF
+							VL_ent_name
+							)
+	(setq
+		ss (ssget "x" '(
+										(-4 . "<AND")
+											( 0 . "INSERT")
+											(-4 . "<OR")
+												( 8 . "e-afd")
+												( 8 . "e-asd")
+											(-4 . "OR>")
+										(-4 . "AND>")
+									 )
+			 )
+		storm_ID_list (list "")
+		foul_ID_list (list "")
+		storm_data_list (list "")
+		foul_data_list (list "")
+		pS0 (getpoint "\nSelect point to build manhole schedule (top left corner): ")
+		pF0 (polar pS0 0 180)
+		pS (polar pS0 (* pi -0.5) 7.8128656)
+		pF (polar pF0 (* pi -0.5) 7.8128656)
+	)
+	; OPERATION - Insert Manhole Schedule Header blocks
+	(command "._insert" "ManScheduleHeader" pS0 "1" "1" "0")
+	(command "._insert" "ManScheduleHeader" pF0 "1" "1" "0")
+
+	; OPERATION - Run though all existing manhole blocks
+	(foreach e (ssnamex ss)
+		(setq
+			VL_ent_name (vlax-ename->vla-object (cadr e))
+		)
+		(cond
+			( (and
+					(= "e-asd" (vla-get-layer VL_ent_name))
+					(= "SW-Manhole" (LM:effectivename VL_ent_name))
+				);END and
+				(setq
+					storm_ID_list (append storm_ID_list (list (get_ID VL_ent_name) ))
+					storm_data_list (append storm_data_list (list (list (get_ID VL_ent_name) (cadr e) )))
+				)
+			);END cond storm
+
+			(	(and
+					(= "e-afd" (vla-get-layer VL_ent_name))
+					(= "FW-Manhole" (LM:effectivename VL_ent_name))
+				);END and
+				(setq
+					foul_ID_list (append foul_ID_list (list (get_ID VL_ent_name) ))
+					foul_data_list (append foul_data_list (list (list (get_ID VL_ent_name) (cadr e)) ))
+				)
+			);END cond foul
+
+		);END cond
+	);END foreach
+
+	; OPERATION - Short lists by ID
+	(setq
+		sorted_storm_ID_list (acad_strlsort storm_ID_list)
+		sorted_foul_ID_list  (acad_strlsort foul_ID_list)
+		sorted_storm_data_list (list "")
+		sorted_foul_data_list (list "")
+	)
+
+	; OPERATION - Rebuild data lists shorted by lists
+	(foreach ID sorted_storm_ID_list
+		(cond
+			((/= "" ID)
+				(setq position (vl-position ID storm_ID_list)) 		; position of the ID at storm_ID_list
+				(setq ent (cadr (nth position storm_data_list)))	; data associated to the current ID at storm_data_list
+				(DT:autoMSC ent pS)
+				(setq pS (polar pS (* pi -0.5) 16.5))							; recalculate next insertion point
+			)
+		);END cond
+	);END foreach
+	(foreach ID sorted_foul_ID_list
+		(cond
+			((/= "" ID)
+				(setq position (vl-position ID foul_ID_list)) 		; position of the ID at foul_ID_list
+				(setq ent (cadr (nth position foul_data_list)))	; data associated to the current ID at foul_data_list
+				(DT:autoMSC ent pF)
+				(setq pF (polar pF (* pi -0.5) 16.5))							; recalculate next insertion point
+			)
+		);END cond
+	);END foreach
+
+	(princ)
+  ; v0.0 - 2016.04.10 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.04.10
 )
 (defun c:MSCS (/ oldlayer oldosmode oldcmdecho)
   ; SET - Error handling function
@@ -550,11 +657,10 @@
 
   ; End without double messages
   (princ)
-  ; v0.4 - 2016.04.10 - Fix depth to soffit value return bug.
-  ;                   - Code translation.
+  ; v0.4 - 2016.04.10 - Code tidy up
   ; v0.3 - 2016.03.10 - Feature added: chamber size is now calculated based on pipe sizes
-  ;                   - Feature added: allow retry after failing to a Dyamic Manhole Block
-  ;                   - Feature added: allow retry after selecting something else different to a Dyamic Manhole Block
+  ;                   - Feature added: cuando vas a elegir el manhole, si no seleccionas nada te avisa y te deja volver a intentarlo
+  ;                   - Feature added: cuando vas a elegir el manhole, si seleccionas otra cosa que no es un bloque de manhole te avisa y te deja volver a intentarlo
   ; v0.2 - 2016.03.08 - Feature added: coordinates extraction and plot
   ; v0.1 - 2016.03.01 - DTS<1m and DTS>6m added (out of rank conditions)
   ; v0.0 - 2016.02.24
