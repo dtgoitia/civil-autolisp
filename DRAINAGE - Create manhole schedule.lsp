@@ -90,11 +90,12 @@
   )
 
   ; SAVE CURRENT SETTINGS - Current layer, OSMODE and CMDECHO
-  (setq oldlayer (getvar "clayer")
-        oldosmode (getvar "osmode")
-        oldcmdecho (getvar "cmdecho")
-        oldattdia (getvar "attdia")
-        oldattreq (getvar "attreq")
+  (setq
+    oldlayer (getvar "clayer")
+    oldosmode (getvar "osmode")
+    oldcmdecho (getvar "cmdecho")
+    oldattdia (getvar "attdia")
+    oldattreq (getvar "attreq")
   )
 
   ; SET INITIAL SETTINGS
