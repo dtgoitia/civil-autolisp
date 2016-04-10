@@ -386,9 +386,10 @@
   ; End without double messages
   (princ)
   ; v0.4 - 2016.04.10 - Fix depth to soffit value return bug.
+  ;                   - Code translation.
   ; v0.3 - 2016.03.10 - Feature added: chamber size is now calculated based on pipe sizes
-  ;                   - Feature added: cuando vas a elegir el manhole, si no seleccionas nada te avisa y te deja volver a intentarlo
-  ;                   - Feature added: cuando vas a elegir el manhole, si seleccionas otra cosa que no es un bloque de manhole te avisa y te deja volver a intentarlo
+  ;                   - Feature added: allow retry after failing to a Dyamic Manhole Block
+  ;                   - Feature added: allow retry after selecting something else different to a Dyamic Manhole Block
   ; v0.2 - 2016.03.08 - Feature added: coordinates extraction and plot
   ; v0.1 - 2016.03.01 - DTS<1m and DTS>6m added (out of rank conditions)
   ; v0.0 - 2016.02.24
