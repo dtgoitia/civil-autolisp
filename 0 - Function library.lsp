@@ -256,6 +256,17 @@
   (princ)
 )
 (defun LM:Round ( n ) (fix (+ n (if (minusp n) -0.5 0.5))))
+(defun LM:rtos ( real units prec / dimzin result )
+;; rtos wrapper  -  Lee Mac
+;; A wrapper for the rtos function to negate the effect of DIMZIN
+    (setq dimzin (getvar 'dimzin))
+    (setvar 'dimzin 0)
+    (setq result (vl-catch-all-apply 'rtos (list real units prec)))
+    (setvar 'dimzin dimzin)
+    (if (not (vl-catch-all-error-p result))
+        result
+    )
+)
 (defun LM:getvisibilitystate ( blk )
 ;; Get Dynamic Block Visibility State  -  Lee Mac
 ;; Returns the value of the Visibility Parameter of a Dynamic Block (if present)
