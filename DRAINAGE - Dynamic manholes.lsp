@@ -7,7 +7,11 @@
           (vlax-invoke obj 'getattributes)
         )
 )
-(defun get_IL_manhole ( txt_msg )  ;
+(defun get_IL_manhole ( txt_msg
+                        /
+                        ent ent_name VL_ent_name
+                        IL capa point
+                      )
   ; (Re)load VLISP
   (vl-load-com)
 
@@ -49,10 +53,10 @@
           (princ (strcat "\nIL1=" txt_IL1 "   IL2=" txt_IL2))
           ; Choose desired IL:
           (initget 1 "1 2")
-          (setq answer (getkword "\nMore than one IL found. Select IL [1/2]: "))
+          (setq ans3 (getkword "\nMore than one IL found. Select IL [1/2]: "))
           (cond
-            ((= answer "1") (setq IL IL1)) ; IL = IL1
-            ((= answer "2") (setq IL IL2)) ; IL = IL2
+            ((= ans3 "1") (setq IL IL1)) ; IL = IL1
+            ((= ans3 "2") (setq IL IL2)) ; IL = IL2
           )
         ) ; END B - 2 IL available
 
@@ -62,11 +66,11 @@
           (princ (strcat "\nIL1=" txt_IL1 "   IL2=" txt_IL2 "   IL3=" txt_IL3))
           ; Choose desired IL:
           (initget 1 "1 2 3")
-          (setq answer (getkword "\nMore than one IL found. Select IL [1/2/3]: "))
+          (setq ans3 (getkword "\nMore than one IL found. Select IL [1/2/3]: "))
           (cond
-            ((= answer "1") (setq IL IL1)) ; IL = IL1
-            ((= answer "2") (setq IL IL2)) ; IL = IL2
-            ((= answer "3") (setq IL IL3)) ; IL = IL3
+            ((= ans3 "1") (setq IL IL1)) ; IL = IL1
+            ((= ans3 "2") (setq IL IL2)) ; IL = IL2
+            ((= ans3 "3") (setq IL IL3)) ; IL = IL3
           )
         ) ; END C - 3 IL disponibles
 
@@ -76,12 +80,12 @@
           (princ (strcat "\nIL1=" txt_IL1 "   IL2=" txt_IL2 "   IL3=" txt_IL3 "   IL4=" txt_IL4 ))
           ; Choose desired IL:
           (initget 1 "1 2 3 4")
-          (setq answer (getkword "\nMore than one IL found. Select IL [1/2/3/4]: "))
+          (setq ans3 (getkword "\nMore than one IL found. Select IL [1/2/3/4]: "))
           (cond
-            ((= answer "1") (setq IL IL1)) ; IL = IL1
-            ((= answer "2") (setq IL IL2)) ; IL = IL2
-            ((= answer "3") (setq IL IL3)) ; IL = IL3
-            ((= answer "4") (setq IL IL4)) ; IL = IL4
+            ((= ans3 "1") (setq IL IL1)) ; IL = IL1
+            ((= ans3 "2") (setq IL IL2)) ; IL = IL2
+            ((= ans3 "3") (setq IL IL3)) ; IL = IL3
+            ((= ans3 "4") (setq IL IL4)) ; IL = IL4
           )
         ) ; END CASE D - 4 IL disponibles
       ); END cond
@@ -91,11 +95,16 @@
   (princ "\nSelected IL: ")(princ IL)
   ; Return values
   (list IL capa point)
+  ; v0.3 - 2016.04.10 - Code tidy up and translation.
+  ;                   - Return result as list and set correctly local variables.
+  ; v0.0 - 2016.03.01
+  ; Author: David Torralba
+  ; Last revision: 2016.04.10
 )
 (defun c:DM (/
               ; LOCAL VARIABLES
-              oldlayer oldosmode oldcmdecho
-              answer
+              oldlayer oldosmode oldcmdecho oldattdia oldattreq oldangbase
+              ans1 ans2 ans3
               real_text_height text_height
               manhole_layer MNH1_capa capa
               IL IL1 IL2 txt_ID txt_IL2
@@ -155,7 +164,7 @@
   ; SET - Real text height
   (setq real_text_height 0.02)
 
-  ; INPUT - Elegir como empezar: nueva arqueta o existente ---------------------------------------------------------- AÑADIDO EN CASA, REVISAR
+  ; INPUT - Choose how to start: new or existing manhole
   (initget "Start Continue")
   (setq ans1 (getkword "\nSelect action [Start/Continue] creating manholes <Continue>: "))
   (if (not ans1) (setq ans1 "Continue"))
