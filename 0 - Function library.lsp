@@ -132,7 +132,7 @@
     ); END if1
   )
 )
-(defun DT:clic_or_type_level(/ in nent txt VL_ent_name)
+(defun DT:clic_or_type_level (/ in nent txt VL_ent_name)
   ; Clic on any atribute or text with a level and return its text, or type it in
   (setq in (DT:input_string_or_point))
   (cond
@@ -169,12 +169,12 @@
       (atof (substr txt 5))
     )
     ; Road level
-    ( (and (= "%%U" (substr txt 1 3)) (= 3 (- (strlen txt) (vl-string-search "." txt))))
+    ( (and (or (= "%%U" (substr txt 1 3)) (= "%%u" (substr txt 1 3))) (= 3 (- (strlen txt) (vl-string-search "." txt))))
       ;(alert "case 3")
       (atof (substr txt 4 10))
     )
     ; Plot level
-    ( (and (= "%%U" (substr txt 1 3)) (= 4 (- (strlen txt) (vl-string-search "." txt))))
+    ( (and (or (= "%%U" (substr txt 1 3)) (= "%%u" (substr txt 1 3))) (= 4 (- (strlen txt) (vl-string-search "." txt))))
       ;(alert "case 4")
       (atof (substr txt 4 9))
     )
