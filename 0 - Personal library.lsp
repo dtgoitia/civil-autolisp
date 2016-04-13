@@ -246,3 +246,7 @@
    )
  );END if
 )
+(defun c:ct()
+  ; Copy any nested string into the clipboard
+  (CopyToClipboard (DT:destripar_txt))
+)
