@@ -80,6 +80,10 @@
 (defun c:gate ()
   (command "-insert" "Access Gate" pause 0.001 0.001 pause)
 )
+(defun c:has()
+	(command "-hatch" "S" (ssget) "" "")
+	(princ)
+)
 (defun c:ha ( / ss i ent ent_name VL_ent_name)
   ; automatic HAtching
   ; This function selects the polylines within the selection set,
