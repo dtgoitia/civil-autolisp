@@ -30,49 +30,99 @@
   (princ)
 ) ; Shed
 
-; Block insertion with rotation - Master routine
-(defun DT:lay_block_rotate ( block lay / *error* old_osmode old_clayer old_cmdecho)
+; Insert Block - Master routine
+(defun DT:ib (blk lay rot osm
+            /
+            *error*
+            oldosmode oldclayer oldcmdecho
+            )
   (defun *error* ( msg )
     (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
-    (setvar "clayer" old_clayer)
-    (setvar "cmdecho" old_cmdecho)
+    (setvar "clayer" oldclayer)
+    (setvar "cmdecho" oldcmdecho)
+    (princ)
+  )
+  (cond
+    ((= blk nil)
+      (princ "\nNo block defined.")
+    );END cond - no block
+    (t ; if any block specified:
+      (if (/= lay "")
+        (progn
+          (setq oldclayer (getvar "clayer"))
+          (command "-layer" "M" lay "")
+        ); END progn
+      );END if change CLAYER
+      (if (/= osm "")
+        (progn
+          (setq oldosmode (getvar "osmode"))
+          (setvar "osmode" osm)
+        ); END progn
+      );END if change OSMODE
+      (cond
+        ( (= rot "")
+          (command "-insert" blk pause 1 1 0)
+        ); END cond no rotation
+        ( (= rot "P")
+          (command "-insert" blk pause 1 1 pause)
+        ); END cond with rotation
+        ( (and (/= rot "") (/= rot "P"))
+          (princ "\nrot")
+          (command "-insert" blk pause 1 1 rot)
+        ); END cond no rotation
+      );END cond rot
+      (if (/= lay "") (setvar "clayer" oldclayer))
+      (if (/= osm "") (setvar "osmode" oldosmode))
+    );END cond - block OK
+  );END cond
+  (princ)
+  ; v0.0 - 2016.0.14 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.04.14
+)
+; Block insertion with rotation - Master routine
+(defun DT:lay_block_rotate ( block lay / *error* oldosmode oldclayer oldcmdecho)
+  (defun *error* ( msg )
+    (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
+    (setvar "clayer" oldclayer)
+    (setvar "cmdecho" oldcmdecho)
     (princ)
   )
   (setq
-    old_clayer (getvar "clayer")
-    old_cmdecho (getvar "cmdecho")
+    oldclayer (getvar "clayer")
+    oldcmdecho (getvar "cmdecho")
   )
   (setvar "cmdecho" 0)
   (command "-layer" "M" lay "")
   (fbi block)
-  (setvar "clayer" old_clayer)
-  (setvar "cmdecho" old_cmdecho)
+  (setvar "clayer" oldclayer)
+  (setvar "cmdecho" oldcmdecho)
   (princ)
 )
 (defun c:shed() (DT:load_block "shed" "zshed") (DT:lay_block_rotate "shed" "e-external-works-shed")(princ)) ; Shed
 
 ;; Drainage block insertion routines
 ; Private block insertion - Master routine
-(defun DT:lay_block ( block lay osm / *error* old_osmode old_clayer old_cmdecho)
+(defun DT:lay_block ( block lay osm / *error* oldosmode oldclayer oldcmdecho)
   (defun *error* ( msg )
     (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
-    (setvar "osmode" old_osmode)
-    (setvar "clayer" old_clayer)
-    (setvar "cmdecho" old_cmdecho)
+    (setvar "osmode" oldosmode)
+    (setvar "clayer" oldclayer)
+    (setvar "cmdecho" oldcmdecho)
     (princ)
   )
   (setq
-    old_osmode (getvar "osmode")
-    old_clayer (getvar "clayer")
-    old_cmdecho (getvar "cmdecho")
+    oldosmode (getvar "osmode")
+    oldclayer (getvar "clayer")
+    oldcmdecho (getvar "cmdecho")
   )
   (setvar "osmode" osm)
   (setvar "cmdecho" 0)
   (command "-layer" "M" lay "")
   (fbi2 block)
-  (setvar "osmode" old_osmode)
-  (setvar "clayer" old_clayer)
-  (setvar "cmdecho" old_cmdecho)
+  (setvar "osmode" oldosmode)
+  (setvar "clayer" oldclayer)
+  (setvar "cmdecho" oldcmdecho)
   (princ)
 )
 ; Private blocks - Foul
@@ -87,18 +137,18 @@
 (defun c:krwp()   (c:rwp) (c:psd))                                           ; Combo: RWP + PSD
 
 ; Private sewer - Master routine
-(defun DT:drainage_line ( lay osm / *error* old_osmode old_clayer old_cmdecho)
+(defun DT:drainage_line ( lay osm / *error* oldosmode oldclayer oldcmdecho)
   (defun *error* ( msg )
     (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
-    (setvar "osmode" old_osmode)
-    (setvar "clayer" old_clayer)
-    (setvar "cmdecho" old_cmdecho)
+    (setvar "osmode" oldosmode)
+    (setvar "clayer" oldclayer)
+    (setvar "cmdecho" oldcmdecho)
     (princ)
   )
   (setq
-    old_osmode (getvar "osmode")
-    old_clayer (getvar "clayer")
-    old_cmdecho (getvar "cmdecho")
+    oldosmode (getvar "osmode")
+    oldclayer (getvar "clayer")
+    oldcmdecho (getvar "cmdecho")
   )
   (setvar "osmode" osm) ; Was 679 before
   (setvar "cmdecho" 0)
@@ -106,9 +156,9 @@
   (command "line")
   (while (> (getvar "CMDACTIVE") 0) (command pause))
 
-  (setvar "osmode" old_osmode)
-  (setvar "clayer" old_clayer)
-  (setvar "cmdecho" old_cmdecho)
+  (setvar "osmode" oldosmode)
+  (setvar "clayer" oldclayer)
+  (setvar "cmdecho" oldcmdecho)
   (princ)
 )
 ; Private sewer - Foul
