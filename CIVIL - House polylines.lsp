@@ -25,7 +25,7 @@
   (setvar "cmdecho" 0)
 
   (setq
-    ent_name (entlast)                            ; Select last created entity
+    ent_name (car (entsel) )                            ; Select last created entity
     VL_ent_name (vlax-ename->vla-object ent_name) ; Convert to VL object
   ); END setq
 
@@ -33,7 +33,7 @@
   (if (= :vlax-false (vla-get-closed VL_ent_name)) (vla-put-closed VL_ent_name :vlax-true))
 
   ; OPERATION - Exxtract object propety list
-  (setq entList (entget ent_name))
+  (setq entList (entget (car ent)))
 
   ; OPERATION - Set zero thickness for closed polyline
   (setq thickness (cdr (assoc 43 entList) ) )
@@ -81,13 +81,13 @@
   (cond
     ((= btype "House")
       (setq
-        thickness 0.302
+        thickness 302
         dist (* 0.5 thickness)
       )
     ); END cond house
     ((= btype "Garage")
       (setq
-        thickness 0.215
+        thickness 215
         dist (* 0.5 thickness)
       )
     ); END cond garage
