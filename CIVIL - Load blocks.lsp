@@ -20,10 +20,9 @@
 ;
 ;---------------------------------------------------------------------------
 ;
-; TITLE BLOCK INSERTION FUNCTIONS
+; TITLE BLOCK INSERTION MASTER FUNCTION
 ;
 ;---------------------------------------------------------------------------
-; Insert Block - Master routine
 (defun DT:ib (blk lay rot osm
             /
             *error*
@@ -84,11 +83,11 @@
   (setvar "attdia" oldattdia)
   (setvar "attreq" oldattreq)
   (princ)
-  ; v0.0 - 2016.0.14 - First issue
+  ; v0.1 - 2016.04.15 - ATTDIA and ATTREQ system variable control added
+  ; v0.0 - 2016.04.14 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.04.14
 )
-(defun c:revision_box_D() (DT:ib "Revision-box" "MJA-Title" "" ""))
 (defun title_block_date ( / d yr mo )
   ; Title block date function
   (setq
@@ -165,6 +164,7 @@
   (while (> (getvar "CMDACTIVE") 0) (command ""))
   (princ)
 )
+(defun c:revision_box_D() (DT:ib "Revision-box" "MJA-Title" "" ""))
 ; V0.1 - 2016.04.07 - Dynamic functins added
 ; v0.0 - 2016.03.29 - First issue
 ; Author: David Torralba
@@ -200,48 +200,6 @@
   (setvar "cmdecho" old_cmdecho)
   (princ)
 )
-; Private block insertion - Master routines
-(defun DT:lay_block ( block lay osm / *error* old_osmode old_clayer old_cmdecho)
-  (defun *error* ( msg )
-    (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
-    (setvar "osmode" old_osmode)
-    (setvar "clayer" old_clayer)
-    (setvar "cmdecho" old_cmdecho)
-    (princ)
-  )
-  (setq
-    old_osmode (getvar "osmode")
-    old_clayer (getvar "clayer")
-    old_cmdecho (getvar "cmdecho")
-  )
-  (setvar "osmode" osm)
-  (setvar "cmdecho" 0)
-  (command "-layer" "M" lay "")
-  (fbi2 block)
-  (setvar "osmode" old_osmode)
-  (setvar "clayer" old_clayer)
-  (setvar "cmdecho" old_cmdecho)
-  (princ)
-)
-; Block insertion with rotation - Master routine
-(defun DT:lay_block_rotate ( block lay / *error* old_osmode old_clayer old_cmdecho)
-  (defun *error* ( msg )
-    (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
-    (setvar "clayer" old_clayer)
-    (setvar "cmdecho" old_cmdecho)
-    (princ)
-  )
-  (setq
-    old_clayer (getvar "clayer")
-    old_cmdecho (getvar "cmdecho")
-  )
-  (setvar "cmdecho" 0)
-  (command "-layer" "M" lay "")
-  (fbi block)
-  (setvar "clayer" old_clayer)
-  (setvar "cmdecho" old_cmdecho)
-  (princ)
-)
 ; Private sewer - Foul
 (defun c:pfd() (DT:drainage_line "e-pfd" 4))
 
@@ -249,20 +207,18 @@
 (defun c:psd() (DT:drainage_line "e-psd" 132))
 
 ; Private blocks - Foul
-(defun c:svp()    (DT:lay_block "e-pfd-svp"                      "e-pfd" 4)) ; SVP
-(defun c:svp300() (DT:lay_block "Private-Square300-Foul-Manhole" "e-pfd" 4)) ; Private Square 300 Foul Manhole
-(defun c:svp475() (DT:lay_block "Private-Square475-Foul-Manhole" "e-pfd" 4)) ; Private Square 475 Foul Manhole
+(defun c:svp()    (DT:IB "e-pfd-svp"                      "e-pfd" ""  4)) ; SVP
+(defun c:svp300() (DT:IB "Private-Square300-Foul-Manhole" "e-pfd" ""  4)) ; Private Square 300 Foul Manhole
+(defun c:svp475() (DT:IB "Private-Square475-Foul-Manhole" "e-pfd" ""  4)) ; Private Square 475 Foul Manhole
 
 ; Private blocks - Storm
-(defun c:rwp()    (DT:lay_block "e-psd-rwp"                      "e-psd" 4)) ; RWP
-(defun c:rwp2()   (DT:lay_block "Private-Round-Storm-Manhole"    "e-psd" 4)) ; Private round storm manhole
-(defun c:reye()   (DT:lay_block_rotate "Rodding-Eye"           "e-psd")) ; Rodding eye
+(defun c:rwp()    (DT:IB "e-psd-rwp"                      "e-psd" ""  4)) ; RWP
+(defun c:rwp2()   (DT:IB "Private-Round-Storm-Manhole"    "e-psd" ""  4)) ; Private round storm manhole
+(defun c:reye()   (DT:IB "Rodding-Eye"                    "e-psd" "P" "")) ; Rodding eye
 (defun c:krwp()   (c:rwp) (c:psd))
 ; v0.0 - 2016.03.30 - First issue
 ; Author: David Torralba
 ; Last revision: 2016.03.30
-;
-;
 ;
 ;
 ;---------------------------------------------------------------------------
@@ -271,5 +227,5 @@
 ;
 ;---------------------------------------------------------------------------
 ; Manhole Schedule Header insertion function
-(defun c:ManHeader() (DT:lay_block "ManScheduleHeader" "e-manhole-schedule" 0))
+(defun c:ManHeader() (DT:ID "ManScheduleHeader" "e-manhole-schedule" "" ""))
 (princ)
