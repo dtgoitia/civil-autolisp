@@ -27,14 +27,27 @@
 (defun DT:ib (blk lay rot osm
             /
             *error*
-            oldosmode oldclayer oldcmdecho
+            oldosmode oldclayer oldcmdecho oldattdia oldattreq
             )
+  ; (DT:ib "block_name" "layer_name" "rotation_value" "osmode_value")
+  ; layer_name = ""       --> use current layer
+  ; rotation_value = ""   --> rotation = 90 degree
+  ; rotation_value = "P"  --> let user select rotation
+  ; osmode_value = ""     --> use current osmode
   (defun *error* ( msg )
     (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
     (setvar "clayer" oldclayer)
     (setvar "cmdecho" oldcmdecho)
+    (setvar "attdia" oldattdia)
+    (setvar "attreq" oldattreq)
     (princ)
   )
+  (setq
+    oldattdia (getvar "attdia")
+    oldattreq (getvar "attreq")
+  )
+  (setvar "attdia" 0)
+  (setvar "attreq" 0)
   (cond
     ((= blk nil)
       (princ "\nNo block defined.")
@@ -68,15 +81,14 @@
       (if (/= osm "") (setvar "osmode" oldosmode))
     );END cond - block OK
   );END cond
+  (setvar "attdia" oldattdia)
+  (setvar "attreq" oldattreq)
   (princ)
   ; v0.0 - 2016.0.14 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.04.14
 )
-(defun c:revision_box_D()
-(alert "Be patient Prof. Woodsy,\nI\'m still working on it \;\)")
-(princ)
-)
+(defun c:revision_box_D() (DT:ib "Revision-box" "MJA-Title" "" ""))
 (defun title_block_date ( / d yr mo )
   ; Title block date function
   (setq
