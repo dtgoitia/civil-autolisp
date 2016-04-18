@@ -214,7 +214,7 @@
 ; Private blocks - Storm
 (defun c:rwp()    (DT:IB "e-psd-rwp"                      "e-psd" ""  4)) ; RWP
 (defun c:rwp2()   (DT:IB "Private-Round-Storm-Manhole"    "e-psd" ""  4)) ; Private round storm manhole
-(defun c:reye()   (DT:IB "Rodding-Eye"                    "e-psd" "P" "")) ; Rodding eye
+(defun c:reye()   (DT:IB "Rodding-Eye"                    "e-psd" "P" 129)) ; Rodding eye
 (defun c:krwp()   (c:rwp) (c:psd))
 ; v0.0 - 2016.03.30 - First issue
 ; Author: David Torralba
