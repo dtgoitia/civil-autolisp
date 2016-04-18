@@ -24,81 +24,103 @@
   (setvar "osmode" 0)
   (setvar "cmdecho" 0)
 
-  (setq
-    ent_name (car (entsel) )                            ; Select last created entity
-    VL_ent_name (vlax-ename->vla-object ent_name) ; Convert to VL object
-  ); END setq
+  ; INFINITE LOOP
+  (while (not kkkkk)
+    (while (not ent_name)
+      (setq ent_name (car (entsel)))
+      (if (not ent_name) (princ "nothing selected."))
+    ); END while
+    (setq VL_ent_name (vlax-ename->vla-object ent_name)); Convert to VL object
+    
 
-  ; OPERATION - Check if it is closed and if not close it
-  (if (= :vlax-false (vla-get-closed VL_ent_name)) (vla-put-closed VL_ent_name :vlax-true))
+    ; OPERATION - Check if it is closed and if not close it
+    (if (= :vlax-false (vla-get-closed VL_ent_name)) (vla-put-closed VL_ent_name :vlax-true))
 
-  ; OPERATION - Exxtract object propety list
-  (setq entList (entget (car ent)))
+    ; OPERATION - Exxtract object propety list
+    (setq entList (entget ent_name))
+    
+    ; OPERATION - Set zero thickness for closed polyline
+    (setq thickness (cdr (assoc 43 entList) ) )
+    (if (/= thickness 0)
+      (progn
+        (setq thickness 0)
+        (setq destiny_entList (subst (cons 43 thickness) (assoc 43 entList) entList))
+        (entmod destiny_entList)
+      ); END True progn
+    ); END if
 
-  ; OPERATION - Set zero thickness for closed polyline
-  (setq thickness (cdr (assoc 43 entList) ) )
-  (if (/= thickness 0)
-    (progn
-      (setq thickness 0)
-      (setq destiny_entList (subst (cons 43 thickness) (assoc 43 entList) entList))
-      (entmod destiny_entList)
-    ); END True progn
-  ); END if
+    ; OPERATION - Change color and linetype to "ByLayer"
+    (command "SETBYLAYER" ent_name "" "" "")
+    
+    ; OPERATION - Mode closed polyline to "e-set-out-house" layer
+    (setq
+      entList (entget ent_name)
+      lay (cdr (assoc 8 entList))
+    )
+    (if (/= lay 0)
+      (progn
+        ; OPERATION - Create "e-set-out-house" layer if it doesn't exist
+        (setq lay "e-set-out-house")
+        (command "-layer" "M" lay "")
+        (setq destiny_entList (subst (cons 8 lay) (assoc 8 entList) entList))
+        (entmod destiny_entList)
+      ); ENF True progn
+    ); END if
 
-  ; OPERATION - Change color and linetype to "ByLayer"
-  (command "SETBYLAYER" ent_name "" "" "")
+    ; OPERATION - Create "e-work-block" layer if it doesn't exist
+    (setq lay "e-work-block")
+    (command "-layer" "M" lay "")
+    ; OPERATION - Copy closed polyline into "e-work-block" layer
+    (command "._CopyToLayer" ent_name "" lay "")
 
-  ; OPERATION - Mode closed polyline to "e-set-out-house" layer
-  (setq
-    entList (entget ent_name)
-    lay (cdr (assoc 8 entList))
-  )
-  (if (/= lay 0)
-    (progn
-      ; OPERATION - Create "e-set-out-house" layer if it doesn't exist
-      (setq lay "e-set-out-house")
-      (command "-layer" "M" lay "")
-      (setq destiny_entList (subst (cons 8 lay) (assoc 8 entList) entList))
-      (entmod destiny_entList)
-    ); ENF True progn
-  ); END if
+    ; INPUT - Ask building type: house or garage
+    (princ "\nSelect building type [House/Garage] <House>: ")
+    (setq btype nil)
+    (while (not btype)
+      (setq btype (grread) )
+      (cond
+        ( (or
+            (= (chr (cadr btype)) "H")
+            (= (chr (cadr btype)) "h")
+            (= (cadr btype) 13); enter
+            (= (cadr btype) 32); space
+          ); END or
+          (princ "ouse")
+          (setq
+            btype "House"
+            thickness 0.302
+            dist (* 0.5 thickness)
+          )
+        ); END cond H, ENTER, SPACE
+        ( (or
+            (= (chr (cadr btype)) "G")
+            (= (chr (cadr btype)) "g")
+          ); END or
+          (princ "arage")
+          (setq
+            btype "Garage"
+            thickness 0.215
+            dist (* 0.5 thickness)
+          )
+        ); END cond G
+        (t
+          (setq btype nil)
+          (princ "\nSelect building type [House/Garage] <House>: ")
+        ); END else: /=H, /=G, /=ENTER
+      );END cond
+    );END while
 
-  ; OPERATION - Create "e-work-block" layer if it doesn't exist
-  (setq lay "e-work-block")
-  (command "-layer" "M" lay "")
-  ; OPERATION - Copy closed polyline into "e-work-block" layer
-  (command "._CopyToLayer" ent_name "" lay "")
+    ; INPUT - Ask to clic inside the building for oncoming offset
+    (command "._offset" "E" "Y" dist (entlast) (getpoint "\nSelect a point inside the building: ") "")
 
-  ; INPUT - Ask if it is "house" or "garage"
-  (initget "House Garage")
-  (setq btype (getkword "\nSelect building type [House/Garage] <House>: ") )
-  (if (not btype) (setq btype "House"))
-
-  ; INPUT - Ask to clic inside the building for oncoming offset
-  (setq pt (getpoint "\nSelect a point inside the building: "))
-
-  ; OPERATION - Add inner line
-  (cond
-    ((= btype "House")
-      (setq
-        thickness 302
-        dist (* 0.5 thickness)
-      )
-    ); END cond house
-    ((= btype "Garage")
-      (setq
-        thickness 215
-        dist (* 0.5 thickness)
-      )
-    ); END cond garage
-  ); END cond
-  (setq ent_name (entlast))
-  (command "._offset" "E" "Y" dist ent_name pt "")
-
-  ; OPERATION - Change polyline thickness
-  (setq entList (entget (entlast)))
-  (setq destiny_entList (subst (cons 43 thickness) (assoc 43 entList) entList))
-  (entmod destiny_entList)
+    ; OPERATION - Change polyline thickness
+    (setq
+      entList (entget (entlast))
+      destiny_entList (subst (cons 43 thickness) (assoc 43 entList) entList)
+      ent_name nil ; Reset entity so start loop again
+    )
+    (entmod destiny_entList)
+  ); END while
 
   ; RESET to original settings
   (command "._offset" "E" "N" "" "")
@@ -109,8 +131,10 @@
   ; End without double messages
   (princ)
 
+  ; v0.3 - 2016.04.18 - Fix minor bugs in the infinite loop.
+  ; v0.2 - 2016.04.17 - Add infinite loop.
   ; v0.1 - 2016.03.22 - Translate into English
   ; v0.0 - 2016.03.14 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.03.22
+  ; Last revision: 2016.04.18
 )
