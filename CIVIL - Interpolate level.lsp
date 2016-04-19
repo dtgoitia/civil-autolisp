@@ -113,7 +113,9 @@
 
         ; OPERATION - Introduce point 4
         (setvar "osmode" 0)
-        (command "._insert" "PI_DT" p4 "0.5" "0.5" "" level)
+        (if (/= nil (tblsearch "block" "PI_DT"))
+          (command "._insert" "PI_DT" p3 "0.5" "0.5" "" level)
+        );END if
       ); END while Pick
     ); END cond Pick
     ((= mode "Find") ; Introduce level and return point
@@ -176,6 +178,7 @@
   ; End without double messages
   (princ)
 
+  ; v0.7 - 2016.04.19 - Bug fixed at "Pick" mode not to return an error when PI_DT block not found.
   ; v0.6 - 2016.04.01 - Change level input function.
   ;                   - Show gradient between two selected points
   ; v0.5 - 2016.03.22 - Optimize code.
@@ -189,5 +192,5 @@
   ; v0.1 - 2016.03.14 - Loop added to select multiple points to interpolate
   ; v0.0 - 2015.12.14 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.04.01
+  ; Last revision: 2016.04.19
 )
