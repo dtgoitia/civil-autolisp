@@ -109,7 +109,8 @@
           z4 (+ z1 (* d14 (/ (- z2 z1) d12))) ; Calculate leves
           level (rtos z4 2 3)                  ; Convert levels to text (3 decimals)
         ); END setq
-        (princ (strcat "\nLevel = " level))
+        (CopyToClipboard level)
+        (princ (strcat "\nLevel = " level "  (value copied to clipboard)"))
 
         ; OPERATION - Introduce point 4
         (setvar "osmode" 0)
@@ -179,6 +180,7 @@
   (princ)
 
   ; v0.7 - 2016.04.19 - Bug fixed at "Pick" mode not to return an error when PI_DT block not found.
+  ;                   - level of picked point copied to clipboard.
   ; v0.6 - 2016.04.01 - Change level input function.
   ;                   - Show gradient between two selected points
   ; v0.5 - 2016.03.22 - Optimize code.
