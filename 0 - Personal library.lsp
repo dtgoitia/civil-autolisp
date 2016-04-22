@@ -84,6 +84,10 @@
 	(command "-hatch" "S" (ssget) "" "")
 	(princ)
 )
+(defun c:d()
+	(command "measuregeom" "D")
+	(princ)
+)
 (defun c:ha ( / ss i ent ent_name VL_ent_name)
   ; automatic HAtching
   ; This function selects the polylines within the selection set,
