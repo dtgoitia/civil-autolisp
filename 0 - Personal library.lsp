@@ -263,3 +263,18 @@
 	; pt doesn't need to be a point within the centerline
   (vlax-curve-getDistAtPoint VL_ent_name (vlax-curve-getClosestPointTo VL_ent_name pt))
 )
+(defun c:PK( / ent VL_ent_name pt ch)
+  (while (not ent)
+    (setq ent (entsel "\nSelect centerline: "))
+    (if (not ent)
+      (princ "nothing selected.")
+      (setq VL_ent_name (vlax-ename->vla-object (car ent)))
+    ); END if
+  ); END while centerline selection
+
+  (while (not kkkk)
+    (setq ch (DT:PK centerline_VL_ent_name (getpoint "\nSelect a point: ")))
+    (princ (strcat "\nChainage = " (LM:rtos ch 2 3)))
+  );END while
+  (princ)
+)
