@@ -258,3 +258,8 @@
   ; Copy any nested string into the clipboard
   (CopyToClipboard (DT:destripar_txt))
 )
+(defun DT:PK( VL_ent_name pt / cpt )
+	; Returns chainage of a polyline given polylines VLA name and any point
+	; pt doesn't need to be a point within the centerline
+  (vlax-curve-getDistAtPoint VL_ent_name (vlax-curve-getClosestPointTo VL_ent_name pt))
+)
