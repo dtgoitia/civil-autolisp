@@ -13,7 +13,6 @@
     (princ)
   )
   (setvar "cmdecho" 0)
-  (setvar "osmode" 37)
   
   (if (= sf nil) (progn
     (setq sf (getreal "\nNominal Scale   1:<500>  1:"))
