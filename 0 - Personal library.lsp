@@ -258,7 +258,7 @@
   ; Copy any nested string into the clipboard
   (CopyToClipboard (DT:destripar_txt))
 )
-(defun DT:PK( VL_ent_name pt / cpt )
+(defun DT:PK( VL_ent_name pt )
 	; Returns chainage of a polyline given polylines VLA name and any point
 	; pt doesn't need to be a point within the centerline
   (vlax-curve-getDistAtPoint VL_ent_name (vlax-curve-getClosestPointTo VL_ent_name pt))
@@ -268,7 +268,7 @@
     (setq ent (entsel "\nSelect centerline: "))
     (if (not ent)
       (princ "nothing selected.")
-      (setq VL_ent_name (vlax-ename->vla-object (car ent)))
+      (setq centerline_VL_ent_name (vlax-ename->vla-object (car ent)))
     ); END if
   ); END while centerline selection
 
