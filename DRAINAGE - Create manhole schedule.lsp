@@ -18,7 +18,13 @@
   (setq block_effective_name nil)
   (while  (and
             (/= block_effective_name "FW-Manhole")
+            (/= block_effective_name "FW-Manhole-NoAdoptable")
+            (/= block_effective_name "FW-Manhole-NoWipeout")
+            (/= block_effective_name "FW-Manhole-NoWipeout-NoAdoptable")
             (/= block_effective_name "SW-Manhole")
+            (/= block_effective_name "SW-Manhole-NoAdoptable")
+            (/= block_effective_name "SW-Manhole-NoWipeout")
+            (/= block_effective_name "SW-Manhole-NoWipeout-NoAdoptable")
           )
     (setq ent (entsel txt_msg))
     (if (not ent)
@@ -33,7 +39,16 @@
             ; OPERATION - Comprobar si es un manhole, y si no lo es abortar la rutina.
             (setq block_effective_name (LM:effectivename VL_ent_name))
             (if
-              (or (= block_effective_name "FW-Manhole") (= block_effective_name "SW-Manhole") )
+              (or
+                (/= block_effective_name "FW-Manhole")
+                (/= block_effective_name "FW-Manhole-NoAdoptable")
+                (/= block_effective_name "FW-Manhole-NoWipeout")
+                (/= block_effective_name "FW-Manhole-NoWipeout-NoAdoptable")
+                (/= block_effective_name "SW-Manhole")
+                (/= block_effective_name "SW-Manhole-NoAdoptable")
+                (/= block_effective_name "SW-Manhole-NoWipeout")
+                (/= block_effective_name "SW-Manhole-NoWipeout-NoAdoptable")
+              );END or
               (princ "\nManhole selected.\n")                               ; True
               (princ "\nNot manhole block selected. Please, try again.\n")  ; False
             ); END if
@@ -392,7 +407,16 @@
 											( 0 . "INSERT")
 											(-4 . "<OR")
 												( 8 . "e-afd")
-												( 8 . "e-asd")
+                        ( 8 . "e-afd-PH1")
+                        ( 8 . "e-afd-PH2")
+                        ( 8 . "e-afd-PH3")
+                        ( 8 . "e-afd-PH4")
+                        ( 8 . "e-asd")
+                        ( 8 . "e-asd-PH1")
+                        ( 8 . "e-asd-PH2")
+                        ( 8 . "e-asd-PH3")
+                        ( 8 . "e-asd-PH4")
+                        ( 8 . "e-gully")
 											(-4 . "OR>")
 										(-4 . "AND>")
 									 )
@@ -470,9 +494,10 @@
 	);END foreach
 
 	(princ)
+  ; v0.1 - 2016.05.03 - More layers added to filter
   ; v0.0 - 2016.04.10 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.04.10
+  ; Last revision: 2016.05.03
 )
 (defun c:MSCS (
                 /
