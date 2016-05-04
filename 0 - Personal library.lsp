@@ -3,6 +3,7 @@
 (defun c:uiso() (command "unisolateobjects")(princ))
 (defun c:c() (command "copy")(princ))
 (defun c:ci()	(command "circle")(princ))
+(defun c:n() (command "NCOPY" pause "" "" ""))
 (defun c:RTM ()
 	; RT and move together
 	(C:RT)
