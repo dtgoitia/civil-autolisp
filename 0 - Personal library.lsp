@@ -4,6 +4,8 @@
 (defun c:c() (command "copy")(princ))
 (defun c:ci()	(command "circle")(princ))
 (defun c:n() (command "NCOPY" pause "" "" ""))
+(defun c:xu() (command "-xref" "u" "*")(alert "Xref Unload finished!")(princ)) ;Unload all Xrefs
+(defun c:xr() (command "-xref" "r" "*")(alert "Xref Reload finished!")(princ)) ;Reload all Xrefs
 (defun c:RTM ()
 	; RT and move together
 	(C:RT)
