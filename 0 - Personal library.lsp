@@ -282,3 +282,34 @@
   );END while
   (princ)
 )
+(defun DT:BlockPerpendicularToPolyline ( blk / VL_ent_name gr p0 p1 )
+  ; Insert block perpendicular to selected polyline
+  ; Inserta blocque perpendicular a la polilinea seleccionada
+
+  ; INPUT - Select object
+  (setq VL_ent_name (vlax-ename->vla-object (car (entsel "\nSelect centerline: "))))
+
+  (while (= 5 (car (setq gr (grread 't 13 0))))
+    ; OPERATION - Delete auxiliary data, if any
+    (if (/= (vlax-ename->vla-object reference_circle1) nil) (vla-delete (vlax-ename->vla-object reference_circle1)))
+    (if (/= (vlax-ename->vla-object cursor_line) nil) (vla-delete (vlax-ename->vla-object cursor_line)))
+
+    ; OPERATION - Create auxiliary data and objects
+    (setq
+      p0 (cadr gr)
+      p1 (vlax-curve-getClosestPointTo VL_ent_name (cadr gr))
+      reference_circle1 ( _Reference_Circle p1 0.2)
+      cursor_line ( _Set_Line p0 p1 )
+    ); END setq
+  ); END while
+
+  ; OPERATION - Insert block
+  (command "-insert" blk p1 "1" "1" p0)
+
+  ; OPERATION - Delete auxiliary data, if any
+  (if (/= (vlax-ename->vla-object reference_circle1) nil) (vla-delete (vlax-ename->vla-object reference_circle1)))
+  (if (/= (vlax-ename->vla-object cursor_line) nil) (vla-delete (vlax-ename->vla-object cursor_line)))
+  ; v0.0 - 2016.05.10 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.05.10
+)
