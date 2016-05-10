@@ -1,5 +1,4 @@
 ﻿(defun c:DIP (/
-              reference_circle1 cursor_text_L1 cursor_text_L2 cursor_line
               p0 p1
               z0 z1
               oldlayer oldosmode oldcmdecho)
