@@ -313,3 +313,10 @@
   ; Author: David Torralba
   ; Last revision: 2016.05.10
 )
+(defun c:nla (/ obj)
+  ; Find nested object real layer
+  (if (setq obj (car (nentsel "\nSelect object to know layer: ")))
+    (mapcar '(lambda (x) (if (= (car x) 8) (progn (princ "\nDXF Layer = ")(princ (cdr x)) )) ) (entget obj '("*")))
+  ); END if
+  (princ)
+)
