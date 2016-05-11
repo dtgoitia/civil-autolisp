@@ -282,13 +282,19 @@
   );END while
   (princ)
 )
-(defun DT:BlockPerpendicularToPolyline ( blk / VL_ent_name gr p0 p1 )
+(defun DT:BlockPerpendicularToPolyline ( VL_ent_name blk / *error* VL_ent_name gr p0 p1 )
   ; Insert block perpendicular to selected polyline
   ; Inserta blocque perpendicular a la polilinea seleccionada
+	(defun *error* ( msg )
+    (if (not (member msg '("Function cancelled" "quit / exit abort")))
+      (princ (strcat "\nError: " msg))
+    )
+		; OPERATION - Delete auxiliary data, if any
+		(if (/= reference_circle1 nil) (if (/= (vlax-ename->vla-object reference_circle1) nil) (vla-delete (vlax-ename->vla-object reference_circle1))))
+		(if (/= cursor_line nil) (if (/= (vlax-ename->vla-object cursor_line) nil) (vla-delete (vlax-ename->vla-object cursor_line))))
 
-  ; INPUT - Select object
-  (setq VL_ent_name (vlax-ename->vla-object (car (entsel "\nSelect centerline: "))))
-
+    (princ)
+  )
   (while (= 5 (car (setq gr (grread 't 13 0))))
     ; OPERATION - Delete auxiliary data, if any
 		(if (/= reference_circle1 nil) (if (/= (vlax-ename->vla-object reference_circle1) nil) (vla-delete (vlax-ename->vla-object reference_circle1))))
@@ -307,8 +313,8 @@
   (command "-insert" blk p1 "1" "1" p0)
 
   ; OPERATION - Delete auxiliary data, if any
-  (if (/= (vlax-ename->vla-object reference_circle1) nil) (vla-delete (vlax-ename->vla-object reference_circle1)))
-  (if (/= (vlax-ename->vla-object cursor_line) nil) (vla-delete (vlax-ename->vla-object cursor_line)))
+	(if (/= reference_circle1 nil) (if (/= (vlax-ename->vla-object reference_circle1) nil) (vla-delete (vlax-ename->vla-object reference_circle1))))
+	(if (/= cursor_line nil) (if (/= (vlax-ename->vla-object cursor_line) nil) (vla-delete (vlax-ename->vla-object cursor_line))))
 	; v0.1 - 2016.05.11 - Auxiliary object detection bug fix
 	; v0.0 - 2016.05.10 - First issue
   ; Author: David Torralba
