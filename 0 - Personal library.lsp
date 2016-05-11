@@ -291,8 +291,8 @@
 
   (while (= 5 (car (setq gr (grread 't 13 0))))
     ; OPERATION - Delete auxiliary data, if any
-    (if (/= (vlax-ename->vla-object reference_circle1) nil) (vla-delete (vlax-ename->vla-object reference_circle1)))
-    (if (/= (vlax-ename->vla-object cursor_line) nil) (vla-delete (vlax-ename->vla-object cursor_line)))
+		(if (/= reference_circle1 nil) (if (/= (vlax-ename->vla-object reference_circle1) nil) (vla-delete (vlax-ename->vla-object reference_circle1))))
+		(if (/= cursor_line nil) (if (/= (vlax-ename->vla-object cursor_line) nil) (vla-delete (vlax-ename->vla-object cursor_line))))
 
     ; OPERATION - Create auxiliary data and objects
     (setq
@@ -309,9 +309,10 @@
   ; OPERATION - Delete auxiliary data, if any
   (if (/= (vlax-ename->vla-object reference_circle1) nil) (vla-delete (vlax-ename->vla-object reference_circle1)))
   (if (/= (vlax-ename->vla-object cursor_line) nil) (vla-delete (vlax-ename->vla-object cursor_line)))
-  ; v0.0 - 2016.05.10 - First issue
+	; v0.1 - 2016.05.11 - Auxiliary object detection bug fix
+	; v0.0 - 2016.05.10 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.05.10
+  ; Last revision: 2016.05.11
 )
 (defun c:nla (/ obj)
   ; Find nested object real layer
