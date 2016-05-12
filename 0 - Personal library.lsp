@@ -327,3 +327,50 @@
   ); END if
   (princ)
 )
+(defun c:3DPT ( / *error* VL_ent_name arr narr larr nz z oldosmode)
+  (vl-load-com)
+  (defun *error* ( msg )
+    (if (not (member msg '("Function cancelled" "quit / exit abort")))
+      (princ (strcat "\nError: " msg))
+    )
+    ; RESET system variables
+    (setvar "osmode" oldosmode)
+    (princ)
+  )
+  ; SAVE system variables
+  (setq oldosmode (getvar "osmode"))
+
+  ; CHANGE system variables
+  (setvar "osmode" 1)
+
+  ; INPUT - Select polyline
+  (setq VL_ent_name (vlax-ename->vla-object (car (entsel "\nSelect 3D polyline: "))))
+  (if (= "AcDb3dPolyline" (vla-get-ObjectName VL_ent_name))
+    (progn
+      ; El Param daba cero porque se vuelve loco con el OSMODE = 0, pon OSMODE = 1 y funciona perfecto. Pon la cabecera de copiar y salvar el OSMODE y blablabla
+      (while (not exit_variable)
+        (setq
+          ; OPERATION - Save coordinates array and convert it to a list
+          arr (vlax-variant-value (vla-get-Coordinates VL_ent_name))
+          larr (vlax-safearray->list arr)
+          ; INPUT - Select point to return parameter
+          p (getpoint "\nSelect vertex to edit <Esc to exit>: ")
+          ; OPERATION - Get data of point
+          Param (atoi (LM:rtos (vlax-curve-getParamAtPoint VL_ent_name (vlax-curve-getClosestPointTo VL_ent_name p)) 2 0))
+          z (nth (+ 2 (* 3 Param)) larr)
+          ; INPUT - Ask for new Z value por the selected point
+          nz (getreal (strcat "\nZ value <" (LM:rtos z 2 3) ">: "))
+        )
+        (if (or (not nz) (= nz z))
+          (princ "\nZ not changed.")
+          (progn
+            (vlax-safearray-put-element arr (+ 2 (* 3 Param)) nz)
+            (vlax-put-property VL_ent_name 'Coordinates arr)
+          ); END progn
+        ); END if
+      );END while
+    ); END progn
+    (alert "Sorry, that is not a 3D polyline.")
+  ); END if
+  (princ)
+)
