@@ -1,7 +1,9 @@
 ﻿(defun c:DIP (/
               p0 p1
               z0 z1
-              oldlayer oldosmode oldcmdecho)
+              oldlayer oldosmode oldcmdecho
+              reference_circle1 cursor_text_L1 cursor_text_L2 cursor_line
+              )
   ; Dynamic Interpolation
 
   ; SET - Error handling function
@@ -15,10 +17,15 @@
     ) ; END if
 
     ; CLEAN VARIABLES
-    (if (/= reference_circle1 nil) (vla-delete (vlax-ename->vla-object reference_circle1)))
-    (if (/= cursor_text_L1 nil) (vla-delete (vlax-ename->vla-object cursor_text_L1)))
-    (if (/= cursor_text_L2 nil) (vla-delete (vlax-ename->vla-object cursor_text_L2)))
-    (if (/= cursor_line nil) (vla-delete (vlax-ename->vla-object cursor_line)))
+    (if (/= reference_circle1 nil) (if (/= (vlax-ename->vla-object reference_circle1) nil) (vla-delete (vlax-ename->vla-object reference_circle1))))
+  	(if (/= cursor_text_L1 nil) (if (/= (vlax-ename->vla-object cursor_text_L1) nil) (vla-delete (vlax-ename->vla-object cursor_text_L1))))
+    (if (/= cursor_text_L2 nil) (if (/= (vlax-ename->vla-object cursor_text_L2) nil) (vla-delete (vlax-ename->vla-object cursor_text_L2))))
+    (if (/= cursor_line nil) (if (/= (vlax-ename->vla-object cursor_line) nil) (vla-delete (vlax-ename->vla-object cursor_line))))
+
+    ;(if (/= reference_circle1 nil) (vla-delete (vlax-ename->vla-object reference_circle1)))
+    ;(if (/= cursor_text_L1 nil) (vla-delete (vlax-ename->vla-object cursor_text_L1)))
+    ;(if (/= cursor_text_L2 nil) (vla-delete (vlax-ename->vla-object cursor_text_L2)))
+    ;(if (/= cursor_line nil) (vla-delete (vlax-ename->vla-object cursor_line)))
 
     ; RESTORE PREVIOUS SETTINGS
     (setvar "clayer" oldlayer)
@@ -93,10 +100,10 @@
               txt_grad (itoa (LM:Round grad))
         )
         ; OPERATION - Delete auxiliary data, if any
-        (if (/= (vlax-ename->vla-object reference_circle1) nil) (vla-delete (vlax-ename->vla-object reference_circle1)))
-        (if (/= (vlax-ename->vla-object cursor_text_L1) nil) (vla-delete (vlax-ename->vla-object cursor_text_L1)))
-        (if (/= (vlax-ename->vla-object cursor_text_L2) nil) (vla-delete (vlax-ename->vla-object cursor_text_L2)))
-        (if (/= (vlax-ename->vla-object cursor_line) nil) (vla-delete (vlax-ename->vla-object cursor_line)))
+        (if (/= reference_circle1 nil) (if (/= (vlax-ename->vla-object reference_circle1) nil) (vla-delete (vlax-ename->vla-object reference_circle1))))
+      	(if (/= cursor_text_L1 nil) (if (/= (vlax-ename->vla-object cursor_text_L1) nil) (vla-delete (vlax-ename->vla-object cursor_text_L1))))
+        (if (/= cursor_text_L2 nil) (if (/= (vlax-ename->vla-object cursor_text_L2) nil) (vla-delete (vlax-ename->vla-object cursor_text_L2))))
+        (if (/= cursor_line nil) (if (/= (vlax-ename->vla-object cursor_line) nil) (vla-delete (vlax-ename->vla-object cursor_line))))
 
         ; OPERATION - Calculate
         (setq text_height (* real_text_height (getvar "viewsize")))
@@ -125,10 +132,10 @@
         )
 
         ; OPERATION - Delete auxiliary data, if any
-        (if (/= (vlax-ename->vla-object reference_circle1) nil) (vla-delete (vlax-ename->vla-object reference_circle1)))
-        (if (/= (vlax-ename->vla-object cursor_text_L1) nil) (vla-delete (vlax-ename->vla-object cursor_text_L1)))
-        (if (/= (vlax-ename->vla-object cursor_text_L2) nil) (vla-delete (vlax-ename->vla-object cursor_text_L2)))
-        (if (/= (vlax-ename->vla-object cursor_line) nil) (vla-delete (vlax-ename->vla-object cursor_line)))
+        (if (/= reference_circle1 nil) (if (/= (vlax-ename->vla-object reference_circle1) nil) (vla-delete (vlax-ename->vla-object reference_circle1))))
+      	(if (/= cursor_text_L1 nil) (if (/= (vlax-ename->vla-object cursor_text_L1) nil) (vla-delete (vlax-ename->vla-object cursor_text_L1))))
+        (if (/= cursor_text_L2 nil) (if (/= (vlax-ename->vla-object cursor_text_L2) nil) (vla-delete (vlax-ename->vla-object cursor_text_L2))))
+        (if (/= cursor_line nil) (if (/= (vlax-ename->vla-object cursor_line) nil) (vla-delete (vlax-ename->vla-object cursor_line))))
 
         ; OPERATION - Calculate
         (setq real_text_height 0.02)
@@ -149,10 +156,10 @@
   (princ (strcat "\nz0 = " (rtos z0 2 3) "   zf = " (rtos z1 2 3) "   -->   " txt_dist "m @ 1/" txt_grad ))
 
   ; OPERATION - Delete auxiliary data, if any
-  (if (/= (vlax-ename->vla-object reference_circle1) nil) (vla-delete (vlax-ename->vla-object reference_circle1)))
-  (if (/= (vlax-ename->vla-object cursor_text_L1) nil) (vla-delete (vlax-ename->vla-object cursor_text_L1)))
-  (if (/= (vlax-ename->vla-object cursor_text_L2) nil) (vla-delete (vlax-ename->vla-object cursor_text_L2)))
-  (if (/= (vlax-ename->vla-object cursor_line) nil) (vla-delete (vlax-ename->vla-object cursor_line)))
+  (if (/= reference_circle1 nil) (if (/= (vlax-ename->vla-object reference_circle1) nil) (vla-delete (vlax-ename->vla-object reference_circle1))))
+  (if (/= cursor_text_L1 nil) (if (/= (vlax-ename->vla-object cursor_text_L1) nil) (vla-delete (vlax-ename->vla-object cursor_text_L1))))
+  (if (/= cursor_text_L2 nil) (if (/= (vlax-ename->vla-object cursor_text_L2) nil) (vla-delete (vlax-ename->vla-object cursor_text_L2))))
+  (if (/= cursor_line nil) (if (/= (vlax-ename->vla-object cursor_line) nil) (vla-delete (vlax-ename->vla-object cursor_line))))
 
   ; RESTORE PREVIOUS SETTINGS
   (setvar "clayer" oldlayer)
@@ -161,6 +168,7 @@
 
   ; End without double messages
   (princ)
+  ; v0.8 - 2016.05.17 - Auxiliary object deletion bug fixed
   ; v0.7 - 2016.05.10 - Auxiliary object deletion bug fixed
   ; v0.6 - 2016.03.22 - Level prompt when first point selected
   ;                   - Minor bugs fixed
@@ -175,5 +183,4 @@
   ; v0.1 - 2016.02.29 - Data prompt removed from command-line, and put next to the mouse cross.
   ; v0.0 - 2016.02.26
   ; Author: David Torralba
-  ; Last revision: 2016.03.22
-)
+  ; Last revision: 2016.05.17
