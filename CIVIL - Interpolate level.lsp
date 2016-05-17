@@ -84,7 +84,10 @@
 
   ; OPERATION - Calculate gradient and print it
   (setq d12 (distance p1 p2))                ; Distance 1-2
-  (princ "\nGradient = 1/")(princ (itoa (LM:Round (abs (/ d12 (- z2 z1))))))
+  (if (= z1 z2)
+    (princ "\nSelected points are at the same level.")
+    (princ (strcat "\nGradient = 1/" (itoa (LM:Round (abs (/ d12 (- z2 z1)))))))
+  )
 
   ; INPUT - Choose action: pick, find, lowpoint
   (initget "Pick Find Lowpoint")
@@ -120,28 +123,31 @@
       ); END while Pick
     ); END cond Pick
     ((= mode "Find") ; Introduce level and return point
-      (while (= variable_vacia nil)
-        ; INPUT - Level 3
-        (setq z3 (getreal "\nIntroduce level to get point (or press Esc to exit): "))
-        (if (not z3) (exit))
-        (setq
-          p1 (list (car p1) (cadr p1) z1 )    ; Convert p1 to 3D point
-          p2 (list (car p2) (cadr p2) z2 )    ; Convert p2 to 3D point
-          u0 (- (car p2) (car p1))            ; Unit vector u
-          v0 (- (cadr p2) (cadr p1))          ; Unit vector v
-          w0 (- (caddr p2) (caddr p1))        ; Unit vector w
-          d13 (/ (- z3 (caddr p1)) w0)        ; Distance 1-3
-          x3 (+ (car p1)  (* d13 u0) )        ; X coordinate
-          y3 (+ (cadr p1) (* d13 v0) )        ; y coordinate
-          p3 (list x3 y3 0)                   ; Point 3
-          level (rtos z3 2 3)                  ; Convert level to text (3 decimals)
-        ); END setq
-        (princ (strcat "\nLevel = " level))
+      (if (= z1 z2)
+        (princ "\nAs said, selected points are at the same level.")
+        (while (= variable_vacia nil)
+          ; INPUT - Level 3
+          (setq z3 (getreal "\nIntroduce level to get point (or press Esc to exit): "))
+          (if (not z3) (exit))
+          (setq
+            p1 (list (car p1) (cadr p1) z1 )    ; Convert p1 to 3D point
+            p2 (list (car p2) (cadr p2) z2 )    ; Convert p2 to 3D point
+            u0 (- (car p2) (car p1))            ; Unit vector u
+            v0 (- (cadr p2) (cadr p1))          ; Unit vector v
+            w0 (- (caddr p2) (caddr p1))        ; Unit vector w
+            d13 (/ (- z3 (caddr p1)) w0)        ; Distance 1-3
+            x3 (+ (car p1)  (* d13 u0) )        ; X coordinate
+            y3 (+ (cadr p1) (* d13 v0) )        ; y coordinate
+            p3 (list x3 y3 0)                   ; Point 3
+            level (rtos z3 2 3)                  ; Convert level to text (3 decimals)
+          ); END setq
+          (princ (strcat "\nLevel = " level))
 
-        ; OPERATION - Introducir punto 3
-        (setvar "osmode" 0)
-        (command "._insert" "PI_DT" p3 "0.5" "0.5" "" level)
-      ); END while Find
+          ; OPERATION - Introducir punto 3
+          (setvar "osmode" 0)
+          (command "._insert" "PI_DT" p3 "0.5" "0.5" "" level)
+        ); END while Find
+      );END if
     ); END cond Find
     ((= mode "Lowpoint") ; Introduce gradient and return low point
       ; INPUT - Gradient
@@ -179,20 +185,21 @@
   ; End without double messages
   (princ)
 
+  ; v0.8 - 2016.05.17 - Added case and warning messages when selected reference levels are the same.
   ; v0.7 - 2016.04.19 - Bug fixed at "Pick" mode not to return an error when PI_DT block not found.
   ;                   - level of picked point copied to clipboard.
   ; v0.6 - 2016.04.01 - Change level input function.
-  ;                   - Show gradient between two selected points
+  ;                   - Show gradient between two selected points.
   ; v0.5 - 2016.03.22 - Optimize code.
   ;                   - Fix minor bugs.
   ;                   - Translate into English
-  ; v0.4 - 2016.03.21 - Optimize code and translate partialy into English
-  ; v0.3 - 2016.03.18 - Add feature: find low point with a given gradient
-  ; v0.2 - 2016.03.17 - Move text extraction functions to library
-  ;                   - Add feature: find a point from a given level
-  ;                   - Optimize code
-  ; v0.1 - 2016.03.14 - Loop added to select multiple points to interpolate
+  ; v0.4 - 2016.03.21 - Optimize code and translate partialy into English.
+  ; v0.3 - 2016.03.18 - Add feature: find low point with a given gradient.
+  ; v0.2 - 2016.03.17 - Move text extraction functions to library.
+  ;                   - Add feature: find a point from a given level.
+  ;                   - Optimize code.
+  ; v0.1 - 2016.03.14 - Loop added to select multiple points to interpolate.
   ; v0.0 - 2015.12.14 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.04.19
+  ; Last revision: 2016.05.17
 )
