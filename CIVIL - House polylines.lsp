@@ -113,7 +113,7 @@
   (princ)
 
   ; v0.4 - 2016.05.17 - Rewrite many functions to VLA to speed up the routine.
-  ;                   - Add left or right clic as possible inputs when asking for building type.
+  ;                   - Add left or right clic as possible inputs git when asking for building type.
   ; v0.3 - 2016.04.18 - Fix minor bugs in the infinite loop.
   ; v0.2 - 2016.04.17 - Add infinite loop.
   ; v0.1 - 2016.03.22 - Translate into English.
