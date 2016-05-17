@@ -86,7 +86,7 @@
   (setq d12 (distance p1 p2))                ; Distance 1-2
   (if (= z1 z2)
     (princ "\nSelected points are at the same level.")
-    (princ (strcat "\nGradient = 1/" (itoa (LM:Round (abs (/ d12 (- z2 z1)))))))
+    (princ (strcat "\nGradient = 1/" (itoa (LM:Round (abs (/ d12 (- z2 z1))))) " (" (LM:rtos (abs (* 100 (/ (- z2 z1) d12))) 2 2) "%)"))
   )
 
   ; INPUT - Choose action: pick, find, lowpoint
@@ -186,6 +186,7 @@
   (princ)
 
   ; v0.8 - 2016.05.17 - Added case and warning messages when selected reference levels are the same.
+  ;                   - Gradient in percentage display added.
   ; v0.7 - 2016.04.19 - Bug fixed at "Pick" mode not to return an error when PI_DT block not found.
   ;                   - level of picked point copied to clipboard.
   ; v0.6 - 2016.04.01 - Change level input function.
