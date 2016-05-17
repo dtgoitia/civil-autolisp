@@ -25,8 +25,8 @@
   (setvar "cmdecho" 0)
 
   ; OPERATION - Create "e-set-out-house" and "e-work-block" layers if they don't exist
-  (if (not (tblsearch "LAYER" "e-work-block")) (command "-layer" "N" "e-work-block" ""))
-  (if (not (tblsearch "LAYER" "e-set-out-house")) (command "-layer" "N" "e-set-out-house" ""))
+  (if (not (tblsearch "LAYER" "e-work-block")) (command "-layer" "N" "e-work-block" "C" "7" "e-work-block" ""))
+  (if (not (tblsearch "LAYER" "e-set-out-house")) (command "-layer" "N" "e-set-out-house" "C" "7" "e-set-out-house" ""))
 
   ; INFINITE LOOP
   (while (not kkkkk)
@@ -114,6 +114,7 @@
 
   ; v0.4 - 2016.05.17 - Rewrite many functions to VLA to speed up the routine.
   ;                   - Add left or right clic as possible inputs git when asking for building type.
+  ;                   - Ensure "e-work-block" and "e-set-out-house" layers are created on white color (7).
   ; v0.3 - 2016.04.18 - Fix minor bugs in the infinite loop.
   ; v0.2 - 2016.04.17 - Add infinite loop.
   ; v0.1 - 2016.03.22 - Translate into English.
