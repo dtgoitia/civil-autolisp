@@ -78,8 +78,9 @@
   )
 
   ; INPUT - Ask to fix Gradient or IL
-  (initget 1 "Slope Gradient Level")
+  (initget "Slope Gradient Level")
   (setq answer (getkword "\nChoose to fix [Gradient/Level]: "))
+  (if (not answer) (setq answer "Gradient"))
 
   ; SET - Real text height
   (setq real_text_height 0.03)
@@ -168,6 +169,7 @@
 
   ; End without double messages
   (princ)
+  ; v0.9 - 2016.05.18 - Gradient/Level selection updated
   ; v0.8 - 2016.05.17 - Auxiliary object deletion bug fixed
   ; v0.7 - 2016.05.10 - Auxiliary object deletion bug fixed
   ; v0.6 - 2016.03.22 - Level prompt when first point selected
@@ -183,5 +185,5 @@
   ; v0.1 - 2016.02.29 - Data prompt removed from command-line, and put next to the mouse cross.
   ; v0.0 - 2016.02.26
   ; Author: David Torralba
-  ; Last revision: 2016.05.17
+  ; Last revision: 2016.05.18
 )
