@@ -118,7 +118,7 @@
         ; OPERATION - Introduce point 4
         (setvar "osmode" 0)
         (if (/= nil (tblsearch "block" "PI_DT"))
-          (command "._insert" "PI_DT" p3 "0.5" "0.5" "" level)
+          (command "._insert" "PI_DT" p3 "0.25" "0.25" "" level)
         );END if
       ); END while Pick
     ); END cond Pick
@@ -145,7 +145,7 @@
 
           ; OPERATION - Introducir punto 3
           (setvar "osmode" 0)
-          (command "._insert" "PI_DT" p3 "0.5" "0.5" "" level)
+          (command "._insert" "PI_DT" p3 "0.25" "0.25" "" level)
         ); END while Find
       );END if
     ); END cond Find
@@ -168,7 +168,7 @@
 
       ; OPERATION - Introduce point 3
       (setvar "osmode" 0)
-      (command "._insert" "PI_DT" p4 "0.5" "0.5" "" level)
+      (command "._insert" "PI_DT" p3 "0.25" "0.25" "" level)
     ); END cond Find
   ); END cond
 
@@ -185,6 +185,7 @@
   ; End without double messages
   (princ)
 
+  ; v0.9 - 2016.05.20 - Inserted block scale reduced for clarity.
   ; v0.8 - 2016.05.17 - Added case and warning messages when selected reference levels are the same.
   ;                   - Gradient in percentage display added.
   ; v0.7 - 2016.04.19 - Bug fixed at "Pick" mode not to return an error when PI_DT block not found.
@@ -202,5 +203,5 @@
   ; v0.1 - 2016.03.14 - Loop added to select multiple points to interpolate.
   ; v0.0 - 2015.12.14 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.05.17
+  ; Last revision: 2016.05.20
 )
