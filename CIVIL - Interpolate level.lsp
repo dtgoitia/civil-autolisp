@@ -166,9 +166,9 @@
       ); END setq
       (princ (strcat "\nLevel = " level))
 
-      ; OPERATION - Introduce point 3
+      ; OPERATION - Introduce point 4
       (setvar "osmode" 0)
-      (command "._insert" "PI_DT" p3 "0.25" "0.25" "" level)
+      (command "._insert" "PI_DT" p4 "0.25" "0.25" "" level)
     ); END cond Find
   ); END cond
 
