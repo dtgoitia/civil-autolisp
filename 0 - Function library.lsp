@@ -725,3 +725,15 @@
   ; Last revision: 2016.03.30
 )
 (princ)
+(defun CopyToClipboard (str / html result)
+  (if (= 'STR (type str))
+    (progn
+      (setq
+        html (vlax-create-object "htmlfile")
+        result (vlax-invoke (vlax-get (vlax-get html 'ParentWindow) 'ClipBoardData) 'setData "Text" str)
+      ); END setq
+      (vlax-release-object html)
+      str
+    ); END progn
+   );END if
+)
