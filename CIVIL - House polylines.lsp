@@ -8,10 +8,10 @@
     (if (not (member msg '("Function cancelled" "quit / exit abort")))
       (princ (strcat "\nError: " msg))
     )
-    ; RESET to original "osmode" and "cmdecho".
-  (setvar "osmode" oldosmode)
-  (setvar "cmdecho" oldcmdecho)
-  (setvar "clayer" oldclayer)
+    ; RESET to original settings
+    (setvar "osmode" oldosmode)
+    (setvar "cmdecho" oldcmdecho)
+    (setvar "clayer" oldclayer)
     (princ)
   )
 
@@ -101,10 +101,12 @@
 
     ; OPERATION - Reset entity so start loop again
     (setq ent_name nil)
+    
+    ; RESET OFFSET command to original settings
+    (command "._offset" "E" "N" "" "")
   ); END while
 
   ; RESET to original settings
-  (command "._offset" "E" "N" "" "")
   (setvar "osmode" oldosmode)
   (setvar "cmdecho" oldcmdecho)
   (setvar "clayer" oldclayer)
@@ -112,6 +114,7 @@
   ; End without double messages
   (princ)
 
+  ; v0.5 - 2016.06.02 - Reset OFFSET command to original settings.
   ; v0.4 - 2016.05.17 - Rewrite many functions to VLA to speed up the routine.
   ;                   - Add left or right clic as possible inputs git when asking for building type.
   ;                   - Ensure "e-work-block" and "e-set-out-house" layers are created on white color (7).
@@ -120,5 +123,5 @@
   ; v0.1 - 2016.03.22 - Translate into English.
   ; v0.0 - 2016.03.14 - First issue.
   ; Author: David Torralba
-  ; Last revision: 2016.05.17
+  ; Last revision: 2016.06.02
 )
