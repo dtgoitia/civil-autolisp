@@ -7,6 +7,7 @@
 (defun c:xu() (command "-xref" "u" "*")(alert "Xref Unload finished!")(princ)) ;Unload all Xrefs
 (defun c:xr() (command "-xref" "r" "*")(alert "Xref Reload finished!")(princ)) ;Reload all Xrefs
 (defun c:nt() (command "-text" "S" "ARIAL" "J" "MC" pause 3 90)(princ)); Add note
+(defun c:las() (command "layerstate")(princ))
 (defun c:RTM ()
 	; RT and move together
 	(C:RT)
@@ -247,16 +248,17 @@
   ; Author: David Torralba
   ; Last revision: 2016.04.05
 )
-(defun CopyToClipboard(str / html result)
-(if (= 'STR (type str))
-  (progn
-  (setq html   (vlax-create-object "htmlfile")
+(defun CopyToClipboard (str / html result)
+  (if (= 'STR (type str))
+    (progn
+      (setq
+        html (vlax-create-object "htmlfile")
         result (vlax-invoke (vlax-get (vlax-get html 'ParentWindow) 'ClipBoardData) 'setData "Text" str)
-  )
-  (vlax-release-object html)
-   str
-   )
- );END if
+      ); END setq
+      (vlax-release-object html)
+      str
+    ); END progn
+   );END if
 )
 (defun c:ct()
   ; Copy any nested string into the clipboard
@@ -328,6 +330,7 @@
   (princ)
 )
 (defun c:3DPT ( / *error* VL_ent_name arr narr larr nz z oldosmode)
+	; EDIT 3D polyline vertex levels
   (vl-load-com)
   (defun *error* ( msg )
     (if (not (member msg '("Function cancelled" "quit / exit abort")))
@@ -374,3 +377,103 @@
   ); END if
   (princ)
 )
+(defun DT:SDIP( / p1 z0 dist grad)
+  ; Light version for DIP
+  (setq
+    z0 (DT:clic_or_type_level)
+    dist (distance (getpoint "\npoint 1: ") (setq p1 (getpoint "\npoint 2: ")))
+    grad (getreal "\nGradient= 1/")
+  )
+	(list (+ z0 (/ dist grad)) p1)
+)
+(defun c:sDIP_near50( / p1)
+	; For plot or private drainage levels
+	; Light version for DIP rounding the result to the nearest 0.05, inserting a level block and copying it to the ClipBoard
+	(setq p1 (DT:SDIP))
+	(princ "\nLevel = ")(princ (car p1))
+	(if (/= nil (tblsearch "block" "PI_DT"))
+		(command "._insert" "PI_DT" (cadr p1) "0.25" "0.25" "" (LM:rtos (* 0.050 (atof (LM:rtos (/ (car p1) 0.050) 2 0))) 2 2))
+	);END if
+  (princ "\nto clipboard: ")
+  (CopyToClipboard (LM:rtos (* 0.050 (atof (LM:rtos (/ (car p1) 0.050) 2 0))) 2 2))
+)
+(defun c:SDIP( / p1)
+	; For plot or private drainage levels
+	; Light version for DIP rounding the result to the 3rd decimal, inserting a level block and copying it to the ClipBoard
+	(setq p1 (DT:SDIP))
+	(princ "\nLevel = ")(princ (car p1))
+	(if (/= nil (tblsearch "block" "PI_DT"))
+		(command "._insert" "PI_DT" (cadr p1) "0.25" "0.25" "" (LM:rtos (car p1) 2 3))
+	);END if
+  (princ "\nto clipboard: ")
+  (CopyToClipboard (LM:rtos (car p1) 2 3))
+)
+(defun c:garden_gradient (
+                          /
+                          p0 p1 z0 z1 ang ang_txt dif oldangdir oldosmode
+                          )
+; Calculate slope and draw slope line
+  (defun *error* ( msg )
+    (if (not (member msg '("Function cancelled" "quit / exit abort")))
+      (princ (strcat "\nError: " msg))
+    )
+    ; RESET system variables
+    (setvar "angdir" oldangdir)
+    (setvar "osmode" oldosmode)
+    (princ)
+  )
+  (setq oldangdir (getvar "angdir"))
+  (setq oldosmode (getvar "osmode"))
+  (setvar "angdir" 0)
+
+  (setq
+    p0 (getpoint "\nSelect point A: ")
+    z0 (DT:clic_or_type_level)
+    p1(getpoint "\nSelect point B: ")
+    z1 (DT:clic_or_type_level)
+    dif (- z1 z0)
+    ang (- (angle p0 p1) (* 0.5 pi))
+    pm (polar p0 (+ ang (* 0.5 pi)) (* 0.5 (distance p0 p1)))
+  )
+  (setvar "osmode" 0)
+  (cond
+    ( (= dif 0)
+      (alert "Flat gradient. Try again.")
+      (exit)
+    );END cond flat
+    ( (< dif 0)
+      (command ".-insert" "grad-arrow" pm 1 1 (* (/ 180 pi) (+ ang (* 1.5 pi))))
+      (command "mirror" "L" "" p0 p1 "Y")
+      (setq
+        ent_name (entlast)
+        grad (strcat "1/" (LM:rtos (/ (distance p0 p1) (- 0 dif)) 2 0))
+      )
+    );END cond z0 high
+    ( (> dif 0)
+      (command ".-insert" "grad-arrow" pm 1 1 (* (/ 180 pi) (+ ang (* 0.5 pi))))
+      (setq
+        ent_name (entlast)
+        grad (strcat "1/" (LM:rtos (/ (distance p0 p1) dif) 2 0))
+      )
+    );END cond z1 high
+  )
+  (if (and (> ang 0) (< ang pi))
+    (progn
+      (setq ang_txt (+ ang pi))
+      ; falta hacer mirror del bloque arrow
+      (command "mirror" "L" "" p0 p1 "Y")
+    );END progn
+    (setq ang_txt ang)
+  )
+  (command "-text" "S" "ROMANS" "J" "BC" pm "0.350" (* (/ 180 pi) ang_txt) grad)
+
+  ;(command "circle" p0 "0.1")
+  ;(command "circle" p1 "0.1")
+  ;(command "circle" pm "0.1")
+
+  (setvar "angdir" oldangdir)
+  (setvar "osmode" oldosmode)
+  (princ)
+)
+(defun c:DB() (command "draworder" (ssget) "" "Back" ""))
+(defun c:DF() (command "draworder" (ssget) "" "Front" ""))
