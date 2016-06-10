@@ -477,3 +477,49 @@
 )
 (defun c:DB() (command "draworder" (ssget) "" "Back" ""))
 (defun c:DF() (command "draworder" (ssget) "" "Front" ""))
+(defun c:DT:move_KTF_SettingOutLabel( /
+                            ent_name VL_ent_name
+                            label_X label_Y p0 p_ins gr
+                            )
+  (if (= "INSERT" (cdr (assoc 0 (entget (setq ent_name (car (entsel "\nSelect setting out block: ")) )))))
+    (progn
+      (princ "\"XY_advanced\" setting out block selected.")
+      (setq VL_ent_name (vlax-ename->vla-object ent_name))
+      (cond
+        ((= "XY_advanced" (LM:effectivename VL_ent_name))
+          (setq
+            label_X (LM:getdynpropvalue VL_ent_name "Position1 X")  ;label initial position, to block insertion point
+            label_Y (LM:getdynpropvalue VL_ent_name "Position1 Y")  ;label initial position, to block insertion point
+            p0 (cadr (grread 't))                                   ;pointer position
+            p_ins (cdr (assoc 10 (entget ent_name)))                ;block insertion point
+          )
+          (while (= 5 (car (setq gr (grread 't 13 0))))
+            (LM:setdynpropvalue VL_ent_name "Position1 X" (+ (- (car (cadr gr)) (car p0)) label_X) )
+            (LM:setdynpropvalue VL_ent_name "Position1 Y" (+ (- (cadr (cadr gr)) (cadr p0)) label_Y) )
+          );END while
+          (princ
+            (strcat
+              "\nLabel moved from ("
+              (LM:rtos label_X 2 3)
+              " "
+              (LM:rtos label_Y 2 3)
+              " 0.000) to ("
+              (LM:rtos (+ (- (car (cadr gr)) (car p0)) label_X) 2 3)
+              " "
+              (LM:rtos (+ (- (cadr (cadr gr)) (cadr p0)) label_Y) 2 3)
+              " 0.000)"
+            );EMD strcat
+          );END princ
+        )
+        (t
+          (princ "\nSelected object is not a \"XY_advanced\" setting out block.")
+        )
+      );END cond
+    )
+    (princ "\nSelected object is not a \"XY_advanced\" setting out block.")
+  );END if
+  (princ)
+  ; v0.0 - 2016.06.10
+  ; Author: David Torralba
+  ; Last revision: 2016.06.10
+)
