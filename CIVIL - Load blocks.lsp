@@ -227,5 +227,5 @@
 ;
 ;---------------------------------------------------------------------------
 ; Manhole Schedule Header insertion function
-(defun c:ManHeader() (DT:ID "ManScheduleHeader" "e-manhole-schedule" "" ""))
+(defun c:ManHeader() (DT:IB "ManScheduleHeader" "e-manhole-schedule" "" ""))
 (princ)
