@@ -112,13 +112,14 @@
       VL_ent_name (vlax-ename->vla-object ent_name)
     )
     (if (= :vlax-false (vla-get-closed VL_ent_name)) (vla-put-closed VL_ent_name :vlax-true)) ; close if opened
-    (command "-hatch" "P" "ANSI31" "0.1" "" "A" "A" "Y" "" "S" ent_name "" "")                ; add hatch
+    (command "-hatch" "LA" "." "P" "ANSI31" "0.1" "" "A" "A" "Y" "" "S" ent_name "" "")       ; add hatch
     (setq i (+ i 1))                                                                          ; continue to next polyline
   ); END while
 
+	; v0.1 - 2016.06.15 - Force hatch to be in current layer.
   ; v0.0 - 2016.03.16 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.03.16
+  ; Last revision: 2016.06.15
 )
 (defun c:BY ( / ss)
   ; Set by layer
