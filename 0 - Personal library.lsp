@@ -524,3 +524,36 @@
   ; Author: David Torralba
   ; Last revision: 2016.06.10
 )
+(defun c:PI_block_to_Z_level()
+  ; Move blocks PI to the coordinate Z indicated by their attribute "LEVEL"
+  (foreach a (ssnamex (ssget '((0 . "INSERT"))))
+    (if (= 'ename (type (cadr a)))
+      (vla-move
+        (vlax-ename->vla-object (cadr a))
+        (vlax-3d-point (list 0 0 0))
+        (vlax-3d-point
+          (list
+            0
+            0
+            (-
+              (atof
+                (vl-some
+                  '(lambda
+                    ( att )
+                    (if (= "LEVEL" (strcase (vla-get-tagstring att))) (vla-get-textstring att))
+                  );END lambda
+                  (vlax-invoke (vlax-ename->vla-object (cadr a)) 'getattributes)
+                );END vl-some
+              );END atof
+              (caddr (cdr (assoc 10 (entget (cadr a)))))
+            );END - (substraction)
+          );END list
+        );END vlax-3d-point
+      );END vla-move
+    );END if
+  );END foreach
+  (princ)
+  ; v0.0 - 2016.06.16
+  ; Author: David Torralba
+  ; Last revision: 2016.06.16
+)
