@@ -330,6 +330,13 @@
   ); END if
   (princ)
 )
+(defun c:cnla (/ obj)
+  ; Find nested object real layer and copy its name to clipboard
+  (if (setq obj (car (nentsel "\nSelect object to know layer: ")))
+    (mapcar '(lambda (x) (if (= (car x) 8) (progn (princ "\nDXF Layer = ")(princ (cdr x))(CopyToClipboard (cdr x)) )) ) (entget obj '("*")))
+  ); END if
+  (princ)
+)
 (defun c:3DPT ( / *error* VL_ent_name arr narr larr nz z oldosmode)
 	; EDIT 3D polyline vertex levels
   (vl-load-com)
