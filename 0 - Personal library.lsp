@@ -564,3 +564,28 @@
   ; Author: David Torralba
   ; Last revision: 2016.06.16
 )
+(defun c:nlayf (/ obj lay)
+  ; Freeze nested object real layer
+  (if (setq obj (car (nentsel "\nSelect object to freeze layer: ")))
+    (mapcar
+      '(lambda (x)
+        (if (= (car x) 8)
+          (progn
+            (princ "\nDXF Layer = ")
+            (princ (cdr x))
+            (setq lay (cdr x))
+          ); END progn
+        )
+      )
+      (entget obj '("*"))
+    )
+  ); END if
+  (if (not lay)
+    (princ "\nLayer name has not been saved at lay variable. Take a look to the code.")
+    (command "-layer" "f" lay "")
+  );END if
+  (princ)
+  ; v0.0 - 2016.06.17
+  ; Author: David Torralba
+  ; Last revision: 2016.06.17
+)
