@@ -229,7 +229,8 @@
 
   ; v0.2 - 2016.06.27 - Message prompt tidy up
   ;                   - Code tidy up and translation
-  ;                   - Update input parametes update
+  ;                   - Input parameters update
+  ;                   - Local variables update
   ; v0.1 - 2016.04.09 - Code tidy up and translation
   ;                   - Change and reset ATTDIA and ATTREQ system variables
   ; v0.0 - 2016.02.23
@@ -325,7 +326,7 @@
 	);END foreach
 
 	(princ)
-  ; v0.2 - 2016.06.27 - Layers filter removed to selec blocks in any layer
+  ; v0.2 - 2016.06.27 - Layer filters removed to select blocks in any layer
   ;                   - Message prompt tidy up
   ;                   - Update local variables
   ; v0.1 - 2016.05.03 - More layers added to filter
