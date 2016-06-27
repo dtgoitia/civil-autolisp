@@ -66,6 +66,7 @@
             (and (= (car btype) 2) (= (cadr btype) 13)); enter
             (and (= (car btype) 2) (= (cadr btype) 32)); space
             (= (car btype) 3); left clic (point)
+            (= (car btype) 11); right clic on weird computers
             (= (car btype) 25); right clic
           ); END or
           (princ "House")
@@ -114,7 +115,8 @@
   ; End without double messages
   (princ)
 
-  ; v0.5 - 2016.06.02 - Reset OFFSET command to original settings.
+  ; v0.5 - 2016.06.02 - Add 11 code for grread.
+  ;                   - Reset OFFSET command to original settings.
   ; v0.4 - 2016.05.17 - Rewrite many functions to VLA to speed up the routine.
   ;                   - Add left or right clic as possible inputs git when asking for building type.
   ;                   - Ensure "e-work-block" and "e-set-out-house" layers are created on white color (7).
