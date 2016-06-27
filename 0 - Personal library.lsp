@@ -589,3 +589,57 @@
   ; Author: David Torralba
   ; Last revision: 2016.06.17
 )
+(defun c:TOTAL_AREA( / a ar art i)
+  ; Select all hatches and iterate adding their areas.
+  (setq
+    i 0
+    art 0
+  )
+  (foreach a (ssnamex (ssget '((-4 . "<or") (0 . "HATCH") (0 . "LWPOLYLINE") (-4 . "or>"))))
+    (if (= 'ename (type (cadr a)))
+      (if (setq ar (vla-get-area (vlax-ename->vla-object (cadr a))))
+        (progn
+          (setq
+            i (+ i 1)
+            art (+ art ar)
+          )
+          (princ (strcat "\nArea " (itoa i) " = " (LM:rtos ar 2 3) "m2"))
+        );END progn
+      );END if2
+    );END if
+  );END foreach
+  (if (/= nil art)
+    (princ (strcat "\nCUMULATIVE AREA = " (LM:rtos art 2 3) "m2"))
+  );END if
+  (princ)
+  ; v0.0 - 2016.06.23
+  ; Author: David Torralba
+  ; Last revision: 2016.06.23
+)
+(defun c:TOTAL_LENGTH( / a l lt i)
+  ; Select all lines and polylnes and iterate adding their length.
+  (setq
+    i 0
+    lt 0
+  )
+  (foreach a (ssnamex (ssget '((-4 . "<or") (0 . "LINE") (0 . "LWPOLYLINE") (-4 . "or>"))))
+    (if (= 'ename (type (cadr a)))
+      (if (setq l (vla-get-length (vlax-ename->vla-object (cadr a))))
+        (progn
+          (setq
+            i (+ i 1)
+            lt (+ lt l)
+          )
+          (princ (strcat "\nLength " (itoa i) " = " (LM:rtos l 2 3) "m"))
+        );END progn
+      );END if2
+    );END if
+  );END foreach
+  (if (/= nil lt)
+    (princ (strcat "\nCUMULATIVE LENGTH = " (LM:rtos lt 2 3) "m"))
+  );END if
+  (princ)
+  ; v0.0 - 2016.06.23
+  ; Author: David Torralba
+  ; Last revision: 2016.06.23
+)
