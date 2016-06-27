@@ -1,14 +1,4 @@
 (defun c:loadCIVILblocks()
-  ; OPERATION - Check if fbi function is loaded. If not, exit.
-  (princ "\nChecking if fbi function is loaded... ")
-  (if (or
-        (= (eval fbi) nil)
-      );END or
-    (progn
-      (princ "not found.\nPlease, load function and run command again.")
-      (exit)
-    )
-  )
   ; OPERATION - Import blocks from master drawing, and explode and remove them
   (command "-insert" "MJA_Block_master_drawing" "0,0" 1 1 0 "erase" "L" "")
   (command "-purge" "B" "MJA_Block_master_drawing" "N")
@@ -20,7 +10,7 @@
 ;
 ;---------------------------------------------------------------------------
 ;
-; TITLE BLOCK INSERTION MASTER FUNCTION
+; BLOCK INSERTION MASTER FUNCTION
 ;
 ;---------------------------------------------------------------------------
 (defun DT:ib (blk lay rot osm
@@ -88,6 +78,12 @@
   ; Author: David Torralba
   ; Last revision: 2016.04.14
 )
+;
+;---------------------------------------------------------------------------
+;
+; TITLE BLOCK INSERTION MASTER FUNCTION
+;
+;---------------------------------------------------------------------------
 (defun title_block_date ( / d yr mo )
   ; Title block date function
   (setq
@@ -228,4 +224,24 @@
 ;---------------------------------------------------------------------------
 ; Manhole Schedule Header insertion function
 (defun c:ManHeader() (DT:IB "ManScheduleHeader" "e-manhole-schedule" "" ""))
+;
+;
+;---------------------------------------------------------------------------
+;
+; ROAD BLOCKS INSERTION FUNCTIONS
+;
+;---------------------------------------------------------------------------
+(defun c:road_fall_arrow()    (DT:IB "Road-Fall-Arrow"    "e-road" "P" 0))  ; Road Fall Arrow insertion function
+(defun c:parking_fall_arrow() (DT:IB "Parking-Fall-Arrow" "e-road" "P" 0))  ; Parking Fall Arrow insertion function
+;
+;
+;---------------------------------------------------------------------------
+;
+; STREET LIGHT BLOCKS INSERTION FUNCTIONS
+;
+;---------------------------------------------------------------------------
+(defun c:street_light()  (DT:IB "Street-Light"   "e-street-lights" "P" 0)); Street light insertion function
+(defun c:street_light1() (DT:IB "Street-Light-1" "e-street-lights" "P" 0)); Street light 1 insertion function
+(defun c:street_light2() (DT:IB "Street-Light-2" "e-street-lights" "P" 0)); Street light 2 insertion function
+(defun c:street_light3() (DT:IB "Street-Light-3" "e-street-lights" "P" 0)); Street light 3 insertion function
 (princ)
