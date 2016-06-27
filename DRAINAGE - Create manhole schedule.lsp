@@ -1,3 +1,8 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  Shortcuts:                                                                ;;
+;;    MSC: creates manhole schedule                                           ;;
+;;    MSCS: calculates soffit, chamber size and manhole type                  ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun get_ID ( VL_ent_name )
   (vl-some '(lambda ( att )
               (if (= "ID" (strcase (vla-get-tagstring att)))
@@ -91,149 +96,12 @@
   ); END if
   (princ)
 )
-(defun c:MSC (/
+(defun DT:autoMSC (ent_name p_ins /
               oldlayer oldosmode oldcmdecho oldattdia oldattreq
               ID CL
               IL0 IL1 IL2 IL3 IL4 txt_IL0 txt_IL1 txt_IL2 txt_IL3 txt_IL4
-              p_ins p_ins2
-              last_ent VL_last_ent ent ent_name VL_ent_name
-              vis_sta
-              )
-  ; SET - Error handling function
-  (defun *error* ( msg )
-    (if (not (member msg '("Function cancelled" "quit / exit abort")))
-      (princ (strcat "\nError: " msg))
-    )
-    ; RESTORE PREVIOUS SETTINGS
-    (setvar "clayer" oldlayer)
-    (setvar "osmode" oldosmode)
-    (setvar "cmdecho" oldcmdecho)
-    (setvar "attdia" oldattdia)
-    (setvar "attreq" oldattreq)
-    (princ)
-  )
-
-  ; SAVE CURRENT SETTINGS - Current layer, OSMODE and CMDECHO
-  (setq
-    oldlayer (getvar "clayer")
-    oldosmode (getvar "osmode")
-    oldcmdecho (getvar "cmdecho")
-    oldattdia (getvar "attdia")
-    oldattreq (getvar "attreq")
-  )
-
-  ; SET INITIAL SETTINGS
-  (setvar "osmode" 0)
-  (setvar "cmdecho" 0)
-  (setvar "attdia" 0)
-  (setvar "attreq" 1)
-
-  ; INPUT - Seleccionar el manhole
-	(get_manhole_att "\nSelect a manhole:")  ; Extraigo los atributos a las correspondientes variables (ver funcion mas arriba)
-
-  ; OPERATION - Activar referencias
-  (setvar "osmode" 1)
-
-  ; INPUT - Seleccionar el punto de inserción del bloque
-  (setq p_ins (getpoint "\nSelect point to insert schedule: ") )
-
-  ; OPERATION - Desactivar referencias
-  (setvar "osmode" 0)
-
-  ; OPERATION - Asignar al IL de salida (IL0) el menor de los IL disponible diferente de 0
-    ; procesar valores igual a cero para que sean descomunales
-    (if (= IL1 0) (setq IL1 9999.999))
-    (if (= IL2 0) (setq IL2 9999.999))
-    (if (= IL3 0) (setq IL3 9999.999))
-    (if (= IL4 0) (setq IL4 9999.999))
-    ; buscar el mínimo y asignarlo a IL0
-    (setq IL0 (min IL1 IL2 IL3 IL4) )
-    ; devolver  alos valores descomunales el valor 0
-    (if (= IL1 9999.999) (setq IL1 0.0))
-    (if (= IL2 9999.999) (setq IL2 0.0))
-    (if (= IL3 9999.999) (setq IL3 0.0))
-    (if (= IL4 9999.999) (setq IL4 0.0))
-    ;convertir IL0 a string (modo Engineering (2) con 3 decimales)
-    (setq txt_IL0 (LM:rtos IL0 2 3))
-    (princ "\nIL1 = ")(princ IL1)
-    (princ "\nIL2 = ")(princ IL2)
-    (princ "\nIL3 = ")(princ IL3)
-    (princ "\nIL4 = ")(princ IL4)
-    (princ "\nIL0 = ")(princ IL0)
-
-    ; OPERATION - Create and/or change current layer to insert block
-    (princ "\nLooking for e-manhole-schedule layer...")
-    (if (/= (tblsearch "LAYER" "e-manhole-schedule") nil)
-      (progn
-        (princ " found.")
-        (command "._layer" "S" "e-manhole-schedule" "C" "7" "" nil)
-      ) ; END progn true
-      (progn
-        (princ " not found.")
-        ; Create "e-manhole-schedule" layer
-        (command "._-layer" "N" "e-manhole-schedule" "S" "e-manhole-schedule" "C" "7" "" nil)
-        (princ "\n\"e-manhole-schedule\" layer created.")
-      ) ; END progn false
-    ) ; END if
-
-  (princ "\n")(princ "p_ins = ")(princ p_ins)
-  (princ "\n")(princ "ID = ")(princ ID)
-  (princ "\n")(princ "CL = ")(princ CL)
-  (princ "\n")(princ "txt_IL1 = ")(princ txt_IL1)
-  (princ "\n")(princ "txt_IL2 = ")(princ txt_IL2)
-  (princ "\n")(princ "txt_IL3 = ")(princ txt_IL3)
-  (princ "\n")(princ "txt_IL4 = ")(princ txt_IL4)
-  (princ "\n")(princ "txt_IL0 = ")(princ txt_IL0)
-  (princ "\n")(princ "txt_E_coord = ")(princ txt_E_coord)
-  (princ "\n")(princ "txt_N_coord = ")(princ txt_N_coord)
-  ; OPERATION - Insertar el bloque
-  (command "._insert" "ManScheduleBody" p_ins "1" "1" "0" ID CL "" "" "" txt_IL1 txt_IL2 txt_IL3 txt_IL4 txt_IL0 "" "" "" "" "" "" "" "" "" "" txt_E_coord txt_N_coord)
-
-  ; OPERATION - Sincronizar ambos estados de visibilidad
-    ; seleccionar ultimo objeto creado
-    (setq last_ent (entlast))
-    ; traducir su nombre VLA
-    (setq VL_last_ent (vlax-ename->vla-object last_ent))
-    ; cambiar el estado de visibilidad
-    (LM:SetVisibilityState VL_last_ent vis_sta)
-
-  ; OPERATION - Insert ManDetail block
-  (setq
-    p_ins2 (polar p_ins   0 121.5)
-    p_ins2 (polar p_ins2 (* -0.5 pi) 8.25)
-  )
-  (command "._insert" "ManDetail" p_ins2 "1" "1" "0")
-
-  ; OPERATION - Sync ManDetail block visibility state
-  (setq
-    last_ent (entlast)                            ; select last object's name
-    VL_last_ent (vlax-ename->vla-object last_ent) ; get last object's VL name
-  )
-  (LM:SetVisibilityState VL_last_ent vis_sta)     ; change ManDetail block visibility state
-
-  ; RESTORE PREVIOUS SETTINGS
-  (setvar "clayer" oldlayer)
-  (setvar "osmode" oldosmode)
-  (setvar "cmdecho" oldcmdecho)
-  (setvar "attdia" oldattdia)
-  (setvar "attreq" oldattreq)
-
-  ; End without double messages
-  (princ)
-
-  ; v0.1 - 2016.04.09 - Code tidy up and translation
-  ;                   - Change and reset ATTDIA and ATTREQ system variables
-  ; v0.0 - 2016.02.23
-  ; Author: David Torralba
-  ; Last revision: 2016.04.09
-)
-;(DT:autoMSC (entsel) (getpoint))
-(defun DT:autoMSC (ent_name pt /
-              oldlayer oldosmode oldcmdecho oldattdia oldattreq
-              ID CL
-              IL0 IL1 IL2 IL3 IL4 txt_IL0 txt_IL1 txt_IL2 txt_IL3 txt_IL4
-              p_ins p_ins2
-              last_ent VL_last_ent VL_ent_name
+              p_ins2
+              VL_ent_name
               vis_sta
               )
   ; SET - Error handling function
@@ -290,7 +158,6 @@
             txt_IL3 (get_block_att VL_ent_name "IL3") IL3 (atof txt_IL3) txt_IL3 (LM:rtos IL3 2 3)
             txt_IL4 (get_block_att VL_ent_name "IL4") IL4 (atof txt_IL4) txt_IL4 (LM:rtos IL4 2 3)
       )
-      (princ "\nIL correctly extracted.")
     ); END progn true
     (princ "\nThis object is not a manhole.")         ; False. No se puede aplicar el método
   ); END if
@@ -300,68 +167,45 @@
   ; OPERATION - Activar referencias
   (setvar "osmode" 1)
 
-  ; INPUT - Seleccionar el punto de inserción del bloque
-  (setq p_ins pt)
+  ; INPUT - Select block insertion point
+  ;(setq p_ins pt)
 
-  ; OPERATION - Desactivar referencias
+  ; OPERATION - Unable references
   (setvar "osmode" 0)
 
-  ; OPERATION - Asignar al IL de salida (IL0) el menor de los IL disponible diferente de 0
-    ; procesar valores igual a cero para que sean descomunales
+  ; OPERATION - Asign the lowest IL (but no zero) to the out IL (IL0)
+    ; change zero IL values to huge values
     (if (= IL1 0) (setq IL1 9999.999))
     (if (= IL2 0) (setq IL2 9999.999))
     (if (= IL3 0) (setq IL3 9999.999))
     (if (= IL4 0) (setq IL4 9999.999))
-    ; buscar el mínimo y asignarlo a IL0
+    ; look for the lowest IL and asign it to IL0
     (setq IL0 (min IL1 IL2 IL3 IL4) )
-    ; devolver  alos valores descomunales el valor 0
+    ; return huge IL values to zero IL values
     (if (= IL1 9999.999) (setq IL1 0.0))
     (if (= IL2 9999.999) (setq IL2 0.0))
     (if (= IL3 9999.999) (setq IL3 0.0))
     (if (= IL4 9999.999) (setq IL4 0.0))
-    ;convertir IL0 a string (modo Engineering (2) con 3 decimales)
+    ; convert IL0 to a string
     (setq txt_IL0 (LM:rtos IL0 2 3))
-    (princ "\nIL1 = ")(princ IL1)
-    (princ "\nIL2 = ")(princ IL2)
-    (princ "\nIL3 = ")(princ IL3)
-    (princ "\nIL4 = ")(princ IL4)
-    (princ "\nIL0 = ")(princ IL0)
 
     ; OPERATION - Create and/or change current layer to insert block
-    (princ "\nLooking for e-manhole-schedule layer...")
     (if (/= (tblsearch "LAYER" "e-manhole-schedule") nil)
+      (command "._layer" "S" "e-manhole-schedule" "C" "7" "" nil)
       (progn
-        (princ " found.")
-        (command "._layer" "S" "e-manhole-schedule" "C" "7" "" nil)
-      ) ; END progn true
-      (progn
-        (princ " not found.")
+        (princ "\nLooking for e-manhole-schedule layer not found.")
         ; Create "e-manhole-schedule" layer
         (command "._-layer" "N" "e-manhole-schedule" "S" "e-manhole-schedule" "C" "7" "" nil)
         (princ "\n\"e-manhole-schedule\" layer created.")
       ) ; END progn false
     ) ; END if
 
-  (princ "\n")(princ "p_ins = ")(princ p_ins)
-  (princ "\n")(princ "ID = ")(princ ID)
-  (princ "\n")(princ "CL = ")(princ CL)
-  (princ "\n")(princ "txt_IL1 = ")(princ txt_IL1)
-  (princ "\n")(princ "txt_IL2 = ")(princ txt_IL2)
-  (princ "\n")(princ "txt_IL3 = ")(princ txt_IL3)
-  (princ "\n")(princ "txt_IL4 = ")(princ txt_IL4)
-  (princ "\n")(princ "txt_IL0 = ")(princ txt_IL0)
-  (princ "\n")(princ "txt_E_coord = ")(princ txt_E_coord)
-  (princ "\n")(princ "txt_N_coord = ")(princ txt_N_coord)
+  (princ (strcat "\nManhole " ID " found at X=" (LM:rtos (car p_ins) 2 3) ", Y=" (LM:rtos (cadr p_ins) 2 3) ))
   ; OPERATION - Insertar el bloque
   (command "._insert" "ManScheduleBody" p_ins "1" "1" "0" ID CL "" "" "" txt_IL1 txt_IL2 txt_IL3 txt_IL4 txt_IL0 "" "" "" "" "" "" "" "" "" "" txt_E_coord txt_N_coord)
 
-  ; OPERATION - Sincronizar ambos estados de visibilidad
-    ; seleccionar ultimo objeto creado
-    (setq last_ent (entlast))
-    ; traducir su nombre VLA
-    (setq VL_last_ent (vlax-ename->vla-object last_ent))
-    ; cambiar el estado de visibilidad
-    (LM:SetVisibilityState VL_last_ent vis_sta)
+  ; OPERATION - Synchronize both visibility states
+  (LM:SetVisibilityState (vlax-ename->vla-object (entlast)) vis_sta)
 
   ; OPERATION - Insert ManDetail block
   (setq
@@ -371,11 +215,7 @@
   (command "._insert" "ManDetail" p_ins2 "1" "1" "0")
 
   ; OPERATION - Sync ManDetail block visibility state
-  (setq
-    last_ent (entlast)                            ; select last object's name
-    VL_last_ent (vlax-ename->vla-object last_ent) ; get last object's VL name
-  )
-  (LM:SetVisibilityState VL_last_ent vis_sta)     ; change ManDetail block visibility state
+  (LM:SetVisibilityState (vlax-ename->vla-object (entlast)) vis_sta)
 
   ; RESTORE PREVIOUS SETTINGS
   (setvar "clayer" oldlayer)
@@ -387,41 +227,37 @@
   ; End without double messages
   (princ)
 
+  ; v0.2 - 2016.06.27 - Message prompt tidy up
+  ;                   - Code tidy up and translation
+  ;                   - Update input parametes update
   ; v0.1 - 2016.04.09 - Code tidy up and translation
   ;                   - Change and reset ATTDIA and ATTREQ system variables
   ; v0.0 - 2016.02.23
   ; Author: David Torralba
   ; Last revision: 2016.04.09
 )
-(defun c:autoMSC(
+(defun c:MSC(
 							/
-							ss
+							ans ss
               storm_ID_list storm_data_list sorted_storm_ID_list sorted_storm_data_list
-              foul_ID_list foul_data_list sorted_foul_ID_list sorted_foul_data_list
+              foul_ID_list  foul_data_list  sorted_foul_ID_list  sorted_foul_data_list
               pS0 pF0 pS pF
 							VL_ent_name
+              position ent
 							)
-	(setq
-		ss (ssget "x" '(
-										(-4 . "<AND")
-											( 0 . "INSERT")
-											(-4 . "<OR")
-												( 8 . "e-afd")
-                        ( 8 . "e-afd-PH1")
-                        ( 8 . "e-afd-PH2")
-                        ( 8 . "e-afd-PH3")
-                        ( 8 . "e-afd-PH4")
-                        ( 8 . "e-asd")
-                        ( 8 . "e-asd-PH1")
-                        ( 8 . "e-asd-PH2")
-                        ( 8 . "e-asd-PH3")
-                        ( 8 . "e-asd-PH4")
-                        ( 8 . "e-gully")
-											(-4 . "OR>")
-										(-4 . "AND>")
-									 )
-			 )
-		storm_ID_list (list "")
+  ; INPUT - Ask user if he wants to select manholes manually or select all manholes in the drawing
+  (initget "All Manually")
+  (setq ans (getkword "\nChoose selection mode [All/Manually] <All>: "))
+
+  ; OPERATION - Select manholes according to previous step
+  (if (not ans)
+    (setq ss (ssget "x" '((0 . "INSERT"))))
+    (setq ss (ssget '((0 . "INSERT"))))
+  )
+
+  ;OPERATION - Prepare initial variables and conditions
+  (setq
+    storm_ID_list (list "")
 		foul_ID_list (list "")
 		storm_data_list (list "")
 		foul_data_list (list "")
@@ -430,37 +266,32 @@
 		pS (polar pS0 (* pi -0.5) 7.8128656)
 		pF (polar pF0 (* pi -0.5) 7.8128656)
 	)
-	; OPERATION - Insert Manhole Schedule Header blocks
+
+  ; OPERATION - Insert Manhole Schedule Header blocks
 	(command "._insert" "ManScheduleHeader" pS0 "1" "1" "0")
 	(command "._insert" "ManScheduleHeader" pF0 "1" "1" "0")
 
 	; OPERATION - Run though all existing manhole blocks
 	(foreach e (ssnamex ss)
-		(setq
-			VL_ent_name (vlax-ename->vla-object (cadr e))
-		)
-		(cond
-			( (and
-					(= "e-asd" (vla-get-layer VL_ent_name))
-					(= "SW-Manhole" (LM:effectivename VL_ent_name))
-				);END and
-				(setq
-					storm_ID_list (append storm_ID_list (list (get_ID VL_ent_name) ))
-					storm_data_list (append storm_data_list (list (list (get_ID VL_ent_name) (cadr e) )))
-				)
-			);END cond storm
-
-			(	(and
-					(= "e-afd" (vla-get-layer VL_ent_name))
-					(= "FW-Manhole" (LM:effectivename VL_ent_name))
-				);END and
-				(setq
-					foul_ID_list (append foul_ID_list (list (get_ID VL_ent_name) ))
-					foul_data_list (append foul_data_list (list (list (get_ID VL_ent_name) (cadr e)) ))
-				)
-			);END cond foul
-
-		);END cond
+    (if (/= (car e) -1)
+      (progn
+        (setq VL_ent_name (vlax-ename->vla-object (cadr e)))
+        (cond
+    			( (= "SW-Manhole" (LM:effectivename VL_ent_name))
+    				(setq
+    					storm_ID_list (append storm_ID_list (list (get_ID VL_ent_name) ))
+    					storm_data_list (append storm_data_list (list (list (get_ID VL_ent_name) (cadr e) )))
+    				)
+    			);END cond storm
+    			(	(= "FW-Manhole" (LM:effectivename VL_ent_name))
+    				(setq
+    					foul_ID_list (append foul_ID_list (list (get_ID VL_ent_name) ))
+    					foul_data_list (append foul_data_list (list (list (get_ID VL_ent_name) (cadr e)) ))
+    				)
+    			);END cond foul
+    		);END cond
+      );END progn
+    );END if
 	);END foreach
 
 	; OPERATION - Short lists by ID
@@ -494,10 +325,13 @@
 	);END foreach
 
 	(princ)
+  ; v0.2 - 2016.06.27 - Layers filter removed to selec blocks in any layer
+  ;                   - Message prompt tidy up
+  ;                   - Update local variables
   ; v0.1 - 2016.05.03 - More layers added to filter
   ; v0.0 - 2016.04.10 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.05.03
+  ; Last revision: 2016.06.27
 )
 (defun c:MSCS (
                 /
