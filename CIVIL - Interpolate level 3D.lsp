@@ -1,6 +1,6 @@
 (defun c:int3d (/
                 *error*
-
+                oldosmode oldcmdecho oldclayer
                 )
   (defun *error* ( msg )
     (if (not (member msg '("Function cancelled" "quit / exit abort")))
@@ -19,6 +19,13 @@
     (setvar "cmdecho" oldcmdecho)
     (setvar "clayer" oldclayer)
     (princ)
+  )
+
+  ; SAVE SETTINGS
+  (setq
+    oldosmode (getvar "osmode")
+    oldcmdecho (getvar "cmdecho")
+    oldclayer (getvar "clayer")
   )
 
   ; OPERATION - Check if function library is loaded. If not, exit.
@@ -150,7 +157,8 @@
   (setvar "cmdecho" oldcmdecho)
   (setvar "clayer" oldclayer)
   (princ)
-  ; v0.0 - 2015.04.06 - First issue
+  ; v0.1 - 2015.05.25 - System variable management bug fixed.
+  ; v0.0 - 2015.04.06 - First issue.
   ; Author: David Torralba
-  ; Last revision: 2016.04.06
+  ; Last revision: 2016.05.25
 )
