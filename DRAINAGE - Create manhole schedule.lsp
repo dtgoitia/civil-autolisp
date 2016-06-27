@@ -251,7 +251,7 @@
   (setq ans (getkword "\nChoose selection mode [All/Manually] <All>: "))
 
   ; OPERATION - Select manholes according to previous step
-  (if (not ans)
+  (if (or (not ans) (= ans "All"))
     (setq ss (ssget "x" '((0 . "INSERT"))))
     (setq ss (ssget '((0 . "INSERT"))))
   )
@@ -274,7 +274,7 @@
 
 	; OPERATION - Run though all existing manhole blocks
 	(foreach e (ssnamex ss)
-    (if (> (car e) 0)
+    (if (>= (car e) 0)
       (progn
         (setq VL_ent_name (vlax-ename->vla-object (cadr e)))
         (cond
