@@ -1,5 +1,0 @@
-(defun c:reset_ktf-sf-cacc ()
-  (setq sf nil)
-  (princ "\n\nPreviously set KTF scale removed from memory.")
-  (princ)
-)
