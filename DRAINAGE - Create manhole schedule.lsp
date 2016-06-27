@@ -274,7 +274,7 @@
 
 	; OPERATION - Run though all existing manhole blocks
 	(foreach e (ssnamex ss)
-    (if (/= (car e) -1)
+    (if (> (car e) 0)
       (progn
         (setq VL_ent_name (vlax-ename->vla-object (cadr e)))
         (cond
@@ -329,6 +329,7 @@
   ; v0.2 - 2016.06.27 - Layer filters removed to select blocks in any layer
   ;                   - Message prompt tidy up
   ;                   - Update local variables
+  ;                   - foreach filter condition update
   ; v0.1 - 2016.05.03 - More layers added to filter
   ; v0.0 - 2016.04.10 - First issue
   ; Author: David Torralba
