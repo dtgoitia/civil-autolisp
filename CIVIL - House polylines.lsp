@@ -33,8 +33,12 @@
   ; INFINITE LOOP
   (while (not kkkkk)
     ; INPUT - Ask to select buildings
+    (setq ss nil)
     (princ "\nSelect one or more building perimeter polylines (press Esc to exit): ")
-    (setq ss (ssget '((-4 . "<or") (0 . "LWPOLYLINE") (0 . "POLYLINE") (-4 . "or>"))))
+    (while (not ss)
+      (setq ss (ssget '((-4 . "<or") (0 . "LWPOLYLINE") (0 . "POLYLINE") (-4 . "or>"))))
+      (if (not ss) (princ "Nothing selected. Select one or more building perimeter polylines (press Esc to exit): "))
+    )
     ; INPUT - Ask building type: house or garage
     (initget "House Garage")
     (setq ans (getkword "\nSelect building type [House/Garage] <House>: "))
