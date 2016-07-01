@@ -737,3 +737,14 @@
     ); END progn
    );END if
 )
+(defun DT:AVE_vertex ( VL_ent_name / c i x y p )
+  ; Returns a point with the average coordinates of all the polyline vertexes
+  (setq c (vlax-get VL_ent_name "Coordinates") i 0 x 0 y 0 )
+  (repeat (/ (length c) 2)
+    (setq
+      x (+ x (nth i c)) i (+ i 1)
+      y (+ y (nth i c)) i (+ i 1)
+    )
+  );END repeat
+  (setq p (list (/ x (/ (length c) 2)) (/ y (/ (length c) 2)) 0.0 ) )
+)
