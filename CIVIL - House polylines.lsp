@@ -55,44 +55,25 @@
     (vla-put-layer (vla-copy VL_ent_name) "e-work-block")
 
     ; INPUT - Ask building type: house or garage
-    (princ "\nSelect building type [House/Garage] <House>: ")
-    (setq btype nil)
-    (while (not btype)
-      (setq btype (grread))
-      (cond
-        ( (or
-            (and (= (car btype) 2) (= (chr (cadr btype)) "H"))
-            (and (= (car btype) 2) (= (chr (cadr btype)) "h"))
-            (and (= (car btype) 2) (= (cadr btype) 13)); enter
-            (and (= (car btype) 2) (= (cadr btype) 32)); space
-            (= (car btype) 3); left clic (point)
-            (= (car btype) 11); right clic on weird computers
-            (= (car btype) 25); right clic
-          ); END or
-          (princ "House")
+    (initget "House Garage")
+    (setq ans (getkword "\nSelect building type [House/Garage] <House>: "))
+    (if (not ans) (setq ans "House"))
+    (cond
+      ((= ans "House")
           (setq
             btype "House"
             thickness 0.302
             dist (* 0.5 thickness)
           )
-        ); END cond H, ENTER, SPACE, clic
-        ( (or
-            (and (= (car btype) 2) (= (chr (cadr btype)) "G"))
-            (and (= (car btype) 2) (= (chr (cadr btype)) "g"))
-          ); END or
-          (princ "Garage")
-          (setq
-            btype "Garage"
-            thickness 0.215
-            dist (* 0.5 thickness)
-          )
-        ); END cond G
-        (t
-          (setq btype nil)
-          (princ "\nSelect building type [House/Garage] <House>: ")
-        ); END else: /=H, /=G, /=ENTER, /=SPACE, /=left clic, /=right clic
-      );END cond
-    );END while
+      )
+      ((= ans "Garage")
+        (setq
+          btype "Garage"
+          thickness 0.215
+          dist (* 0.5 thickness)
+        )
+      )
+    );END cond
 
     ; INPUT - Ask to clic inside the building for oncoming offset
     (command "._offset" "E" "Y" dist (entlast) (getpoint "\nSelect a point inside the building: ") "")
@@ -102,7 +83,7 @@
 
     ; OPERATION - Reset entity so start loop again
     (setq ent_name nil)
-    
+
     ; RESET OFFSET command to original settings
     (command "._offset" "E" "N" "" "")
   ); END while
@@ -115,6 +96,7 @@
   ; End without double messages
   (princ)
 
+  ; v0.6 - 2016.07.01 - grread function substituted for initget and getkwrod functions as users requested
   ; v0.5 - 2016.06.02 - Add 11 code for grread.
   ;                   - Reset OFFSET command to original settings.
   ; v0.4 - 2016.05.17 - Rewrite many functions to VLA to speed up the routine.
@@ -125,5 +107,5 @@
   ; v0.1 - 2016.03.22 - Translate into English.
   ; v0.0 - 2016.03.14 - First issue.
   ; Author: David Torralba
-  ; Last revision: 2016.06.02
+  ; Last revision: 2016.07.01
 )
