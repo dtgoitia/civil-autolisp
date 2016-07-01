@@ -161,11 +161,13 @@
   (princ)
 )
 (defun c:revision_box_D() (DT:ib "Revision-box" "MJA-Title" "" ""))
-; V0.1 - 2016.04.07 - Dynamic functins added
+; v0.1 - 2016.04.07 - Dynamic functins added
 ; v0.0 - 2016.03.29 - First issue
 ; Author: David Torralba
 ; Last revision: 2016.04.07
 ;
+; North-Arrow insertion function
+(defun c:NorthArrow() (DT:IB "North-Arrow" "MJA-Title" "" ""))
 ;---------------------------------------------------------------------------
 ;
 ; DRAINAGE INSERTION AND DRAWING FUNCTIONS
