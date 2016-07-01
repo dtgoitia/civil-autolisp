@@ -76,7 +76,8 @@
     );END cond
 
     ; INPUT - Ask to clic inside the building for oncoming offset
-    (command "._offset" "E" "Y" dist (entlast) (getpoint "\nSelect a point inside the building: ") "")
+    ;(command "._offset" "E" "Y" dist (entlast) (getpoint "\nSelect a point inside the building: ") "")
+    (command "._offset" "E" "Y" dist (entlast) (DT:AVE_vertex VL_ent_name) "")
 
     ; OPERATION - Change polyline thickness
     (vlax-put-property (vlax-ename->vla-object (entlast)) 'ConstantWidth thickness)
@@ -97,6 +98,7 @@
   (princ)
 
   ; v0.6 - 2016.07.01 - grread function substituted for initget and getkwrod functions as users requested
+  ;                   - Use of DT:AVE_vertex function to find automatically polyline center and offset without asking to click a point inside the building
   ; v0.5 - 2016.06.02 - Add 11 code for grread.
   ;                   - Reset OFFSET command to original settings.
   ; v0.4 - 2016.05.17 - Rewrite many functions to VLA to speed up the routine.
