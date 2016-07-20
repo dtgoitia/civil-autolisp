@@ -330,7 +330,6 @@
   ); END if
   (princ)
 )
-(tblsearch "layer" layer_name)
 (defun c:cnla (/ obj)
   ; Find nested object real layer and copy its name to clipboard
   (if (setq obj (car (nentsel "\nSelect object to know layer: ")))
