@@ -214,6 +214,11 @@
 (defun c:rwp2()   (DT:IB "Private-Round-Storm-Manhole"    "e-psd" ""  4)) ; Private round storm manhole
 (defun c:reye()   (DT:IB "Rodding-Eye"                    "e-psd" "P" 129)) ; Rodding eye
 (defun c:krwp()   (c:rwp) (c:psd))
+
+; Private blocks - Manhole label
+(defun c:manlab()    (DT:IB "manhole-label" "" "" ""))
+
+; v0.1 - 2016.07.21 - "manhole-label" added.
 ; v0.0 - 2016.03.30 - First issue
 ; Author: David Torralba
 ; Last revision: 2016.03.30
