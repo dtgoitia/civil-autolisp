@@ -251,4 +251,48 @@
 (defun c:street_light1() (DT:IB "Street-Light-1" "e-street-lights" "P" 0)); Street light 1 insertion function
 (defun c:street_light2() (DT:IB "Street-Light-2" "e-street-lights" "P" 0)); Street light 2 insertion function
 (defun c:street_light3() (DT:IB "Street-Light-3" "e-street-lights" "P" 0)); Street light 3 insertion function
+;
+;
+;---------------------------------------------------------------------------
+;
+; GATE DYNAMIC BLOCKS INSERTION FUNCTION
+;
+;---------------------------------------------------------------------------
+(defun c:gate( / p1 p2 dist ang)
+  ; INPUT - Ask user gate location
+  (while (not p1)
+    (initget 1 "eXit")
+    (if (= "eXit" (setq p1 (getpoint "\nSelect gate first point <eXit>: ")))
+      (progn
+        (princ "\nRoutine aborted by user.\n")
+        (exit)
+      );END progn
+      (princ "point correctly introduced.")
+    );END if
+  ); END while
+  (while (not p2)
+    (initget 1 "eXit")
+    (if (= "eXit" (setq p2 (getpoint "\nSelect gate second point <eXit>: ")))
+      (progn
+        (princ "\nRoutine aborted by user.\n")
+        (exit)
+      );END progn
+      (princ "point correctly introduced.")
+    );END if
+  ); END while
+  (setq
+    dist (distance p1 p2)
+    ang (angle p1 p2)
+  )
+  ; OPERATION - Correct angle
+  (if (= 1 (getvar "angdir")) (setq ang (- 0 ang)))
+  (setq ang (/ (* 180 ang) pi))
+
+  ; OPERATION - Insert block
+  (command "-insert" "access-gate" p1 1 1 ang)
+
+  ; OPERATION - Edit block property
+  (LM:setdynpropvalue (vlax-ename->vla-object (entlast)) "DistA" dist)
+  (princ)
+)
 (princ)
