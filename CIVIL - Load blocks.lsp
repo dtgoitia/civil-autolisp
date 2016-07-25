@@ -205,13 +205,13 @@
 (defun c:psd() (DT:drainage_line "e-psd" 132))
 
 ; Private blocks - Foul
-(defun c:svp()    (DT:IB "e-pfd-svp"                      "e-pfd" ""  4)) ; SVP
-(defun c:svp300() (DT:IB "Private-Square300-Foul-Manhole" "e-pfd" ""  4)) ; Private Square 300 Foul Manhole
-(defun c:svp475() (DT:IB "Private-Square475-Foul-Manhole" "e-pfd" ""  4)) ; Private Square 475 Foul Manhole
+(defun c:svp()    (DT:IB "e-pfd-svp"                      "e-pfd" ""  5)) ; SVP
+(defun c:svp300() (DT:IB "Private-Square300-Foul-Manhole" "e-pfd" ""  5)) ; Private Square 300 Foul Manhole
+(defun c:svp475() (DT:IB "Private-Square475-Foul-Manhole" "e-pfd" ""  5)) ; Private Square 475 Foul Manhole
 
 ; Private blocks - Storm
-(defun c:rwp()    (DT:IB "e-psd-rwp"                      "e-psd" ""  4)) ; RWP
-(defun c:rwp2()   (DT:IB "Private-Round-Storm-Manhole"    "e-psd" ""  4)) ; Private round storm manhole
+(defun c:rwp()    (DT:IB "e-psd-rwp"                      "e-psd" ""  5)) ; RWP
+(defun c:rwp2()   (DT:IB "Private-Round-Storm-Manhole"    "e-psd" ""  5)) ; Private round storm manhole
 (defun c:reye()   (DT:IB "Rodding-Eye"                    "e-psd" "P" 129)) ; Rodding eye
 (defun c:krwp()   (c:rwp) (c:psd))
 
