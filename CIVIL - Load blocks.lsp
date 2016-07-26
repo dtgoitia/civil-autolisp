@@ -255,10 +255,10 @@
 ;
 ;---------------------------------------------------------------------------
 ;
-; GATE DYNAMIC BLOCKS INSERTION FUNCTION
+; EXTERNAL WORKS BLOCKS INSERTION FUNCTION
 ;
 ;---------------------------------------------------------------------------
-(defun c:gate( / p1 p2 dist ang)
+(defun c:gate( / p1 p2 dist ang); Gate dynami block insertion function
   ; INPUT - Ask user gate location
   (while (not p1)
     (initget 1 "eXit")
@@ -295,4 +295,5 @@
   (LM:setdynpropvalue (vlax-ename->vla-object (entlast)) "DistA" dist)
   (princ)
 )
+(defun c:streetplate() (DT:IB "street-plate" "e-postal" "" 0))
 (princ)
