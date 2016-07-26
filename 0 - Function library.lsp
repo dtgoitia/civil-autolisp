@@ -421,6 +421,17 @@
           (vlax-invoke obj 'getattributes)
         )
 )
+(defun LM:vl-getattributevalue ( blk tag )
+;; Get Attribute Value  -  Lee Mac
+;; Returns the value held by the specified tag within the supplied block, if present.
+;; blk - [vla] VLA Block Reference Object
+;; tag - [str] Attribute TagString
+;; Returns: [str] Attribute value, else nil if tag is not found.
+    (setq tag (strcase tag))
+    (vl-some '(lambda ( att ) (if (= tag (strcase (vla-get-tagstring att))) (vla-get-textstring att)))
+        (vlax-invoke blk 'getattributes)
+    )
+)
 (defun LM:grsnap:snapfunction ( )
   ;; Object Snap for grread: Snap Function  -  Lee Mac
   ;; Returns: [fun] A function requiring two arguments:
