@@ -16,27 +16,35 @@
 (defun DT:ib (blk lay rot osm
             /
             *error*
-            oldosmode oldclayer oldcmdecho oldattdia oldattreq
+            oldosmode oldclayer oldattdia oldattreq
             )
   ; (DT:ib "block_name" "layer_name" "rotation_value" "osmode_value")
   ; layer_name = ""       --> use current layer
   ; rotation_value = ""   --> rotation = 90 degree
   ; rotation_value = "P"  --> let user select rotation
   ; osmode_value = ""     --> use current osmode
+
+  ; ERROR HANDLING FUNCTION
   (defun *error* ( msg )
     (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
-    (setvar "clayer" oldclayer)
-    (setvar "cmdecho" oldcmdecho)
     (setvar "attdia" oldattdia)
     (setvar "attreq" oldattreq)
+    (if (/= oldclayer nil) (setvar "clayer" oldclayer))
+    (if (/= oldosmode nil) (setvar "osmode" oldosmode))
     (princ)
   )
+
+  ; SAVE OLD SYSTEM VARIABLES
   (setq
     oldattdia (getvar "attdia")
     oldattreq (getvar "attreq")
   )
+
+  ; MODIFY SETTINGS
   (setvar "attdia" 0)
   (setvar "attreq" 0)
+
+  ; MAIN ROUTINE
   (cond
     ((= blk nil)
       (princ "\nNo block defined.")
@@ -70,9 +78,13 @@
       (if (/= osm "") (setvar "osmode" oldosmode))
     );END cond - block OK
   );END cond
+
+  ; RESTORE PREVIOUS SETTINGS
   (setvar "attdia" oldattdia)
   (setvar "attreq" oldattreq)
   (princ)
+
+  ; v0.2 - 2016.07.28 - Update system variable management
   ; v0.1 - 2016.04.15 - ATTDIA and ATTREQ system variable control added
   ; v0.0 - 2016.04.14 - First issue
   ; Author: David Torralba
@@ -295,5 +307,9 @@
   (LM:setdynpropvalue (vlax-ename->vla-object (entlast)) "DistA" dist)
   (princ)
 )
-(defun c:streetplate() (DT:IB "street-plate" "e-postal" "" 0))
+
+(defun c:mpart1() (DT:IB "Part-m-primary-0"    "e-part-m"  "P" 1))  ; Part-m-primary-0 block insertion function
+(defun c:mpart2() (DT:IB "Part-m-primary-180"  "e-part-m"  "P" 1))  ; Part-m-primary-0 block insertion function
+(defun c:mpart3() (DT:IB "Part-m-secondary"    "e-part-m"  "P" 1))  ; Part-m-primary-0 block insertion function
+(defun c:streetplate() (DT:IB "street-plate"  "e-postal"  ""  0))  ; Street plate block insertion function
 (princ)
