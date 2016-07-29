@@ -389,6 +389,9 @@
   ; Light version for DIP
   (setq
     z0 (DT:clic_or_type_level)
+	)
+	(princ (strcat "\nz1 = " (LM:rtos z0 2 3) "m"))
+	(setq
     dist (distance (getpoint "\npoint 1: ") (setq p1 (getpoint "\npoint 2: ")))
     grad (getreal "\nGradient= 1/")
   )
@@ -642,4 +645,45 @@
   ; v0.0 - 2016.06.23
   ; Author: David Torralba
   ; Last revision: 2016.06.23
+)
+(defun c:ltp ( / ss i p1 p2)
+	; Convert lines to polylines (lwpolylines)
+  (princ "\nSelect lines to convert to polylines:")
+  (setq
+    ss (ssget '(( 0 . "LINE")) )
+    i 0
+  )
+  (foreach a (ssnamex ss)
+    (if (= 'ename (type (cadr a)))
+      (progn
+        (setq
+          p1 (vlax-curve-getStartPoint (vlax-ename->vla-object (cadr a)))
+          p2 (vlax-curve-getEndPoint (vlax-ename->vla-object (cadr a)))
+        )
+        (entmake
+          (append
+            (list
+              '(000 . "LWPOLYLINE")         ; Object type
+              '(100 . "AcDbEntity")
+              '(100 . "AcDbPolyline")
+              '(070 . 0)                  ; Open(0)/Closed(1)
+              '(090 . 2)                  ; Number of vertices
+            );END list
+            (list
+              (cons 10 p1)
+              (cons 10 p2)
+            );END list
+          );END append
+        );END entmake
+        (vla-delete (vlax-ename->vla-object (cadr a)))
+        (setq i (+ i 1) )
+      ); END progn
+    );END if1
+  );END foreach
+  (princ (strcat "\n" (itoa i) " lines converted to polylines."))
+  (princ)
+
+  ; v0.0 - 2016.07.29 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.07.29
 )
