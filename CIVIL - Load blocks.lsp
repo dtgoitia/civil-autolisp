@@ -217,23 +217,25 @@
 (defun c:psd() (DT:drainage_line "e-psd" 132))
 
 ; Private blocks - Foul
-(defun c:svp()    (DT:IB "e-pfd-svp"                      "e-pfd" ""  5)) ; SVP
-(defun c:svp300() (DT:IB "Private-Square300-Foul-Manhole" "e-pfd" ""  5)) ; Private Square 300 Foul Manhole
-(defun c:svp475() (DT:IB "Private-Square475-Foul-Manhole" "e-pfd" ""  5)) ; Private Square 475 Foul Manhole
+(defun c:svp()    (DT:IB "e-pfd-svp"                        "e-pfd"                   ""  5))   ; SVP
+(defun c:svp300() (DT:IB "Private-Square300-Foul-Manhole"   "e-pfd"                   ""  5))   ; Private Square 300 Foul Manhole
+(defun c:svp475() (DT:IB "Private-Square475-Foul-Manhopl le"   "e-pfd"                   ""  5))   ; Private Square 475 Foul Manhole
+(defun c:svp600() (DT:IB "Adoptable-Round600-Foul-Manhole"  "e-pfd-adoptable-lateral" ""  5))   ; Private Square 600 Foul Manhole
 
 ; Private blocks - Storm
-(defun c:rwp()    (DT:IB "e-psd-rwp"                      "e-psd" ""  5)) ; RWP
-(defun c:rwp2()   (DT:IB "Private-Round-Storm-Manhole"    "e-psd" ""  5)) ; Private round storm manhole
-(defun c:reye()   (DT:IB "Rodding-Eye"                    "e-psd" "P" 129)) ; Rodding eye
+(defun c:rwp()    (DT:IB "e-psd-rwp"                        "e-psd"                   ""  5))   ; RWP
+(defun c:rwp2()   (DT:IB "Private-Round-Storm-Manhole"      "e-psd"                   ""  5))   ; Private round storm manhole
+(defun c:reye()   (DT:IB "Rodding-Eye"                      "e-psd"                   "P" 129)) ; Rodding eye
 (defun c:krwp()   (c:rwp) (c:psd))
 
 ; Private blocks - Manhole label
 (defun c:manlab()    (DT:IB "manhole-label" "" "" ""))
 
+; v0.2 - 2016.07.29 - "Adoptable Round 600 Foul Manhole" added.
 ; v0.1 - 2016.07.21 - "manhole-label" added.
 ; v0.0 - 2016.03.30 - First issue
 ; Author: David Torralba
-; Last revision: 2016.03.30
+; Last revision: 2016.07.29
 ;
 ;
 ;---------------------------------------------------------------------------
@@ -308,8 +310,8 @@
   (princ)
 )
 
-(defun c:mpart1() (DT:IB "Part-m-primary-0"    "e-part-m"  "P" 1))  ; Part-m-primary-0 block insertion function
-(defun c:mpart2() (DT:IB "Part-m-primary-180"  "e-part-m"  "P" 1))  ; Part-m-primary-0 block insertion function
-(defun c:mpart3() (DT:IB "Part-m-secondary"    "e-part-m"  "P" 1))  ; Part-m-primary-0 block insertion function
+(defun c:mpart1() (DT:IB "Part-m-primary-0"    "e-part-m"  "P" 514))  ; Part-m-primary-0 block insertion function
+(defun c:mpart2() (DT:IB "Part-m-primary-180"  "e-part-m"  "P" 514))  ; Part-m-primary-0 block insertion function
+(defun c:mpart3() (DT:IB "Part-m-secondary"    "e-part-m"  "P" 514))  ; Part-m-primary-0 block insertion function
 (defun c:streetplate() (DT:IB "street-plate"  "e-postal"  ""  0))  ; Street plate block insertion function
 (princ)
