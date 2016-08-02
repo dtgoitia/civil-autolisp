@@ -310,8 +310,7 @@
   (princ)
 )
 
-(defun c:mpart1() (DT:IB "Part-m-primary-0"    "e-part-m"  "P" 514))  ; Part-m-primary-0 block insertion function
-(defun c:mpart2() (DT:IB "Part-m-primary-180"  "e-part-m"  "P" 514))  ; Part-m-primary-0 block insertion function
-(defun c:mpart3() (DT:IB "Part-m-secondary"    "e-part-m"  "P" 514))  ; Part-m-primary-0 block insertion function
-(defun c:streetplate() (DT:IB "street-plate"  "e-postal"  ""  0))  ; Street plate block insertion function
+(defun c:mpart1() (DT:IB "Part-m-primary"     "e-part-m"  "P" 514)) ; Part-m-primary-0 block insertion function
+(defun c:mpart3() (DT:IB "Part-m-secondary"   "e-part-m"  "P" 514)) ; Part-m-secondary-0 block insertion function
+(defun c:streetplate() (DT:IB "street-plate"  "e-postal"  ""  0))   ; Street plate block insertion function
 (princ)
