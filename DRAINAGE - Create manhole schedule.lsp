@@ -233,7 +233,7 @@
   ;                   - Local variables update
   ; v0.1 - 2016.04.09 - Code tidy up and translation
   ;                   - Change and reset ATTDIA and ATTREQ system variables
-  ; v0.0 - 2016.02.23
+  ; v0.0 - 2016.02.23 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.04.09
 )
@@ -509,7 +509,74 @@
   ;                   - Feature added: cuando vas a elegir el manhole, si seleccionas otra cosa que no es un bloque de manhole te avisa y te deja volver a intentarlo
   ; v0.2 - 2016.03.08 - Feature added: coordinates extraction and plot
   ; v0.1 - 2016.03.01 - DTS<1m and DTS>6m added (out of rank conditions)
-  ; v0.0 - 2016.02.24
+  ; v0.0 - 2016.02.24 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.04.10
+)
+(defun c:UpdateManholeSchedule (/
+                        ;*error*
+                        mnhsch mnh
+                        mnhsch_ID mnh_ID
+                        ans
+                        )
+  ; AUXILIARY FUNCTIONS
+  (defun DT:UpdateManholeCoordinate (mnhsch mnh)
+    (LM:vl-setattributevalue (vlax-ename->vla-object mnhsch) "E" (LM:rtos (car  (cdr (assoc 10 (entget mnh)))) 2 3))
+    (LM:vl-setattributevalue (vlax-ename->vla-object mnhsch) "N" (LM:rtos (cadr (cdr (assoc 10 (entget mnh)))) 2 3))
+  )
+
+  ; INPUT - Ask user to select Manhole Schedule block to update
+  (while (not mnhsch)
+    (if (not (setq mnhsch (car (entsel "\nSelect Manhole Schedule block to update coordinates: "))))
+      (princ "missed. Try again.")
+      (princ "object selected.\n")
+    ); END if
+  );END while
+
+  ; OPERATION - Check selected object is a Manhole Schedule block
+  (if (/= "ManScheduleBody" (LM:effectivename (vlax-ename->vla-object mnhsch)))
+    (progn
+      (alert "Selected object is not a Manhole Schedule Block.")
+      (exit)
+    );END progn
+  );END if
+
+  ; INPUT - Ask user to select Manhole Block to update to
+  (while (not mnh)
+    (if (not (setq mnh (car (entsel "\nSelect Manhole block to update coordinates to: "))))
+      (princ "missed. Try again.")
+      (princ "object selected.\n")
+    ); END if
+  );END while
+
+  ; OPERATION - Check selected object is a Manhole block
+  (if (/= "W-Manhole" (substr (LM:effectivename (vlax-ename->vla-object mnh)) 2 9))
+    (progn
+      (alert "Selected object is not a Manhole Block.")
+      (exit)
+    );END progn
+  );END if
+
+  ; OPERATION - Get block "ID" attributes
+  (setq
+    mnhsch_ID (LM:vl-getattributevalue (vlax-ename->vla-object mnhsch) "ID")
+    mnh_ID (LM:vl-getattributevalue (vlax-ename->vla-object mnh) "ID")
+  )
+
+  ; OPERATION - Update block attributes
+  (if (= mnh_ID mnhsch_ID)
+    (if (= nil (DT:UpdateManholeCoordinate mnhsch mnh)) (princ "\nManhole Schedule not updated.") (princ "\nManhole Schedule succesfully updated.") )
+    (progn
+      (initget "Yes No")
+      (setq ans (getkword "\nSelected object don't match.\nAre you sure you want to update the manhole schedule? <Yes/No>: [No]"))
+      (if (not ans) (setq ans "No"))
+      (if (= ans "Yes")
+        (if (= nil (DT:UpdateManholeCoordinate mnhsch mnh)) (princ "\nManhole Schedule not updated.") (princ "\nManhole Schedule succesfully updated.") )
+      );END if
+    );END progn
+  );END if
+  (princ)
+  ; v0.0 - 2016.08.05 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.08.05
 )
