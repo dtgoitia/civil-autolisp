@@ -278,6 +278,28 @@
         result
     )
 )
+(defun LM:getdynprops ( blk )
+;; Get Dynamic Block Properties  -  Lee Mac
+;; Returns an association list of Dynamic Block properties & values.
+;; blk - [vla] VLA Dynamic Block Reference object
+;; Returns: [lst] Association list of ((<prop> . <value>) ... )
+    (mapcar '(lambda ( x ) (cons (vla-get-propertyname x) (vlax-get x 'value)))
+        (vlax-invoke blk 'getdynamicblockproperties)
+    )
+)
+(defun LM:setdynprops ( blk lst / itm )
+;; Set Dynamic Block Properties  -  Lee Mac
+;; Modifies values of Dynamic Block properties using a supplied association list.
+;; blk - [vla] VLA Dynamic Block Reference object
+;; lst - [lst] Association list of ((<Property> . <Value>) ... )
+;; Returns: nil
+    (setq lst (mapcar '(lambda ( x ) (cons (strcase (car x)) (cdr x))) lst))
+    (foreach x (vlax-invoke blk 'getdynamicblockproperties)
+        (if (setq itm (assoc (strcase (vla-get-propertyname x)) lst))
+            (vla-put-value x (vlax-make-variant (cdr itm) (vlax-variant-type (vla-get-value x))))
+        )
+    )
+)
 (defun LM:getvisibilitystate ( blk )
 ;; Get Dynamic Block Visibility State  -  Lee Mac
 ;; Returns the value of the Visibility Parameter of a Dynamic Block (if present)
@@ -758,4 +780,60 @@
     )
   );END repeat
   (setq p (list (/ x (/ (length c) 2)) (/ y (/ (length c) 2)) 0.0 ) )
+)
+(defun c:beo () (DT:beo (car (entsel)) ) )
+(defun DT:beo ( ent_name / VL_ent_name ans)
+  ; Block Explode Option
+  ; This routine allows to enable/disable explodable option at selected block.
+
+  ; OPERATION - Mark selected object
+  (sssetfirst nil (ssadd ent_name))
+  ;OPERATION - Check if it is a block
+  (if (= "INSERT" (cdr (assoc 0 (entget ent_name))))
+    (progn
+      ; OPERATION - Get objects VLA block name
+      (setq VL_ent_name (vla-item (vla-get-blocks (vla-get-activedocument (vlax-get-acad-object))) (cdr (assoc 2 (entget ent_name)))) )
+      ; OPERATION - Check if EXPLODABLE property exists at the selected object
+      (if (vlax-property-available-p VL_ent_name 'explodable)
+        (cond
+          ((= (vlax-get-property VL_ent_name 'explodable) :vlax-true)
+            (princ "\nSelected block's explode option is ON.")
+            (initget "Yes No")
+            (setq ans (getkword " Do you want to disable it? [Yes/No] <No>:"))
+            (if (not ans) (setq ans "No"))
+            (if (= ans "Yes")
+              (progn
+                (vlax-put-property VL_ent_name 'explodable :vlax-false)
+                ; OPERATION - Check if it's been changed correctly
+                (if (= (vlax-get-property VL_ent_name 'explodable) :vlax-true) (princ "\nSorry, it was impossible to disable explode option.") )
+              );END progn
+            );END if ans
+          );END subcond
+          ((= (vlax-get-property VL_ent_name 'explodable) :vlax-false)
+            (princ "\nSelected block's explode option is OFF.")
+            (initget "Yes No")
+            (setq ans (getkword " Do you want to enable it? [Yes/No] <No>:"))
+            (if (not ans) (setq ans "No"))
+            (if (= ans "Yes")
+              (progn
+                (vlax-put-property VL_ent_name 'explodable :vlax-true)
+                ; OPERATION - Check if it's been changed correctly
+                (if (= (vlax-get-property VL_ent_name 'explodable) :vlax-false) (princ "\nSorry, it was impossible to disable explode option.") )
+              );END progn
+            );END if ans
+          );END subcond
+        );END cond
+      );END if property available
+    );END progn
+    (alert "This is not a block!")
+  );END if
+
+  ; OPERATION - Ungrip selected object
+  (sssetfirst nil nil)
+
+  (princ)
+
+  ; v0.0 - 2016.08.11 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.08.11
 )
