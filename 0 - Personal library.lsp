@@ -687,3 +687,84 @@
   ; Author: David Torralba
   ; Last revision: 2016.07.29
 )
+(defun c:ewl()
+  ; create E-Work Layers
+  (command "-layer" "m" "e-work-services" "c" "9" "" "")
+  (command "-layer" "m" "e-work-hse" "c" "9" "" "")
+  (princ)
+	; v0.0 - 2016.08.12 - First issue
+	; Author: David Torralba
+	; Last revision: 2016.08.12
+)
+(defun c:ewb( / *error* p_ins p0 ss blk_name)
+  ; creates E-Work Block
+
+  ; SAVE CURRENT SETTINGS
+  (setq
+    oldclayer   (getvar "clayer")
+    oldosmode   (getvar "osmode")
+    oldcmdecho  (getvar "cmdecho")
+    olderror    *error*
+  )
+
+  ; CHANGE SETTINGS
+  (setvar "cmdecho" 1)
+  (setvar "osmode" 1)
+
+  ; AUXILIARY FUNCTION
+  (defun *error* (errmes)
+    ;(princ (strcat "\nProcess halted by the following error: \n    >>> " ERRMES))
+    ; NOTE: to turn error message on, erase the semicolon in the line above.
+
+    (setvar "cmdecho" OLDCE)
+    (setq *error* OLDERR)
+    (setvar "OSMODE" oldSnap)  ; Reset "OSMODE" to previous value.
+    (setvar "cmdecho" OLDCE)   ; Reset "cmdecho" to previous value.
+    (setvar "CLAYER" oldCla)   ; Reset "CLAYER" to previous value.
+    (prin1)
+  )
+
+  ; OPERATION - Check if "e-work-hse" layer exists, and if not, create it
+  (if (not (tblsearch "layer" "e-work-hse")) (command "-layer" "m" "e-work-hse" "c" "9" "" ""))
+
+  ; OPERATION - Check if "e-work-hse" layer is current, and if not, put as current layer
+  (if (/= "e-work-hse" (getvar "clayer")) (setvar "clayer" "e-work-hse") )
+
+  ; INPUT - Ask user to specify block basepoint
+  (setq p_ins (getpoint "\nSpecify block base point: "))
+
+  ; OPERATION - Switch off the snap mode
+  (setvar "OSMODE" 0)
+
+  ; INPUT - Ask user to specify the point in where to copy scaled block
+  (setq p0 (getpoint "\nSpecify point to copy and scale the block: "))
+
+  ; OPERATION - Draw a circle of 2m around the selected point to label the block
+  (command "_.circle" p0 "2000")
+
+  ; INPUT - Ask user to select the objects to copy, scale and block
+  (setq ss (ssget))
+
+  ; INPUT - Ask user to introduce block name
+  (setq blk_name (getstring 't "\nSpecify block name (press Enter to finish): "))
+
+  ;; OPERATION - Copy, scale and block the objects.
+  (command "_.move" ss "" p_ins p_ins)
+  (command "_.scale" ss "" p_ins "0.001")
+  (command "_.-Block" blk_name p_ins ss "")
+  (command "_.-insert" blk_name p0 "" "" "")
+  (command "_.-insert" blk_name p_ins 1000 1000 "")
+  (command "_.explode" "L")
+
+  ; RESTORE MODIFIED SYSTEM VARIABLES
+  (setvar "cmdecho" oldcmdecho)
+  (setvar "clayer" oldclayer)
+  (setvar "osmode" oldosmode)
+  (setq *error* olderror)
+
+  (princ)
+
+	; v0.0 - 2016.08.12 - First issue
+	; Author: David Torralba
+	; Last revision: 2016.08.12
+)
