@@ -768,3 +768,21 @@
 	; Author: David Torralba
 	; Last revision: 2016.08.12
 )
+(defun c:CS(
+            /
+            s s_str
+            )
+; Choose Scale
+  (if (setq s (getint "\nSelect scale: 1:"))
+    (progn
+      (setq s_str (strcat (LM:rtos (/ 1000 (float s) ) 2 2) "xp") )
+      (command "zoom" "S" s_str)
+      (princ (strcat "\nViewport scale updated to 1:" (itoa s) "."))
+    );END progn
+    (princ "\nNothing introduced. Routine finished with no viewport scale change.")
+  );END if
+  (princ)
+	; v0.0 - 2016.08.15 - First issue
+	; Author: David Torralba
+	; Last revision: 2016.08.15
+)
