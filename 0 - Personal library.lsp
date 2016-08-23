@@ -786,3 +786,50 @@
 	; Author: David Torralba
 	; Last revision: 2016.08.15
 )
+(defun c:erase_bylayer (
+    /
+    oldclayer oldcmdecho olderror
+    ent_name ss
+    lay
+    )
+  ; SAVE SETTINGS
+  (setq
+    oldclayer (getvar "clayer")
+    oldcmdecho (getvar "cmdecho")
+    olderror *error*
+  )
+
+  ; CHANGE SETTINGS
+  (setvar "cmdecho" 1)
+
+  (defun *error* (errmes)
+    ; RESTORE SETTINGS
+    (setvar "cmdecho" oldcmdecho)
+    (setvar "clayer" oldclayer)
+    (setq *error* olderror)
+    (princ)
+  )
+
+  ; INPUT - Ask the user to select an object to identify the layer to clean
+  (setq
+    ent_name (car (entsel "\nSelect an object in the layer to clean: "))
+    lay (cdr (assoc 8 (entget ent_name)))
+  )
+  (princ (strcat "\nLayer where to erase objetcs: " lay))
+
+  ; INPUT - Ask user to select objects to clean
+  (setq ss (ssget (list (cons 8 lay))) )
+
+  ; OPERATION - Erase the objects
+  (command "_.erase" ss "")
+
+  ; RESTORE SETTINGS
+  (setvar "cmdecho" oldcmdecho)
+  (setvar "clayer" oldclayer)
+  (setq *error* olderror)
+  (princ)
+
+  ; v0.0 - 2016.08.23 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.08.23
+)
