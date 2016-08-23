@@ -128,13 +128,16 @@
   ; Author: David Torralba
   ; Last revision: 2016.03.29
 )
-(defun title_block_D_insert ( blk /  )
+(defun title_block_D_insert ( blk /  oldosmode)
+  (setq oldosmode (getvar "osmode"))
+  (setvar "osmode" 0)
   (command "-insert" blk "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) "" "" "" "" "PRELIMINARY")
   (while (> (getvar "CMDACTIVE") 0) (command ""))
   (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
   (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
+  (setvar "osmode" oldosmode)
   (princ)
-  ; v0.0 - 2016.08.23 - Layer and color management added
+  ; v0.1 - 2016.08.23 - OSMODE, layer and color management added
   ; v0.0 - 2016.03.29 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.08.23
