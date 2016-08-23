@@ -131,10 +131,13 @@
 (defun title_block_D_insert ( blk /  )
   (command "-insert" blk "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) "" "" "" "" "PRELIMINARY")
   (while (> (getvar "CMDACTIVE") 0) (command ""))
+  (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
+  (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
   (princ)
+  ; v0.0 - 2016.08.23 - Layer and color management added
   ; v0.0 - 2016.03.29 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.03.29
+  ; Last revision: 2016.08.23
 )
 (defun c:MJA_A0_landscape () (title_block_insert "A0-Landscape") (princ))
 (defun c:MJA_A1_landscape () (title_block_insert "A1-Landscape") (princ))
