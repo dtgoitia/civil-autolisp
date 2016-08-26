@@ -13,6 +13,14 @@
 
   ; Press ENTER, Esc, Space or Right-Clic-Button to exit the routine.
 
+  ; CHECK - UCS world
+  (if (= 0 (getvar "WORLDUCS"))
+    (progn
+      (alert "------------------  WARNING!  ------------------\n\nCurrent UCS is not \"World\".\n\nPlease, set UCS \"World\" and try again.")
+      (exit)
+    );END progn
+  );END if
+
   ; SAVE SETTINGS
   (setq
     olderror *error*
@@ -138,6 +146,7 @@
   (setq *error* olderror)
   (princ)
 
+  ; v0.1 - 2016.08.26 - Add UCS checking
   ; v0.0 - 2016.08.26 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.08.26
