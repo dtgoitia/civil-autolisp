@@ -833,3 +833,22 @@
   ; Author: David Torralba
   ; Last revision: 2016.08.23
 )
+(defun c:ug() (command "_ungroup") )
+(defun c:gg()
+  ; Selection Group ON/OFF shortcut
+  (cond
+    ((= 0 (getvar "pickstyle"))
+      (setvar "pickstyle" 1)
+      (princ "\nGroup selection ON.")
+    );END subcond
+    ((= 1 (getvar "pickstyle"))
+      (setvar "pickstyle" 0)
+      (princ "\nGroup selection OFF.")
+    );END subcond
+  );END cond
+  (princ)
+
+  ; v0.0 - 2016.08.30 - First issue
+  ; Author: David Torralban
+  ; Last revision: 2016.08.30
+);END defun
