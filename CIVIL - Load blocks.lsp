@@ -245,7 +245,7 @@
 ; Private blocks - Foul
 (defun c:svp()    (DT:IB "e-pfd-svp"                        "e-pfd"                   ""  5))   ; SVP
 (defun c:svp300() (DT:IB "Private-Square300-Foul-Manhole"   "e-pfd"                   ""  5))   ; Private Square 300 Foul Manhole
-(defun c:svp475() (DT:IB "Private-Square475-Foul-Manhopl le"   "e-pfd"                   ""  5))   ; Private Square 475 Foul Manhole
+(defun c:svp475() (DT:IB "Private-Square475-Foul-Manhole"   "e-pfd"                   ""  5))   ; Private Square 475 Foul Manhole
 (defun c:svp600() (DT:IB "Adoptable-Round600-Foul-Manhole"  "e-pfd-adoptable-lateral" ""  5))   ; Private Square 600 Foul Manhole
 
 ; Private blocks - Storm
