@@ -24,16 +24,27 @@
                 )
   ; SET - Error handling function
   (defun *error* ( msg )
-    (if (not (member msg '("Function cancelled" "quit / exit abort")))
-      (princ (strcat "\nError: " msg))
-    )
+    (cond
+      ((or
+        (= msg "Function cancelled")
+        (= msg "quit / exit abort")
+       );END or
+        (princ (strcat "\nFunction stopped by user."))
+      );END subcond
+      (t
+        (princ (strcar "\nERROR:" msg))
+      );END subcond
+    );END cond
+
     ; Restore previous settings
     (setvar "osmode" oldosmode)
     (setvar "cmdecho" oldcmdecho)
+    (setq *error* olderror)
     (princ)
   )
 
   (setq
+    olderror *error*
     oldcmdecho (getvar "cmdecho")
     oldosmode (getvar "osmode")
   )
@@ -56,28 +67,40 @@
   );END if
 
   (setq olay (getvar "clayer"))
-  (setq cs (getpoint "\nSelect point to Co-ordinate :"))
 
-  (if (/= cs nil)
-    (progn
-      (setq
-        E (strcat "E " (LM:rtos (nth 0 CS) 2 cacc))
-        N (strcat "N " (LM:rtos (nth 1 CS) 2 cacc))
-      )
-      (setvar "osmode" 0)
-      (command "_insert" "XY_advanced" CS sf "" "" E N)
-    );END progn
-  );END if
+  (while (not cs)
+    ; INPUT - Ask user to pick a point
+    (setq cs (getpoint "\nSelect point to Co-ordinate (press Esc to exit):"))
+
+    (cond
+      ((/= cs nil) ; OPERATION - If point introduced...
+        (setq
+          E (strcat "E " (LM:rtos (nth 0 cs) 2 cacc))
+          N (strcat "N " (LM:rtos (nth 1 cs) 2 cacc))
+        )
+        (setvar "osmode" 0)
+        (command "_insert" "XY_advanced" cs sf "" "" E N)
+        (setvar "osmode" oldosmode)
+        (setq cs nil)
+      );END subcond
+      ((= cs nil) ; OPERATION - If no point introduced...
+        (exit)
+      );END subcond
+    );END cond
+  );END while
 
   (setvar "osmode" oldosmode)
   (setvar "cmdecho" oldcmdecho)
+  (setq *error* olderror)
   (princ)
 
+  ; v0.1 - 2016.09.02 - Add loop to pick points.
+  ;                   - *error* function update.
   ; v0.1 - 2016.06.27 - Code tidy up.
   ;                   - Merge code into a single file.
   ; v0.0 - 2016.03.03 - First issue.
   ; Author: David Torralba
-  ; Last revision: 2016.03.03
+  ; Last revision: 2016.09.02
 )
 (defun c:COORDP (
                 /
