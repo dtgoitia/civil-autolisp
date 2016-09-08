@@ -287,10 +287,10 @@
 ; STREET LIGHT BLOCKS INSERTION FUNCTIONS
 ;
 ;---------------------------------------------------------------------------
-(defun c:street_light()  (DT:IB "Street-Light"   "e-street-lights" "P" 0)); Street light insertion function
-(defun c:street_light1() (DT:IB "Street-Light-1" "e-street-lights" "P" 0)); Street light 1 insertion function
-(defun c:street_light2() (DT:IB "Street-Light-2" "e-street-lights" "P" 0)); Street light 2 insertion function
-(defun c:street_light3() (DT:IB "Street-Light-3" "e-street-lights" "P" 0)); Street light 3 insertion function
+(defun c:street_light()  (DT:IB "Street-Light"   "e-street-lights" "P" 677)); Street light insertion function
+(defun c:street_light1() (DT:IB "Street-Light-1" "e-street-lights" "P" 677)); Street light 1 insertion function
+(defun c:street_light2() (DT:IB "Street-Light-2" "e-street-lights" "P" 677)); Street light 2 insertion function
+(defun c:street_light3() (DT:IB "Street-Light-3" "e-street-lights" "P" 677)); Street light 3 insertion function
 ;
 ;
 ;---------------------------------------------------------------------------
