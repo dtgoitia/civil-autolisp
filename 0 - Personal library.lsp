@@ -852,3 +852,23 @@
   ; Author: David Torralban
   ; Last revision: 2016.08.30
 );END defun
+(defun c:lb( / ans)
+  ; Layout Background
+  (initget "White Black")
+  (setq ans (getkword "\nWhat background color would you like [White/Black]? ") )
+  (cond
+    ((= ans "White" )
+      (vla-put-GraphicsWinLayoutBackgrndColor (vla-get-display (vla-get-preferences (vlax-get-acad-object))) 16777215)
+    );END subcond
+    ((= ans "Black" )
+      (vla-put-GraphicsWinLayoutBackgrndColor (vla-get-display (vla-get-preferences (vlax-get-acad-object))) 0)
+    );END subcond
+    (t
+      (princ "\nWrong answer :P")
+    )
+  );END cond
+  (princ)
+  ; v0.0 - 2016.09.08 - First issue
+  ; Author: David Torralban
+  ; Last revision: 2016.09.08
+);END defun
