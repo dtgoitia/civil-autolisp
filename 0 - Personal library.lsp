@@ -6,10 +6,14 @@
 (defun c:n() (command "NCOPY" pause "" "" ""))
 (defun c:xu() (command "-xref" "u" "*")(alert "Xref Unload finished!")(princ)) ;Unload all Xrefs
 (defun c:xr() (command "-xref" "r" "*")(alert "Xref Reload finished!")(princ)) ;Reload all Xrefs
-(defun c:nt( / pt)
-  (setq pt (getpoint "\nSelect text insertion point: ") )
+(defun c:nt( / pt oldtextstyle)
+  (setq
+    oldtextstyle (getvar "textstyle")
+    pt (getpoint "\nSelect text insertion point: ")
+  )
   (command "-text" "S" "ARIAL" "J" "MC" pt 3 90 (getstring t "\nEnter text: "))
   (command "scale" "L" "" pt pause)
+  (setvar "textstyle" oldtextstyle)
   (princ)
 ); Add note
 (defun c:las() (command "layerstate")(princ))
