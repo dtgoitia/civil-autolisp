@@ -82,8 +82,10 @@
   (setq z2 (DT:clic_or_type_level))
   (princ "\nLevel B = ")(princ z2)(princ "m")
 
+
   ; OPERATION - Calculate gradient and print it
   (setq d12 (distance p1 p2))                ; Distance 1-2
+  (princ (strcat "\nDistance = " (LM:rtos d12 2 3) "m" ) )
   (if (= z1 z2)
     (princ "\nSelected points are at the same level.")
     (princ (strcat "\nGradient = 1/" (itoa (LM:Round (abs (/ d12 (- z2 z1))))) " (" (LM:rtos (abs (* 100 (/ (- z2 z1) d12))) 2 2) "%)"))
@@ -185,6 +187,7 @@
   ; End without double messages
   (princ)
 
+  ; v1.0 - 2016.09.28 - Distance added to information print at INT function
   ; v0.9 - 2016.05.20 - Inserted block scale reduced for clarity.
   ; v0.8 - 2016.05.17 - Added case and warning messages when selected reference levels are the same.
   ;                   - Gradient in percentage display added.
@@ -203,5 +206,5 @@
   ; v0.1 - 2016.03.14 - Loop added to select multiple points to interpolate.
   ; v0.0 - 2015.12.14 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.05.20
+  ; Last revision: 2016.09.28
 )
