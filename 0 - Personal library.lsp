@@ -274,10 +274,46 @@
   ; Copy any nested string into the clipboard
   (CopyToClipboard (DT:destripar_txt))
 )
-(defun DT:PK( VL_ent_name pt )
-	; Returns chainage of a polyline given polylines VLA name and any point
+(defun DT:PK( VL_ent_name pt / aux_VL_ent_name arr larr i a ch)
+	; Returns chainage of a polyline given polyline VLA entity name and any point
 	; pt doesn't need to be a point within the centerline
-  (vlax-curve-getDistAtPoint VL_ent_name (vlax-curve-getClosestPointTo VL_ent_name pt))
+  (cond
+    ((= "LWPOLYLINE" (cdr (assoc 0 (entget (vlax-vla-object->ename VL_ent_name) ))) )
+      (vlax-curve-getDistAtPoint VL_ent_name (vlax-curve-getClosestPointTo VL_ent_name pt))
+    );END subcond
+    ((= "POLYLINE" (cdr (assoc 0 (entget (vlax-vla-object->ename VL_ent_name) ))) )
+      (princ "\n3D polyline selected.\n")
+      ; OPERATION - Create an auxiliary 3D polyline
+      (setq
+        aux_VL_ent_name (vla-copy VL_ent_name)
+        ; OPERATION - Save coordinates array and convert it to a list
+        arr (vlax-variant-value (vla-get-Coordinates aux_VL_ent_name))
+        larr (vlax-safearray->list arr)
+        i 1
+      )
+
+      ; OPERATION - Set every Z value of the auxiliary 3D polyline to 0 (zero)
+      (foreach a larr
+          (if (= (* 3 (fix (/ (float i) 3))) i) (vlax-safearray-put-element arr (- i 1) 0.0))
+          (setq i (+ i 1))
+      );END foreach
+      (vlax-put-property aux_VL_ent_name 'Coordinates arr)
+
+      ; OPERATION - Find closest point and save its chainage
+      (setq ch (vlax-curve-getDistAtPoint aux_VL_ent_name (vlax-curve-getClosestPointTo aux_VL_ent_name pt)) )
+
+      ; OPERATION - Remove the auxiliary polyline (3D flat polyline)
+      (vla-delete aux_VL_ent_name)
+
+      ; OPERATION - Return saved chainage
+      (setq ch ch)
+    );END subcond
+  );END cond
+
+  ; v0.1 - 2016.09.28 - Added 3D polyline management
+  ; v0.0 - 2019.??.?? - First issue
+  ; Author: David Torralban
+  ; Last revision: 2016.09.28
 )
 (defun c:PK( / ent VL_ent_name pt ch)
   (while (not ent)
