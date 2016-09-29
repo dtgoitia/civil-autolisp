@@ -282,7 +282,6 @@
       (vlax-curve-getDistAtPoint VL_ent_name (vlax-curve-getClosestPointTo VL_ent_name pt))
     );END subcond
     ((= "POLYLINE" (cdr (assoc 0 (entget (vlax-vla-object->ename VL_ent_name) ))) )
-      (princ "\n3D polyline selected.\n")
       ; OPERATION - Create an auxiliary 3D polyline
       (setq
         aux_VL_ent_name (vla-copy VL_ent_name)
