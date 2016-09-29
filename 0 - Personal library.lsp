@@ -878,6 +878,7 @@
   ; Last revision: 2016.08.23
 )
 (defun c:ug() (command "_ungroup") )
+(defun c:ge() (command "_groupedit") )
 (defun c:gg()
   ; Selection Group ON/OFF shortcut
   (cond
