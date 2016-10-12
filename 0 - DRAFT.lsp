@@ -255,19 +255,28 @@ defun
   (princ)
 )
 (defun c:1()
-  ; Insert front door block 1 and rotate 90 degree.
+  ; Insert front door block 1, and rotate 90 degree.
   (command "-insert" "Part-m-primary-0" (setq p1 (getpoint "\nPunto 1: ")) 1 1 pause)
   (command "rotate" (entlast) "" p1 "-90")
 )
 (defun c:2()
-  ; Insert front door block 2 and rotate 90 degree.
-  (command "-insert" "Part-m-primary-180" (setq p1 (getpoint "\nPunto 1: ")) 1 1 pause)
-  (command "rotate" (entlast) "" p1 "-90")
-)
-(defun c:3()
-  ; Insert rear door block and rotate 90 degree.
+  ; Insert rear door block, and rotate 90 degree.
   (command "-insert" "Part-m-secondary" (setq p1 (getpoint "\nPunto 1: ")) 1 1 pause)
   (command "rotate" (entlast) "" p1 "-90")
+)
+(defun c:3( / p1 p1a p1b)
+  ; Insert rear door block between two points, and rotate 90 degree.
+  (setvar "osmode" 513)
+  (setq
+   p1a (getpoint "\nPoint 1a:")
+   p1b (getpoint "\nPoint 1b:")
+   p1 (polar p1a (angle p1a p1b) (* 0.5 (distance p1a p1b)) )
+  )
+  (setvar "osmode" 0)
+  ;(command "-insert" "Part-m-secondary" p1 1 1 (* (/ 180 pi) (angle p1a p1b)) )
+  (command "-insert" "Part-m-secondary" p1 1 1 (* (/ 180 pi) (+ (angle p1a p1b) (* -0.5 pi) ) -1 ) )
+  (command "rotate" (entlast) "" p1 "-90")
+  (setvar "osmode" 513)
 )
 (defun c:1()
 ; Draw kerbing polyline with 0.2 width and 150 color
