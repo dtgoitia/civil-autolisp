@@ -1,6 +1,6 @@
 # Civil AutoLISP
 
-This project contains a bunch of functions I use every day -literally- at work. Everything works around *AutoCAD*, and it is focused on civil engineering.
+This project contains a bunch of ~~functions~~ scripts I use every day -literally- at work. Everything works around *AutoCAD*, and it is focused on civil engineering.
 
 ## Getting Started
 
