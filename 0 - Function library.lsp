@@ -837,6 +837,7 @@
   ; Author: David Torralba
   ; Last revision: 2016.08.11
 )
+; ERROR HANDLING FUNCTIONS -----------------------------------------------------
 (defun get_sysvars(targets)
     ; Return variable's values
     (mapcar
@@ -851,3 +852,40 @@
         variables
     )
 ); END defun
+(defun get_environment(targets)
+  ; Store current *error* function and requested system variables
+  ; targets [list] = system variables to store, e.g.: (list "osmode" "angdir" "angbase")
+  (setq
+    old_error *error*
+    old_sysvars (get_sysvars targets)
+  )
+);END defun
+(defun restore_environment()
+  ; Store old environment
+  (set_sysvars old_sysvars)     ; Restore old system variables
+  (setq
+    *error* old_error           ; Restore old error function
+    old_error nil               ; Clear old error variable
+  )
+); END defun
+(defun set_custom_error()
+  (defun *error*(msg)
+    (princ (strcat "\n >>> ERROR: " msg))
+    (restore_environment)
+  );END defun
+);END defun
+(defun save_environment (targets)
+    ; Store environment and set custom error handler
+    (get_environment targets)
+    (set_custom_error)
+);END defun
+;| USE TEMPLATE
+(defun c:test (/ old_error old_sysvars)
+    (save_environment '("osmode" "angdir" "angbase"))
+
+    WRITE_HERE_YOUR_CODE
+
+    (restore_environment)
+);END defun
+|;
+; ------------------------------------------------------------------------------
