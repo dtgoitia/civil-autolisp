@@ -2588,7 +2588,7 @@ defun
         variables
     )
 )
-(defun unset_error_handler()
+(defun unsave_environment_handler()
 ; Create the error handler that is in theory the default
     (defun *error* (msg)
         (princ "error: ")
@@ -2596,10 +2596,10 @@ defun
         (princ)
     )
 )
-(defun set_error_handler()
+(defun save_environment_handler()
 ; Register a one time error handler
     (defun *error*(msg)
-        (unset_error_handler)
+        (unsave_environment_handler)
         (environ_local_error msg)
     )
 )
@@ -2608,11 +2608,11 @@ defun
     (setq old_vars (get_vars targets))
     (defun restore_environ()
         (set_vars old_vars)
-        (unset_error_handler)
+        (unsave_environment_handler)
     )
     (defun environ_local_error (msg)
         (restore_environ)
-        (unset_error_handler)
+        (unsave_environment_handler)
     )
 )
 (defun c:1 (/old_env old_error local_error)
@@ -2660,4 +2660,8 @@ defun
   )
   (entmod ent_list)
   (princ)
+);END defun
+(defun force_error()
+  ; Force *error* function execution
+  (itoa nil)
 );END defun
