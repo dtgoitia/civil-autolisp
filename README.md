@@ -16,8 +16,8 @@ As all the project is written for *AutoCAD*, it should work fine in any of the *
 
 There are many different ways to load a `.lsp` file:
 
-To load a `.lsp` file temporarily, drag the `.lsp` file into *AutoCAD*'s *Model Space* and select *Load Once* as shown below:
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
+To load a `.lsp` file temporarily, drag it file into *AutoCAD*'s *Model Space* and select *Load Once* as shown below:
+![alt text](https://github.com/dtgoitia/civil-autolisp/blob/master/README/load_lsp_file.gif "Load LISP file. Clic and drag")
 
 If you want *AutoCAD* to remember your choice, you can select *Always Load* and you won't be asked each time you load it.
 
