@@ -837,3 +837,17 @@
   ; Author: David Torralba
   ; Last revision: 2016.08.11
 )
+(defun get_sysvars(targets)
+    ; Return variable's values
+    (mapcar
+        '(lambda (variable) (list variable (getvar variable)))
+        targets
+    )
+); END defun
+(defun set_sysvars(variables)
+    ; Given a list of pairs of var-value, it sets them
+    (mapcar
+        '(lambda (variable) (setvar (nth 0 variable) (nth 1 variable)))
+        variables
+    )
+); END defun
