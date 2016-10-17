@@ -549,7 +549,7 @@ defun
 (defun c:6() (command "-insert" "PI_DT" pause "0.25" "0.25" "0" (getstring) "") (vla-put-layer (vlax-ename->vla-object (entlast)) "TEMP garden 3m"))
 (defun c:7() (fbi "3x2_Slab45"))
 (defun c:8() (while (not kkkk) (vla-put-textstring (vlax-ename->vla-object (car (entsel "\nSelect destiny: "))) (strcat "%%U" (LM:rtos (DT:clic_or_type_level) 2 2)))))
-(defun c:9() (vlax-put-property (vlax-ename->vla-object (car (entsel "\nSelect object to be blue: "))) 'Color 5))
+(defun c:9() (vlax-put-property (vlax-ename->vla-object (car (entsel "\nSelect object to be magenta: "))) 'Color 6))
 (defun c:0() (fbi "TEMP01"))
 (defun c:00(/ ss ) (setq ss (ssget "p")) (command "._SetByLayer" ss "" "y" "y"))
 ;(defun c:0() (vla-put-layer (vlax-ename->vla-object (car (entsel "\nSelect object to move: "))) "e-pfd-adoptable-lateral"))
