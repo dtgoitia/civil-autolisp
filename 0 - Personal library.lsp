@@ -16,6 +16,7 @@
   (setvar "textstyle" oldtextstyle)
   (princ)
 ); Add note
+(defun c:pp()(command "_publish"))
 (defun c:las() (command "layerstate")(princ))
 (defun c:RTM ()
 	; RT and move together
