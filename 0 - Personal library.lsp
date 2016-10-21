@@ -332,7 +332,7 @@
 )
 (defun DT:BlockPerpendicularToPolyline ( VL_ent_name blk / *error* VL_ent_name gr p0 p1 )
   ; Insert block perpendicular to selected polyline
-  ; Inserta blocque perpendicular a la polilinea seleccionada
+  ; Inserta bloque perpendicular a la polilinea seleccionada
 	(defun *error* ( msg )
     (if (not (member msg '("Function cancelled" "quit / exit abort")))
       (princ (strcat "\nError: " msg))
