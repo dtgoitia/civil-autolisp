@@ -242,17 +242,30 @@
 ; Private sewer - Storm
 (defun c:psd() (DT:drainage_line "e-psd" 132))
 
-; Private blocks - Foul
+; Private blocks - Foul OLD
 (defun c:svp()    (DT:IB "e-pfd-svp"                        "e-pfd"                   ""  5))   ; SVP
 (defun c:svp300() (DT:IB "Private-Square300-Foul-Manhole"   "e-pfd"                   ""  5))   ; Private Square 300 Foul Manhole
 (defun c:svp475() (DT:IB "Private-Square475-Foul-Manhole"   "e-pfd"                   ""  5))   ; Private Square 475 Foul Manhole
 (defun c:svp600() (DT:IB "Adoptable-Round600-Foul-Manhole"  "e-pfd-adoptable-lateral" ""  5))   ; Private Square 600 Foul Manhole
 
-; Private blocks - Storm
+; Private blocks - Storm OLD
 (defun c:rwp()    (DT:IB "e-psd-rwp"                        "e-psd"                   ""  5))   ; RWP
 (defun c:rwp2()   (DT:IB "Private-Round-Storm-Manhole"      "e-psd"                   ""  5))   ; Private round storm manhole
 (defun c:reye()   (DT:IB "Rodding-Eye"                      "e-psd"                   "P" 129)) ; Rodding eye
 (defun c:krwp()   (c:rwp) (c:psd))
+
+; Private blocks - Generic
+(defun c:PrivateManhole_315mm_1()  (fbi "Manhole-315-1" ))   ; Private Circular 315 Manhole - 1 inlet
+(defun c:PrivateManhole_315mm_2a() (fbi "Manhole-315-2a"))   ; Private Circular 315 Manhole - 2 inlets (A)
+(defun c:PrivateManhole_315mm_2b() (fbi "Manhole-315-2b"))   ; Private Circular 315 Manhole - 2 inlets (B)
+(defun c:PrivateManhole_315mm_3a() (fbi "Manhole-315-3a"))   ; Private Circular 315 Manhole - 3 inlets (A)
+(defun c:PrivateManhole_315mm_3b() (fbi "Manhole-315-3b"))   ; Private Circular 315 Manhole - 3 inlets (B)
+(defun c:PrivateManhole_315mm_4a() (fbi "Manhole-315-4a"))   ; Private Circular 315 Manhole - 4 inlets (A)
+(defun c:PrivateManhole_315mm_4b() (fbi "Manhole-315-4b"))   ; Private Circular 315 Manhole - 4 inlets (B)
+(defun c:PrivateManhole_450mm_1()  (fbi "Manhole-450-5" ))   ; Private Circular 450 Manhole - 1 inlet
+(defun c:PrivateManhole_450mm_3a() (fbi "Manhole-450-3a"))   ; Private Circular 450 Manhole - 3 inlets (A)
+(defun c:PrivateManhole_450mm_3b() (fbi "Manhole-450-3b"))   ; Private Circular 450 Manhole - 3 inlets (B)
+(defun c:PrivateManhole_450mm_5()  (fbi "Manhole-450-5" ))   ; Private Circular 450 Manhole - 1 inlet
 
 ; Private blocks - Manhole label
 (defun c:manlab()    (DT:IB "manhole-label" "" "" ""))
