@@ -262,7 +262,7 @@
 (defun c:PrivateManhole_315mm_3b() (fbi "Manhole-315-3b"))   ; Private Circular 315 Manhole - 3 inlets (B)
 (defun c:PrivateManhole_315mm_4a() (fbi "Manhole-315-4a"))   ; Private Circular 315 Manhole - 4 inlets (A)
 (defun c:PrivateManhole_315mm_4b() (fbi "Manhole-315-4b"))   ; Private Circular 315 Manhole - 4 inlets (B)
-(defun c:PrivateManhole_450mm_1()  (fbi "Manhole-450-5" ))   ; Private Circular 450 Manhole - 1 inlet
+(defun c:PrivateManhole_450mm_1()  (fbi "Manhole-450-1" ))   ; Private Circular 450 Manhole - 1 inlet
 (defun c:PrivateManhole_450mm_3a() (fbi "Manhole-450-3a"))   ; Private Circular 450 Manhole - 3 inlets (A)
 (defun c:PrivateManhole_450mm_3b() (fbi "Manhole-450-3b"))   ; Private Circular 450 Manhole - 3 inlets (B)
 (defun c:PrivateManhole_450mm_5()  (fbi "Manhole-450-5" ))   ; Private Circular 450 Manhole - 1 inlet
