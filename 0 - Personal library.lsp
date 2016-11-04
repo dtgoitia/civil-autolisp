@@ -918,3 +918,10 @@
   ; Author: David Torralban
   ; Last revision: 2016.09.08
 );END defun
+(defun PrintDateTime( / d)
+  (setq d (rtos (getvar "CDATE") 2 6))
+  (strcat (substr d 1 4) "." (substr d 5 2) "." (substr d 7 2) " " (substr d 10 2) ":" (substr d 12 2) ":" (substr d 14 2))
+)
+(defun ReloadXref (file)
+  (command "-xref" "R" file)
+)
