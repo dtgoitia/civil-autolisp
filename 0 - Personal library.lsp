@@ -375,6 +375,20 @@
   ); END if
   (princ)
 )
+(defun DT:nla (ent_name / lay)
+  ; Returns nested object's layer name
+  (if (/= ent_name nil)
+    (progn
+      (mapcar
+        '(lambda (x)
+            (if (= (car x) 8) (setq lay (cdr x)) )
+          ); END lambda
+        (entget obj '("*"))
+      );END mapcar)
+      (setq lay lay)
+    );END progn
+  );END if
+);END defun
 (defun c:cnla (/ obj)
   ; Find nested object real layer and copy its name to clipboard
   (if (setq obj (car (nentsel "\nSelect object to know layer: ")))
