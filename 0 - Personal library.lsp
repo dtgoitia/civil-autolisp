@@ -368,13 +368,6 @@
   ; Author: David Torralba
   ; Last revision: 2016.05.11
 )
-(defun c:nla (/ obj)
-  ; Find nested object real layer
-  (if (setq obj (car (nentsel "\nSelect object to know layer: ")))
-    (mapcar '(lambda (x) (if (= (car x) 8) (progn (princ "\nDXF Layer = ")(princ (cdr x))(princ " (colour ")(princ (cdr (assoc 62 (tblsearch "layer" (cdr x)))) )(princ ")") )) ) (entget obj '("*")))
-  ); END if
-  (princ)
-)
 (defun DT:nla (ent_name / lay)
   ; Returns nested object's layer name
   (if (/= ent_name nil)
@@ -383,14 +376,28 @@
         '(lambda (x)
             (if (= (car x) 8) (setq lay (cdr x)) )
           ); END lambda
-        (entget obj '("*"))
+        (entget ent_name '("*"))
       );END mapcar)
       (setq lay lay)
     );END progn
   );END if
 );END defun
+(defun c:nla( / ent_name lay)
+  ; Print nested object real layer
+  (if (setq ent_name (car (nentsel "\nSelect object to know layer: ")))
+    (progn
+      (setq lay (DT:nla ent_name))
+      (princ
+        (strcat "\nDXF Layer = " lay " (colour "
+        (itoa (cdr (assoc 62 (tblsearch "layer" lay))))
+        ")" )
+      )
+    ); END progn
+  ); END if
+  (princ)
+);END defun
 (defun c:cnla (/ obj)
-  ; Find nested object real layer and copy its name to clipboard
+  ; Print nested object real layer and copy its name to clipboard
   (if (setq obj (car (nentsel "\nSelect object to know layer: ")))
     (mapcar '(lambda (x) (if (= (car x) 8) (progn (princ "\nDXF Layer = ")(princ (cdr x))(princ " (colour ")(princ (cdr (assoc 62 (tblsearch "layer" (cdr x)))) )(princ ")")(CopyToClipboard (cdr x)) )) ) (entget obj '("*")))
   ); END if
