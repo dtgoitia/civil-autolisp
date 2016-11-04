@@ -388,21 +388,31 @@
     (progn
       (setq lay (DT:nla ent_name))
       (princ
-        (strcat "\nDXF Layer = " lay " (colour "
-        (itoa (cdr (assoc 62 (tblsearch "layer" lay))))
-        ")" )
+        (strcat
+          "\nDXF Layer = " lay
+          " (colour " (itoa (cdr (assoc 62 (tblsearch "layer" lay)))) ")"
+        )
       )
     ); END progn
   ); END if
   (princ)
 );END defun
-(defun c:cnla (/ obj)
+(defun c:cnla( / ent_name lay)
   ; Print nested object real layer and copy its name to clipboard
-  (if (setq obj (car (nentsel "\nSelect object to know layer: ")))
-    (mapcar '(lambda (x) (if (= (car x) 8) (progn (princ "\nDXF Layer = ")(princ (cdr x))(princ " (colour ")(princ (cdr (assoc 62 (tblsearch "layer" (cdr x)))) )(princ ")")(CopyToClipboard (cdr x)) )) ) (entget obj '("*")))
+  (if (setq ent_name (car (nentsel "\nSelect object to know layer: ")))
+    (progn
+      (setq lay (DT:nla ent_name))
+      (princ
+        (strcat
+          "\nDXF Layer = " lay
+          " (colour " (itoa (cdr (assoc 62 (tblsearch "layer" lay)))) ")"
+        )
+      )
+      (CopyToClipboard lay)
+    ); END progn
   ); END if
   (princ)
-)
+);END defun
 (defun c:3DPT ( / *error* VL_ent_name arr narr larr nz z oldosmode)
 	; EDIT 3D polyline vertex levels
   (vl-load-com)
