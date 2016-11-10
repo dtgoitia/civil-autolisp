@@ -856,6 +856,7 @@
     );END progn
     (princ "\nNo he podido descargar el archivo.")
   );END if
+  (CleanCommandLine)
   (princ)
 )
 (defun LoadWithoutSecureload ( filePath OnFailMessage / old_secureload URL)
