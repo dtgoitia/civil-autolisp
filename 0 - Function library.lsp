@@ -837,6 +837,88 @@
   ; Author: David Torralba
   ; Last revision: 2016.08.11
 )
+(defun c:egurre( / filePath)
+  ; Descarga mi libreria personal
+  (setq filePath "C:/0%20-%20Personal%20library.lsp")
+  (if (= T (download "https://raw.githubusercontent.com/dtgoitia/civil-autolisp/master/0%20-%20Personal%20library.lsp" "C:/"))
+    (progn
+      ; Comprobar que el archivo es correcto
+      (if (= T (CheckPersonalLibraryFirstLine filePath))
+        (progn
+          (LoadWithoutSecureload filePath "\nEl archivo se ha descargado, contiene lo esperado, pero como no lo puedo cargar se ha eliminado.")
+          (vl-file-delete filePath)                                 ; Borra el archivo
+        );END progn
+        (progn
+          (princ "\nEl archivo descargado no contiene lo esperado y se ha eliminado. Comprueba la URL de GitHub.")
+          (vl-file-delete filePath) ; Borra el archivo
+        );END progn
+      );END if
+    );END progn
+    (princ "\nNo he podido descargar el archivo.")
+  );END if
+  (princ)
+)
+(defun LoadWithoutSecureload ( filePath OnFailMessage / old_secureload URL)
+  (setq old_secureload (getvar "secureload")) ; get current SECURELOAD
+  (setvar "secureload" 0)                     ; set SECURELOAD to 0
+  (load filePath OnFailMessage)               ; load file
+  (setvar "secureload" old_secureload)        ; reset SECURELOAD
+  (princ)
+)
+(defun CheckPersonalLibraryFirstLine( filePath / fileID content )
+  (setq fileID (open (findfile filePath) "R") )
+
+  (if (= (read-line fileID) "; DO NOT REMOVE THIS LINE. It's a checking.")
+    (progn
+      (close fileID)
+      T
+    );END progn
+    (progn
+      (close fileID)
+      nil
+    );END progn
+  );END if
+)
+(defun download (lien rep / cp ok tmp util)
+  ; Credit to *BigBill
+  ; Source: http://forums.autodesk.com/t5/visual-lisp-autolisp-and-general/code-to-get-remote-file-and-place-in-a-specific-directory-i-e/td-p/2657085
+  ; Source last check date: 2016.11.10
+  ; Message in French updated to English.
+  (setq util (vla-get-Utility (vla-get-ActiveDocument (vlax-get-acad-object) ) ) )
+  (if (eq (vla-isurl util lien) :vlax-true)
+    (if (vl-catch-all-error-p (vl-catch-all-apply 'vla-GetRemoteFile (list util lien 'tmp :vlax-true)))
+      (princ "\nDownload error.")
+      (progn
+        (setq cp (strcat rep (vl-filename-base lien) (vl-filename-extension lien)))
+        (if (findfile cp)
+          (vl-file-delete cp)
+        );END if
+        (if (vl-catch-all-error-p (vl-catch-all-apply 'vl-file-copy (list tmp cp)))
+          (progn
+            (princ "\nUnable to move the file \""
+              (strcat (vl-filename-base cp)(vl-filename-extension cp))
+              "\" since the directory \n\""
+              tmp
+              )
+              (vl-file-delete tmp)
+          );END progn
+          (progn
+            (vl-file-delete tmp)
+            (if (zerop (vl-file-size cp))
+              (progn
+                (vl-file-delete cp)
+                (princ "\nUnable to download the file.")
+              )
+              (setq ok T)
+            );END if
+          )
+        );END if
+      );END progn
+    );END if
+    (princ "\nThe url is not valid.")
+  );END if
+  ok
+)
 ; ERROR HANDLING FUNCTIONS -----------------------------------------------------
 (defun get_sysvars(targets)
     ; Return variable's values
