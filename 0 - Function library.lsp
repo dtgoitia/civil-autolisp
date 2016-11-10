@@ -919,6 +919,10 @@
   );END if
   ok
 )
+(defun CleanCommandLine()
+  (repeat 400 (princ (strcat "\n" (chr 160) ) ) )
+  (princ)
+)
 ; ERROR HANDLING FUNCTIONS -----------------------------------------------------
 (defun get_sysvars(targets)
     ; Return variable's values
