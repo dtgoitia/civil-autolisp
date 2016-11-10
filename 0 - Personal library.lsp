@@ -1,3 +1,4 @@
+; DO NOT REMOVE THIS LINE. It's a checking.
 (vl-load-com)
 (defun c:iso() (command "isolateobjects")(princ))
 (defun c:uiso() (command "unisolateobjects")(princ))
