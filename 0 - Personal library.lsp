@@ -957,3 +957,19 @@
 (defun ReloadXref (file)
   (command "-xref" "R" file)
 )
+(defun DT:GetText(ent_name)
+  ; Returns a string with the text of the selected object, if any
+  (if (= 'ename (type ent_name))
+    (if (vlax-property-available-p (vlax-ename->vla-object ent_name) 'TextString)
+      (vlax-get-property (vlax-ename->vla-object ent_name) 'TextString)
+    );END if2
+  );END if
+)
+(defun DT:SetText(ent_name txt)
+  ; Sets the text of the selected object, if possible
+  (if (= 'ename (type ent_name))
+    (if (vlax-property-available-p (vlax-ename->vla-object ent_name) 'TextString)
+      (vlax-put-property (vlax-ename->vla-object ent_name) 'TextString txt)
+    );END if2
+  );END if
+)
