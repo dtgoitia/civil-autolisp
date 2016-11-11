@@ -141,6 +141,19 @@
   ; Author: David Torralba
   ; Last revision: 2016.03.18
 )
+(defun c:BYC ()
+  (princ "\nSelet objects to set ByLayer:")
+  (foreach a (ssnamex (ssget))
+    (if (= 'ename (type (cadr a)))
+      (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 256)
+    );END if1
+  );END foreach
+  (princ)
+
+  ; v0.0 - 2016.11.11 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.11.11
+)
 (defun c:au ()
   ; Fast audit and safe
   (command "audit" "Yes")
