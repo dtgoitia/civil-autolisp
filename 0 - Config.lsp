@@ -28,6 +28,7 @@
   (setvar "ZOOMFACTOR" 60)          ; Controls how much the magnification changes when the mouse wheel moves forward or backward.
   (setvar "OSOPTIONS" 7)            ; Controls if to OSNAP lines in hatch patterns, and many others.
   (setvar "LAYLOCKFADECTL" 0)       ; Controls locked layers fade (normal 0-100 fade)
+  (setvar "ISAVEBAK" 0)             ; Controls the creation of a backup file (BAK): 0 no, 1 yes.
 
 
 );END defun
