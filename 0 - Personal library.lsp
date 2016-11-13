@@ -987,3 +987,5 @@
     );END if2
   );END if
 )
+(defun asin (sine) (atan sine (sqrt (- 1 (* sine sine)))))
+(defun acos (cosine) (atan (sqrt (- 1 (* cosine cosine))) cosine))
