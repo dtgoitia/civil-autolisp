@@ -183,6 +183,14 @@
   ; Author: David Torralba
   ; Last revision: 2016.11.14
 )
+(defun c:c0()
+  ; Shortcut for copybase with origin (0 0 0) as reference coordinates
+  (command "copybase" (list 0 0 0) (ssget) "")(princ)
+)
+(defun c:p0()
+  ; Shortcut to PASTECLIP at origin (0 0 0)
+  (command "_pasteclip" "0,0")(princ)
+)
 (defun c:au ()
   ; Fast audit and safe
   (command "audit" "Yes")
