@@ -1,61 +1,22 @@
-(defun c:ep ( / *error* sset itm num hnd ent width)
-  ; SET - Error handling function
-  (defun *error* ( msg )
-    (if (not (member msg '("Function cancelled" "quit / exit abort")))
-      (princ (strcat "\nError: " msg))
-    )
-    ; RESET to original "osmode" and "cmdecho".
-    (setvar "osmode" oldosmode)
-    (setvar "cmdecho" oldcmdecho)
-    (princ)
+(defun c:ep ( / i ent_name ptList width )
+  ; Draws individually every single segment of selected polylines
+  (setq
+    i 0
+    ss (ssget '((-4 . "<OR") (0 . "LWPOLYLINE") (-4 . "OR>")))
   )
-
-  ; SAVE "osmode" and "cmdecho"
-  (setq oldosmode (getvar "osmode"))
-  (setq oldcmdecho (getvar "cmdecho"))
-
-  ; CHANGE "osmode" and "cmdecho"
-  (setvar "osmode" 0)
-  (setvar "cmdecho" 0)
-
-  ; INPUT - Select objects, and keep just polylines
-  (setq sset (ssget '((-4 . "<OR") (0 . "POLYLINE") (0 . "LWPOLYLINE") (-4 . "OR>"))))
-
-  ; OPERATION - If something (sset) has been selected...
-  (if sset
-    (progn
-      (setq
-        itm 0               ; Counter of items to 0
-        num (sslength sset) ; Count selected objects
-      )
-
-      ; OPERATION - Run through all selected objects
-      (while (< itm num)
-        (setq
-          hnd (ssname sset itm)       ; object name
-          ent (entget hnd)            ; object property list
-          width (cdr (assoc 43 ent))  ; polyline "Global width" property
-        )
-
-        ; OPERATION - Explode the polyline
-        (command "._explode" hnd "")
-
-        ; OPERATION - Select the lines after exploding the polyline, convert to polyline and modify the width
-        (command "PEDIT" "_M" "_P" "" "Y" "W" width "")
-
-        ; OPERATION - Step into the next selected object
-        (setq itm (1+ itm))
-      ) ; END WHILE
-    ); END progn
-  ) ; END - If something (sset) has been selected...
-
-  ; RESET to original "osmode" and "cmdecho".
-  (setvar "osmode" oldosmode)
-  (setvar "cmdecho" oldcmdecho)
+  (foreach a (ssnamex ss)
+    (if (= 'ENAME (type (cadr a)))
+      (progn
+        (ExplodeSinglePolyline (cadr a))
+        (vla-delete (vlax-ename->vla-object (cadr a)))
+      );END progn
+    );END if1
+  );END foreach
 
   ; End without double messages
   (princ)
 
+  ; v0.3 - 2016.11.14 - All code rewritten
   ; v0.2 - 2016.03.21 - Code optimized and comments translated into English.
   ; v0.1 - 2016.03.02 - Command-line name changed from BRP to EP.
   ;                     Variables added as local variables not to overlap with other routines.
@@ -64,5 +25,64 @@
   ; NOTE: Can be used in polylines with 2 vertexes in the same position.
   ; NOTE: No problem with closed polylines.
   ; Author: David Torralba
-  ; Last revision: 2016.03.21
+  ; Last revision: 2016.11.14
+)
+(defun ExplodeSinglePolyline (ent_name / i ptList width)
+  (setq
+    i 0
+    layerName (GetPolylineLayer ent_name)
+    ptList (GetPolylinePointList ent_name)
+    width (GetPolylineWidth ent_name)
+  )
+  (while (< i (- (length ptList) 1) )
+    (setq
+      p1 (nth i ptList)
+      p2 (nth (+ i 1) ptList)
+    )
+    (if (DrawPolylineSegment p1 p2 width layerName)
+      (setq i (+ i 1) )
+      (progn
+        (princ "\nError drawing polyline segment from ")
+        (princ p1)
+        (princ " to ")
+        (princ p2)
+        (princ ".")
+      );END progn
+    );END if
+  );END while
+)
+(defun GetPolylinePointList (ent_name / param endParam pt ptList)
+  (setq
+    param 0
+    endParam (vlax-curve-getEndParam (vlax-ename->vla-object ent_name))
+  )
+  (while (<= param endParam)
+    (setq
+      pt (vlax-curve-getPointAtParam (vlax-ename->vla-object ent_name) param)
+      ptList (append ptList (list pt) )
+      param (+ param 1)
+    )
+  );END while
+  ptList
+)
+(defun GetPolylineWidth (ent_name)
+  (cdr (assoc 43 (entget ent_name)))
+)
+(defun GetPolylineLayer (ent_name)
+  (cdr (assoc 8 (entget ent_name)))
+)
+(defun DrawPolylineSegment (p1 p2 width layerName)
+  (entmakex
+    (list
+      (cons 0 "LWPOLYLINE")
+      (cons 100 "AcDbEntity")
+      (cons 100 "AcDbPolyline")
+      (cons 8 layerName)
+      (cons 90 2)     ; Number of vertex
+      (cons 70 128)  ; Not closed polyline
+      (cons 43 width)
+      (cons 10 (list (nth 0 p1) (nth 1 p1) ))
+      (cons 10 (list (nth 0 p2) (nth 1 p2) ))
+    );END list
+  );END entmakex
 )
