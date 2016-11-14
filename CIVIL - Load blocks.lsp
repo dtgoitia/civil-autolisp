@@ -16,7 +16,7 @@
 (defun DT:ib (blk lay rot osm
             /
             *error*
-            oldosmode oldclayer oldattdia oldattreq
+            oldosmode oldclayer oldattdia oldattreq oldinsunits oldinsunitsdeftarget oldinsunitsdefsource
             )
   ; (DT:ib "block_name" "layer_name" "rotation_value" "osmode_value")
   ; layer_name = ""       --> use current layer
@@ -29,8 +29,11 @@
     (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
     (setvar "attdia" oldattdia)
     (setvar "attreq" oldattreq)
-    (if (/= oldclayer nil) (setvar "clayer" oldclayer))
-    (if (/= oldosmode nil) (setvar "osmode" oldosmode))
+    (if (/= oldclayer nil)            (setvar "clayer" oldclayer))
+    (if (/= oldosmode nil)            (setvar "osmode" oldosmode))
+    (if (/= oldinsunits nil)          (setvar "insunits" oldinsunits))
+    (if (/= oldinsunitsdeftarget nil) (setvar "insunitsdeftarget" oldinsunitsdeftarget))
+    (if (/= oldinsunitsdefsource nil) (setvar "insunitsdefsource" oldinsunitsdefsource))
     (princ)
   )
 
@@ -38,11 +41,18 @@
   (setq
     oldattdia (getvar "attdia")
     oldattreq (getvar "attreq")
+    oldinsunits (getvar "insunits")
+    oldinsunitsdeftarget (getvar "insunitsdeftarget")
+    oldinsunitsdefsource (getvar "insunitsdefsource")
+
   )
 
   ; MODIFY SETTINGS
   (setvar "attdia" 0)
   (setvar "attreq" 0)
+  (setvar "insunits" 0)
+  (setvar "insunitsdeftarget" 0)
+  (setvar "insunitsdefsource" 0)
 
   ; MAIN ROUTINE
   (cond
@@ -82,6 +92,9 @@
   ; RESTORE PREVIOUS SETTINGS
   (setvar "attdia" oldattdia)
   (setvar "attreq" oldattreq)
+  (setvar "insunits" oldinsunits)
+  (setvar "insunitsdeftarget" oldinsunitsdeftarget)
+  (setvar "insunitsdefsource" oldinsunitsdefsource)
   (princ)
 
   ; v0.2 - 2016.07.28 - Update system variable management
@@ -205,7 +218,7 @@
 ; Last revision: 2016.04.07
 ;
 ; North-Arrow insertion function
-(defun c:NorthArrow() (DT:IB "North-Arrow" "MJA-Title" "" ""))
+(defun c:NorthArrow() (DT:ib "North-Arrow" "MJA-Title" "" ""))
 ;---------------------------------------------------------------------------
 ;
 ; DRAINAGE INSERTION AND DRAWING FUNCTIONS
@@ -243,16 +256,16 @@
 (defun c:psd() (DT:drainage_line "e-psd" 132))
 
 ; Private blocks - Foul OLD
-(defun c:svp()    (DT:IB "e-pfd-svp"                        "e-pfd"                   ""  5))   ; SVP
-(defun c:svp300() (DT:IB "Private-Square300-Foul-Manhole"   "e-pfd"                   ""  5))   ; Private Square 300 Foul Manhole
-(defun c:svp475() (DT:IB "Private-Square475-Foul-Manhole"   "e-pfd"                   ""  5))   ; Private Square 475 Foul Manhole
-(defun c:svp600() (DT:IB "Adoptable-Round600-Foul-Manhole"  "e-pfd-adoptable-lateral" ""  5))   ; Private Square 600 Foul Manhole
+(defun c:svp()    (DT:ib "e-pfd-svp"                        "e-pfd"                   ""  5))   ; SVP
+(defun c:svp300() (DT:ib "Private-Square300-Foul-Manhole"   "e-pfd"                   ""  5))   ; Private Square 300 Foul Manhole
+(defun c:svp475() (DT:ib "Private-Square475-Foul-Manhole"   "e-pfd"                   ""  5))   ; Private Square 475 Foul Manhole
+(defun c:svp600() (DT:ib "Adoptable-Round600-Foul-Manhole"  "e-pfd-adoptable-lateral" ""  5))   ; Private Square 600 Foul Manhole
 
 ; Private blocks - Storm OLD
-(defun c:rwp()    (DT:IB "e-psd-rwp"                        "e-psd"                   ""  5))   ; RWP
-(defun c:rwp2()   (DT:IB "Private-Round475-Storm-Manhole"   "e-psd"                   ""  5))   ; Private round storm manhole
-(defun c:rwp3()   (DT:IB "Private-Round300-Storm-Manhole"   "e-psd"                   ""  5))   ; Private round storm manhole
-(defun c:reye()   (DT:IB "Rodding-Eye"                      "e-psd"                   "P" 129)) ; Rodding eye
+(defun c:rwp()    (DT:ib "e-psd-rwp"                        "e-psd"                   ""  5))   ; RWP
+(defun c:rwp2()   (DT:ib "Private-Round475-Storm-Manhole"   "e-psd"                   ""  5))   ; Private round storm manhole
+(defun c:rwp3()   (DT:ib "Private-Round300-Storm-Manhole"   "e-psd"                   ""  5))   ; Private round storm manhole
+(defun c:reye()   (DT:ib "Rodding-Eye"                      "e-psd"                   "P" 129)) ; Rodding eye
 (defun c:krwp()   (c:rwp) (c:psd))
 
 ; Private blocks - Generic
@@ -269,7 +282,7 @@
 (defun c:PrivateManhole_450mm_5()  (fbi "Manhole-450-5" ))   ; Private Circular 450 Manhole - 1 inlet
 
 ; Private blocks - Manhole label
-(defun c:manlab()    (DT:IB "manhole-label" "" "" ""))
+(defun c:manlab()    (DT:ib "manhole-label" "" "" ""))
 
 ; v0.2 - 2016.07.29 - "Adoptable Round 600 Foul Manhole" added.
 ; v0.1 - 2016.07.21 - "manhole-label" added.
@@ -284,7 +297,7 @@
 ;
 ;---------------------------------------------------------------------------
 ; Manhole Schedule Header insertion function
-(defun c:ManHeader() (DT:IB "ManScheduleHeader" "e-manhole-schedule" "" ""))
+(defun c:ManHeader() (DT:ib "ManScheduleHeader" "e-manhole-schedule" "" ""))
 ;
 ;
 ;---------------------------------------------------------------------------
@@ -292,8 +305,8 @@
 ; ROAD BLOCKS INSERTION FUNCTIONS
 ;
 ;---------------------------------------------------------------------------
-(defun c:road_fall_arrow()    (DT:IB "Road-Fall-Arrow"    "e-road" "P" 0))  ; Road Fall Arrow insertion function
-(defun c:parking_fall_arrow() (DT:IB "Parking-Fall-Arrow" "e-road" "P" 0))  ; Parking Fall Arrow insertion function
+(defun c:road_fall_arrow()    (DT:ib "Road-Fall-Arrow"    "e-road" "P" 0))  ; Road Fall Arrow insertion function
+(defun c:parking_fall_arrow() (DT:ib "Parking-Fall-Arrow" "e-road" "P" 0))  ; Parking Fall Arrow insertion function
 ;
 ;
 ;---------------------------------------------------------------------------
@@ -301,10 +314,10 @@
 ; STREET LIGHT BLOCKS INSERTION FUNCTIONS
 ;
 ;---------------------------------------------------------------------------
-(defun c:street_light()  (DT:IB "Street-Light"   "e-street-lights" "P" 677)); Street light insertion function
-(defun c:street_light1() (DT:IB "Street-Light-1" "e-street-lights" "P" 677)); Street light 1 insertion function
-(defun c:street_light2() (DT:IB "Street-Light-2" "e-street-lights" "P" 677)); Street light 2 insertion function
-(defun c:street_light3() (DT:IB "Street-Light-3" "e-street-lights" "P" 677)); Street light 3 insertion function
+(defun c:street_light()  (DT:ib "Street-Light"   "e-street-lights" "P" 677)); Street light insertion function
+(defun c:street_light1() (DT:ib "Street-Light-1" "e-street-lights" "P" 677)); Street light 1 insertion function
+(defun c:street_light2() (DT:ib "Street-Light-2" "e-street-lights" "P" 677)); Street light 2 insertion function
+(defun c:street_light3() (DT:ib "Street-Light-3" "e-street-lights" "P" 677)); Street light 3 insertion function
 ;
 ;
 ;---------------------------------------------------------------------------
@@ -350,7 +363,7 @@
   (princ)
 )
 
-(defun c:mpart1() (DT:IB "Part-m-primary"     "e-part-m"  "P" 514)) ; Part-m-primary-0 block insertion function
-(defun c:mpart3() (DT:IB "Part-m-secondary"   "e-part-m"  "P" 514)) ; Part-m-secondary-0 block insertion function
-(defun c:streetplate() (DT:IB "street-plate"  "e-postal"  ""  0))   ; Street plate block insertion function
+(defun c:mpart1() (DT:ib "Part-m-primary"     "e-part-m"  "P" 514)) ; Part-m-primary-0 block insertion function
+(defun c:mpart3() (DT:ib "Part-m-secondary"   "e-part-m"  "P" 514)) ; Part-m-secondary-0 block insertion function
+(defun c:streetplate() (DT:ib "street-plate"  "e-postal"  ""  0))   ; Street plate block insertion function
 (princ)
