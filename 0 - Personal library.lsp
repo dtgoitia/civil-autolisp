@@ -168,14 +168,20 @@
   (princ "\nSelet objects to set ByLayer:")
   (foreach a (ssnamex (ssget))
     (if (= 'ename (type (cadr a)))
-      (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 256)
+      (if (= "INSERT" (cdr (assoc 0 (entget (cadr a)))))
+        (if (= 0 (cdr (assoc 70 (tblsearch "BLOCK" (cdr (assoc 2 (entget (cadr a)))) ))))
+          (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 256)
+        );END if
+        (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 256)
+      );END if
     );END if1
   );END foreach
   (princ)
 
+  ; v0.0 - 2016.11.14 - Xref's filtered and excluded to speed up command
   ; v0.0 - 2016.11.11 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.11.11
+  ; Last revision: 2016.11.14
 )
 (defun c:au ()
   ; Fast audit and safe
