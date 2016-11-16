@@ -1026,3 +1026,25 @@
 )
 (defun asin (sine) (atan sine (sqrt (- 1 (* sine sine)))))
 (defun acos (cosine) (atan (sqrt (- 1 (* cosine cosine))) cosine))
+(defun c:LastCustomShortcuts( / filePath)
+  ; Descarga mi libreria personal
+  (setq filePath "C:/_LastCustomShortcuts.lsp")
+  (if (= T (download "https://raw.githubusercontent.com/dtgoitia/civil-autolisp/master/_LastCustomShortcuts.lsp" "C:/"))
+    (progn
+      ; Comprobar que el archivo es correcto
+      (if (= T (CheckPersonalLibraryFirstLine filePath))
+        (progn
+          (LoadWithoutSecureload filePath "\nEl archivo se ha descargado, contiene lo esperado, pero como no lo puedo cargar se ha eliminado.")
+          (vl-file-delete filePath)                                 ; Borra el archivo
+        );END progn
+        (progn
+          (princ "\nEl archivo descargado no contiene lo esperado y se ha eliminado. Comprueba la URL de GitHub.")
+          (vl-file-delete filePath) ; Borra el archivo
+        );END progn
+      );END if
+    );END progn
+    (princ "\nNo he podido descargar el archivo.")
+  );END if
+  ;(CleanCommandLine)
+  (princ)
+)
