@@ -1027,6 +1027,13 @@
 )
 (defun asin (sine) (atan sine (sqrt (- 1 (* sine sine)))))
 (defun acos (cosine) (atan (sqrt (- 1 (* cosine cosine))) cosine))
+(defun c:cfile( / filePath )
+  ; Print and copy current file path
+  (setq filePath (strcat (getvar "dwgprefix") (getvar "dwgname") ) )
+  (CopyToClipboard filePath)
+  (princ (strcat "\n" filePath "   \(copied to ClipBoard\)") )
+  (princ)
+)
 (defun c:LastCustomShortcuts( / filePath)
   ; Descarga mi libreria personal
   (setq filePath "C:/_LastCustomShortcuts.lsp")
