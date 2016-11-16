@@ -1041,6 +1041,17 @@
   (princ (strcat "\n" filePath "   \(copied to ClipBoard\)") )
   (princ)
 )
+(defun c:cfolder()
+  ; Open current file containing folder in Windows Explorer and select the file
+  (startapp
+    (strcat "explorer /select, "
+      (getvar "dwgprefix")
+      (getvar "dwgname")
+      ", /e"
+    )
+  )
+  (princ)
+)
 (defun c:LastCustomShortcuts( / filePath)
   ; Descarga mi libreria personal
   (setq filePath "C:/_LastCustomShortcuts.lsp")
