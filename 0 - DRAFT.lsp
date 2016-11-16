@@ -66,9 +66,7 @@ defun
   (princ)
 )
 (defun c:s ()
-(command "-text" (cadr (grread 't)) "0.3" "" (strcat "S" (rtos (getreal
-
-"\nPica el nivel: ") 2 3)))
+(command "-text" (cadr (grread 't)) "0.3" "" (strcat "S" (rtos (getreal"\nPica el nivel: ") 2 3)))
 (princ)
 )
 (defun c:ct()
@@ -435,6 +433,7 @@ defun
   (princ)
 )
 (defun c:xx() (while (not kkkk) (DT:move_part_m)) )
+(defun c:1() (DT:move_part_m))
 (defun DT:move_part_m( / VL_ent_name p p0 p1 ang)
   ; Move selected m-part block 0.302 toward the inner part of the building (its rotation - 90 degree)
   (setq oldosmode (getvar "osmode"))
@@ -452,7 +451,6 @@ defun
   (setvar "osmode" oldosmode)
   (princ)
 )
-(defun c:mm() (command "move" pause "" (cadr (grread 't)) pause) )
 (defun c:7( / VL_ent_name LastParam x1 xL arr larr newlarr)
   ; Eliminar vertices duplicados (solo mira primer y ultimo vertice)
   (setq
@@ -1731,7 +1729,7 @@ defun
 )
 (defun c:1 (/ obj lay)
 ;(defun c:nlayfv (/ obj lay)
-  ; Gray out nested object real layer in the current viewport
+  ; Freeze nested object real layer in the current viewport
   (if
     (and
       (/= "Model" (getvar "CTAB"  ) )
@@ -1806,6 +1804,45 @@ defun
   ; v0.0 - 2016.08.17
   ; Author: David Torralba
   ; Last revision: 2016.08.17
+)
+(defun c:3 (/ obj lay)
+;(defun c:nlayt (/ obj lay)
+  ; Gray out nested object real layer in the current viewport
+  (if
+    (and
+      (/= "Model" (getvar "CTAB"  ) )
+      (<  1       (getvar "CVPORT") )
+    );END and
+    (progn
+      (if (setq obj (car (nentsel "\nSelect object to fade out: ")))
+        (mapcar
+          '(lambda (x)
+            (if (= (car x) 8)
+              (progn
+                (princ "\nDXF Layer = ")
+                (princ (cdr x))
+                (setq lay (cdr x))
+              ); END progn
+            )
+          )
+          (entget obj '("*"))
+        )
+      ); END if
+      (if (not lay)
+        (princ "\nLayer name has not been saved at lay variable. Take a look to the code.")
+        (command "vplayer" "TR" 80 lay "C" "")
+      );END if
+
+    );END progn true
+    (progn
+      (alert "You are not in a viewport.")
+      (quit)
+    );END progn false
+  );END if
+  (princ)
+  ; v0.0 - 2016.11.09
+  ; Author: David Torralba
+  ; Last revision: 2016.11.09
 )
 
 
@@ -2665,3 +2702,113 @@ defun
   ; Force *error* function execution
   (itoa nil)
 );END defun
+(defun c:1()
+  (princ (strcat "\nStart time: " (PrintDateTime) "\n") )  ; Print start time
+  (ReloadXref "Area P Eng Arch")                           ; Reload XREF
+  (princ (strcat "\nEnd time:   " (PrintDateTime) "\n") )  ; Print end time
+  (princ)
+)
+(defun c:1(/ p1 i)
+	(command ".-insert" "Private-Square300-Foul-Manhole" (setq p1 (getpoint)) 1 1 0)
+  (setq i 0)
+  (repeat 3
+    (progn
+      (setq i (+ i 1))
+      (princ (strcat "\nSelect end point for pipe " (itoa i) ": "))
+      (command ".pline" p1 pause "")
+    )
+	)
+  (princ "\nSelect end point for outfull pipe: ")
+  (command ".pline" p1 "_per" pause "")
+)
+(defun c:2(/ p1)
+	(setq p1 (getpoint))
+	(while (not kkkkk)
+		(command ".pline" p1 pause "")
+	)
+)
+(defun c:1( / ent_name )
+  (setq ent_name (car (entsel)) )
+  (DT:SetText ent_name (strcat "%%U" (LM:rtos (+ (atof (substr (DT:GetText ent_name) 4)) -0.025) 2 3) ) )
+  (command "move" ent_name "" (cadr (grread 't)) pause)
+)
+(defun c:ListAllBlocks()
+;(defun bb ( blockName )
+;(defun DT:CheckIfBlockExists( blockName )
+  (setq
+    acadObject (vlax-get-acad-object)
+    acadDocument (vla-get-ActiveDocument acadObject)
+    acadBlocks (vla-get-blocks acadDocument)
+  )
+  (vlax-for item acadBlocks
+    (progn
+      (princ "\n")
+      (princ item)
+      (cond
+        ((equal (vla-get-IsLayout item) :vlax-true)
+          (princ " (modelspace/layout)")
+        );END subcond
+        ((equal (vla-get-IsXref item) :vlax-true)
+          (princ " (xref)")
+        );END subcond
+        (t
+          (princ " (")
+          (princ
+            (vlax-get-property item
+              (if (vlax-property-available-p item 'EffectiveName) 'EffectiveName 'Name)
+            )
+          )
+          (princ ")")
+        );END subcond
+      );END cond
+    );END progn
+  ); END vlax-for
+  (princ)
+);END defun​​
+(defun bb ( blockName )
+;(defun DT:CheckIfBlockExists( blockName )
+  (setq
+    acadObject (vlax-get-acad-object)
+    acadDocument (vla-get-ActiveDocument acadObject)
+    acadBlocks (vla-get-blocks acadDocument)
+  )
+  (vlax-for item acadBlocks
+    (progn
+      (if
+        (and
+          (equal (vla-get-IsLayout item) :vlax-false)
+          (equal (vla-get-IsXref item) :vlax-false)
+        );END and
+        (progn
+          (if (= blockName (vlax-get-property item (if (vlax-property-available-p item 'EffectiveName) 'EffectiveName 'Name) ) )
+            T   ; The block exists
+            nil ; The doesn't block exist
+          );END if
+        );END progn
+      );END cond
+    );END progn
+  ); END vlax-for
+  (princ)
+);END defun​​
+(bb "testBlock")
+(defun c:1() (c:e-work-layers))
+(LoadWithoutSecureload "C:/Users/davidt/Dropbox/MJA/LISP/TORRALBA/CIV_e-work_layers.lsp" "OnFailMessage")
+(defun c:2() (c:e-work-copyscaleblock))
+(LoadWithoutSecureload "C:/Users/davidt/Dropbox/MJA/LISP/TORRALBA/CIV_e-work-copyscaleblock.lsp" "OnFailMessage")
+(defun c:1() (c:BYC))
+(defun c:2() (c:INT))
+(defun c:4( / ref)
+  ; Update target text with reference level minus 0.39
+  (princ "\nSubase below TARMAC:\n")
+  (setq ref (DT:clic_or_type_level) ) (princ ref)
+  (DT:SetText (car (entsel "\nSelect target text: ")) (strcat "SB" (LM:rtos (- ref 0.39) 2 2)) )
+);END defun
+(defun c:5( / ref)
+  ; Update target text with reference level minus 0.39
+  (princ "\nSubase below BLOCK paving:\n")
+  (setq ref (DT:clic_or_type_level) ) (princ ref)
+  (DT:SetText (car (entsel "\nSelect target text: ")) (strcat "SB" (LM:rtos (- ref 0.41) 2 2)) )
+);END defun
+(defun c:m() (command "move" pause "" (cadr (grread 't)) pause) )
+(defun c:mo() (command "move"))
+(defun c:mm() (command "move"))
