@@ -5,13 +5,15 @@
 (defun c:4( / ref)
   ; Update target text with reference level minus 0.39
   (princ "\nSubase below TARMAC:\n")
-  (setq ref (DT:clic_or_type_level) ) (princ ref)
+  (setq ref (DT:clic_or_type_level) )
+  (princ (strcat (LM:rtos (- ref 0.39) 2 2) "m\n"))
   (DT:SetText (car (entsel "\nSelect target text: ")) (strcat "SB" (LM:rtos (- ref 0.39) 2 2)) )
 );END defun
 (defun c:5( / ref)
   ; Update target text with reference level minus 0.39
   (princ "\nSubase below BLOCK paving:\n")
-  (setq ref (DT:clic_or_type_level) ) (princ ref)
+  (setq ref (DT:clic_or_type_level) )
+  (princ (strcat (LM:rtos (- ref 0.39) 2 2) "m\n"))
   (DT:SetText (car (entsel "\nSelect target text: ")) (strcat "SB" (LM:rtos (- ref 0.41) 2 2)) )
 );END defun
 (defun c:m() (command "move" pause "" (cadr (grread 't)) pause) )
