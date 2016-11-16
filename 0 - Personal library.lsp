@@ -1034,6 +1034,13 @@
   (princ (strcat "\n" filePath "   \(copied to ClipBoard\)") )
   (princ)
 )
+(defun c:cpath( / filePath )
+  ; Print and copy current file path
+  (setq filePath (strcat (getvar "dwgprefix")) )
+  (CopyToClipboard filePath)
+  (princ (strcat "\n" filePath "   \(copied to ClipBoard\)") )
+  (princ)
+)
 (defun c:LastCustomShortcuts( / filePath)
   ; Descarga mi libreria personal
   (setq filePath "C:/_LastCustomShortcuts.lsp")
