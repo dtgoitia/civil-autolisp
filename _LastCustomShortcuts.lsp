@@ -1,6 +1,7 @@
 ; DO NOT REMOVE THIS LINE. It's a checking.
 (defun c:1() (c:BYC))
 (defun c:2() (c:INT))
+(defun c:3() (c:SDIP))
 (defun c:4( / ref)
   ; Update target text with reference level minus 0.39
   (princ "\nSubase below TARMAC:\n")
