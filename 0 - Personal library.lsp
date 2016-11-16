@@ -196,6 +196,7 @@
   (command "audit" "Yes")
   (command "qsave")
 	(princ "\nDrawing audited and saved.")
+  (alert "Drawing audited and saved.")
   (princ)
 
   ; v0.0 - 2016.03.18 - First issue
