@@ -165,17 +165,14 @@
     )
     ; FFL
     ( (and (= "FFL " (substr txt 1 4)) (= 4 (- (strlen txt) (vl-string-search "." txt))) )
-      ;(alert "case 2")
       (atof (substr txt 5))
     )
     ; Road level
     ( (and (or (= "%%U" (substr txt 1 3)) (= "%%u" (substr txt 1 3))) (= 3 (- (strlen txt) (vl-string-search "." txt))))
-      ;(alert "case 3")
       (atof (substr txt 4 10))
     )
     ; Plot level
     ( (and (or (= "%%U" (substr txt 1 3)) (= "%%u" (substr txt 1 3))) (= 4 (- (strlen txt) (vl-string-search "." txt))))
-      ;(alert "case 4")
       (atof (substr txt 4 9))
     )
     ; Private mahole
@@ -184,9 +181,14 @@
         (and (>= (ascii (substr txt 2 1)) 48) (<= (ascii (substr txt 2 1)) 57))
         (> (strlen txt) 5)
       )
-      ;(setq cota (atof (substr txt 4 9)))
-      ;(alert "case 5")
       (atof (substr txt 2))
+    )
+    ; Sub-base level
+    ( (and
+        (or (= "SB" (substr txt 1 2)) (= "sb" (substr txt 1 2)) )
+        (= 3 (- (strlen txt) (vl-string-search "." txt)) )
+      )
+      (atof (substr txt 3 8))
     )
     ; Non number
     ( (and
@@ -194,7 +196,6 @@
         (or (< (ascii (substr txt 2 1)) 97) (> (ascii (substr txt 2 1)) 122))
         (/= (ascii (substr txt 1 1)) 48)
       )
-      ;(alert "case 6")
       (getreal "\nNumber format not understood. Please, introduce level: ")
     )
     ; Other
