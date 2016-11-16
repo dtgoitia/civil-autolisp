@@ -1,3 +1,4 @@
+; DO NOT REMOVE THIS LINE. It's a checking.
 (defun c:1() (c:BYC))
 (defun c:2() (c:INT))
 (defun c:4( / ref)
