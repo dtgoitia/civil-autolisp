@@ -1062,6 +1062,29 @@
   )
   (princ)
 )
+(defun c:f( / url)
+  ; Open the default browser and search in Google for the desired term adding "Autodesk Help " at the beginning
+  (setq
+    url
+    (strcat
+      "https://www.google.co.uk/search?q="
+      "AutoCAD+Help+"
+      (DT:ReplaceSpaceForPlus (getstring t "\nWhat do you want to know about: ") )
+    ); END strcat
+  );END setq
+  (command "._browser" url)
+  (princ)
+);END defun
+(defun DT:ReplaceSpaceForPlus ( txt / i)
+  ; Return the provided string with "+" instead of spaces, if not, returns the provided string
+  ; txt [str] - String where to replace " " for "+"
+  (if (not (vl-string-search " " txt))
+    txt
+    (while (setq i (vl-string-search " " txt))
+      (setq txt (vl-string-subst "+" " " txt) )
+    );END while
+  );END if
+);END defun
 (defun c:LastCustomShortcuts( / filePath)
   ; Descarga mi libreria personal
   (setq filePath "C:/_LastCustomShortcuts.lsp")
