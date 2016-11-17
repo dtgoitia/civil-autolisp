@@ -32,18 +32,6 @@
         oldclayer (getvar "clayer")
   )
 
-  ; OPERATION - Check if function library is loaded. If not, exit.
-  (if (and
-        (= (eval DT:input_string_or_point) nil)
-        (= (eval DT:clic_or_type_level) nil)
-      );END and
-    (progn
-      (princ "required library not found.\nPlease, load function library and run command again.")
-      (exit)
-    )
-    (princ "loaded.")
-  )
-
   ; OPERATION - Turn off the system echo
   (setvar "cmdecho" 0)
 
@@ -87,12 +75,7 @@
   (princ (strcat "\nDistance = " (LM:rtos d12 2 3) "m" ) )
   (if (= z1 z2)
     (princ "\nSelected points are at the same level.")
-    (princ
-      (strcat
-        "\nZ difference = " (LM:rtos (abs (- z2 z1)) 2 3) "m"
-        "\nGradient = 1/" (itoa (LM:Round (abs (/ d12 (- z2 z1))))) " (" (LM:rtos (abs (* 100 (/ (- z2 z1) d12))) 2 2) "%)"
-      )
-    )
+    (princ (strcat "\nGradient = 1/" (itoa (LM:Round (abs (/ d12 (- z2 z1))))) " (" (LM:rtos (abs (* 100 (/ (- z2 z1) d12))) 2 2) "%)"))
   )
 
   ; INPUT - Choose action: pick, find, lowpoint
@@ -191,8 +174,7 @@
   ; End without double messages
   (princ)
 
-  ; v1.1 - 2016.10.12 - Vertical difference added to information print
-  ;                   - Innecesary prints removed
+  ; v1.1 - 2016.11.17 - Unnecesary instructions removed
   ; v1.0 - 2016.09.28 - Distance added to information print at INT function
   ; v0.9 - 2016.05.20 - Inserted block scale reduced for clarity.
   ; v0.8 - 2016.05.17 - Added case and warning messages when selected reference levels are the same.
@@ -212,5 +194,5 @@
   ; v0.1 - 2016.03.14 - Loop added to select multiple points to interpolate.
   ; v0.0 - 2015.12.14 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.10.12
+  ; Last revision: 2016.11.17
 )
