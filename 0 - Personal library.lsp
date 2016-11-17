@@ -206,7 +206,7 @@
 (defun c:s()
   ; Save and prompt message
   (command "_qsave")
-  (princ "\nDrawing audited and saved.")
+  (princ "\nDrawing saved.")
   (alert "Drawing audited and saved.")
   (princ)
   ; v0.0 - 2016.11.17 - First issue
