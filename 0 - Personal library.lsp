@@ -192,9 +192,9 @@
   (command "_pasteclip" "0,0")(princ)
 )
 (defun c:au ()
-  ; Fast audit and safe
+  ; Fast audit and save
   (command "audit" "Yes")
-  (command "qsave")
+  (command "_qsave")
 	(princ "\nDrawing audited and saved.")
   (alert "Drawing audited and saved.")
   (princ)
@@ -202,6 +202,16 @@
   ; v0.0 - 2016.03.18 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.03.18
+)
+(defun c:s()
+  ; Save and prompt message
+  (command "_qsave")
+  (princ "\nDrawing audited and saved.")
+  (alert "Drawing audited and saved.")
+  (princ)
+  ; v0.0 - 2016.11.17 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.11.17
 )
 (defun c:cl ( / ss i ent ent_name VL_ent_name)
   ; Load VLA
