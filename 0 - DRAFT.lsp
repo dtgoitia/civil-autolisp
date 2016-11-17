@@ -2812,3 +2812,260 @@ defun
 (defun c:m() (command "move" pause "" (cadr (grread 't)) pause) )
 (defun c:mo() (command "move"))
 (defun c:mm() (command "move"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+(defun c:INT( /
+              *error*
+              ans
+              set_line reference_circle1 reference_circle2
+              mode grad cota level
+              p1 p2 p3 p4
+              z1 z2 z3 z4
+              d12 d13 d14
+              ang12 ang123 ang13 ang21
+              u0 v0 w0
+              oldosmode oldcmdecho oldclayer
+            )
+  ; SET - Error handling function
+  (defun *error* ( msg )
+    (if (not (member msg '("Function cancelled" "quit / exit abort")))
+      (princ (strcat "\nError: " msg))
+    )
+    ; OPERATION - Delete auxiliary data, if any
+    (if (/= set_line nil) (vla-delete (vlax-ename->vla-object set_line)))
+    (if (/= reference_circle1 nil) (vla-delete (vlax-ename->vla-object reference_circle1)))
+    (if (/= reference_circle2 nil) (vla-delete (vlax-ename->vla-object reference_circle2)))
+
+    ; Restore previous settings
+    (setvar "osmode" oldosmode)
+    (setvar "cmdecho" oldcmdecho)
+    (setvar "clayer" oldclayer)
+    (princ)
+  )
+
+  ; SAVE CURRENT SETTINGS - Current layer, OSMODE and CMDECHO
+  (setq oldosmode (getvar "osmode")
+        oldcmdecho (getvar "cmdecho")
+        oldclayer (getvar "clayer")
+  )
+
+  ; OPERATION - Turn off the system echo
+  (setvar "cmdecho" 0)
+
+  ; OPERATION - Delete auxiliary data, if any
+  (if (/= set_line nil) (vla-delete (vlax-ename->vla-object set_line)))
+  (if (/= reference_circle1 nil) (vla-delete (vlax-ename->vla-object reference_circle1)))
+  (if (/= reference_circle2 nil) (vla-delete (vlax-ename->vla-object reference_circle2)))
+
+  ; INPUT - Point 1
+  (princ "\nSelect point A: ")
+  (setq ans (DT:PointOrString))
+  (cond
+    ((= ans T) ; use last points
+      (setq p1 (list (car (nth 0 INT_LastPoints)) (cadr (nth 0 INT_LastPoints)) 0.0 ) )
+    );END subcond
+    ((= 'LIST (type ans)) ; take new points
+      (setq p1 ans)
+    );END subcond
+    (t
+      (setq
+        ans nil
+        p1 (getpoint "\nSelect point A: ")
+      )
+    );END subcond
+  );END if
+
+  ; OPERATION - Create auxiliary data and objects
+  (setq
+    real_radius 8
+    correction_factor 0.001
+    radius (* real_radius (* correction_factor (getvar "viewsize")))  ; Calculate circle size at curent zoom
+
+    reference_circle1 ( _Reference_Circle p1 radius)
+  )
+
+  ;INPUT - Point 1 level
+  (if (= 'LIST (type ans))
+      (setq z1 (DT:clic_or_type_level))
+      (setq z1 (caddr (nth 0 INT_LastPoints)) )
+  );END if
+
+  (princ "\nLevel A = ")(princ z1)(princ "m")
+
+  ; INPUT - Point 2
+  (if (= 'LIST (type ans))
+      (setq p2 (getpoint "\nSelect point B: "))
+      (setq p2 (list (car (nth 1 INT_LastPoints)) (cadr (nth 1 INT_LastPoints)) 0.0 ) )
+  );END if
+
+  ; OPERATION - Create auxiliary data and objects
+  (setq
+    set_line ( _Set_Line p1 p2)
+    reference_circle2 ( _Reference_Circle p2 radius)
+  )
+
+  ;INPUT - Point 2 level
+  (if (= 'LIST (type ans))
+      (setq z2 (DT:clic_or_type_level))
+      (setq z2 (caddr (nth 1 INT_LastPoints)) )
+  );END if
+
+  (princ "\nLevel B = ")(princ z2)(princ "m")
+
+
+  ; OPERATION - Calculate gradient and print it
+  (setq d12 (distance p1 p2))                ; Distance 1-2
+  (princ (strcat "\nDistance = " (LM:rtos d12 2 3) "m" ) )
+  (if (= z1 z2)
+    (princ "\nSelected points are at the same level.")
+    (princ
+      (strcat
+        "\nZ difference = " (LM:rtos (abs (- z2 z1)) 2 3) "m"
+        "\nGradient = 1/" (itoa (LM:Round (abs (/ d12 (- z2 z1))))) " (" (LM:rtos (abs (* 100 (/ (- z2 z1) d12))) 2 2) "%)"
+      )
+    )
+  )
+  ; OPERATION - Save points as global
+  (setq
+    INT_LastPoints
+    (list
+      (list (nth 0 p1) (nth 1 p1) z1) ; p1
+      (list (nth 0 p2) (nth 1 p2) z2) ; p2
+    )
+  )
+
+  ; INPUT - Choose action: pick, find, lowpoint
+  (initget "Pick Find Lowpoint W")
+  (setq mode (getkword "\nSelect what to do [Pick/Find/Lowpoint] points <Pick>: "))
+  (if (not mode) (setq mode "Pick"))
+
+  (setq variable_vacia nil)
+  (cond
+    ((= mode "Pick") ; Clic and return point level
+      (while (= variable_vacia nil)
+        ; INPUT - Point 3
+        (setvar "osmode" 545)
+        (setq p3 (getpoint "\nSelect point to get level (or press Esc to exit): "))
+        (if (not p3) (exit))
+        (setq
+          d13 (distance p1 p3)                ; Distance 1-3
+          ang12 (angle p1 p2)                 ; Angle 1-2
+          ang13 (angle p1 p3)                 ; Angle 1-3
+          ang123 (- ang13 ang12)              ; Angle 1-3
+          d14 (* d13 (cos ang123))            ; Distance 1-4
+          p4 (polar p1 ang12 d14)             ; Point 4 (intersection between p1-p2 line and a second line perpendicular to p1-p2 line which contains p3)
+          z4 (+ z1 (* d14 (/ (- z2 z1) d12))) ; Calculate leves
+          level (rtos z4 2 3)                  ; Convert levels to text (3 decimals)
+        ); END setq
+        (CopyToClipboard level)
+        (princ (strcat "\nLevel = " level "  (value copied to clipboard)"))
+
+        ; OPERATION - Introduce point 4
+        (setvar "osmode" 0)
+        (if (/= nil (tblsearch "block" "PI_DT"))
+          (command "._insert" "PI_DT" p3 "0.25" "0.25" "" level)
+        );END if
+      ); END while Pick
+    ); END cond Pick
+    ((= mode "Find") ; Introduce level and return point
+      (if (= z1 z2)
+        (princ "\nAs said, selected points are at the same level.")
+        (while (= variable_vacia nil)
+          ; INPUT - Level 3
+          (setq z3 (getreal "\nIntroduce level to get point (or press Esc to exit): "))
+          (if (not z3) (exit))
+          (setq
+            p1 (list (car p1) (cadr p1) z1 )    ; Convert p1 to 3D point
+            p2 (list (car p2) (cadr p2) z2 )    ; Convert p2 to 3D point
+            u0 (- (car p2) (car p1))            ; Unit vector u
+            v0 (- (cadr p2) (cadr p1))          ; Unit vector v
+            w0 (- (caddr p2) (caddr p1))        ; Unit vector w
+            d13 (/ (- z3 (caddr p1)) w0)        ; Distance 1-3
+            x3 (+ (car p1)  (* d13 u0) )        ; X coordinate
+            y3 (+ (cadr p1) (* d13 v0) )        ; y coordinate
+            p3 (list x3 y3 0)                   ; Point 3
+            level (rtos z3 2 3)                  ; Convert level to text (3 decimals)
+          ); END setq
+          (princ (strcat "\nLevel = " level))
+
+          ; OPERATION - Introducir punto 3
+          (setvar "osmode" 0)
+          (command "._insert" "PI_DT" p3 "0.25" "0.25" "" level)
+        ); END while Find
+      );END if
+    ); END cond Find
+    ((= mode "Lowpoint") ; Introduce gradient and return low point
+      ; INPUT - Gradient
+      (setq grad (getint "\nSelect minimum gradient <1/80>: "))
+      (if (not grad) (setq grad 80))
+      (setq
+        ang12 (angle p1 p2)                 ; Angle 1-2
+        ang21 (angle p2 p1)                 ; Angle 2-1
+        d23 (* (- z2 z1) grad)              ; Distance 2-3
+        p3 (polar p2 ang21 d23)             ; Point 3 (same level as point 1)
+        d13 (distance p1 p3)                ; Distance 1-3
+        d14 (* 0.5 d13)                     ; Distance 1-4
+        p4 (polar p1 ang12 d14)             ; Point 4
+        z4 (- z1 (/ d14 grad))              ; Level 4
+        level (rtos z4 2 3)                  ; Convert level to text (3 decimals)
+      ); END setq
+      (princ (strcat "\nLevel = " level))
+
+      ; OPERATION - Introduce point 4
+      (setvar "osmode" 0)
+      (command "._insert" "PI_DT" p4 "0.25" "0.25" "" level)
+    ); END cond Find
+    ((= mode "W")
+      (alert "hola")
+    );END subcond
+  ); END cond
+
+  ; OPERATION - Delete auxiliary data, if any
+  (if (/= set_line nil) (vla-delete (vlax-ename->vla-object set_line)))
+  (if (/= reference_circle1 nil) (vla-delete (vlax-ename->vla-object reference_circle1)))
+  (if (/= reference_circle2 nil) (vla-delete (vlax-ename->vla-object reference_circle2)))
+
+  ; Restore previous settings
+  (setvar "osmode" oldosmode)
+  (setvar "cmdecho" oldcmdecho)
+  (setvar "clayer" oldclayer)
+
+  ; End without double messages
+  (princ)
+)
+(defun DT:PointOrString( / *error* old_pickbox)
+  (defun *error* ( msg ) (setvar "pickbox" old_pickbox) (princ) )
+  ; Return "Last" or point
+  (setq old_pickbox (getvar "pickbox"))
+  (setvar "pickbox" 0)
+  (setq in (grread nil 8) )
+  (setvar "pickbox" old_pickbox)
+  (cond
+    ( (and
+        (= (car in) 2 )
+        (= (cadr in) 119 )
+      )
+      T
+    );END subcond
+    ( (= (car in) 3 )
+      (cadr in)
+    );END subcond
+    (t
+      (setvar "pickbox" old_pickbox)
+    );END subcond
+  );END cond
+  ; v0.0 - 2016.11.17 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.11.17
+);END defun
