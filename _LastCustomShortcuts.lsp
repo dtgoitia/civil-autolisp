@@ -30,6 +30,16 @@
   (princ (strcat (LM:rtos (- ref dif) 2 2) "m\n"))
   (DT:SetText (car (entsel "\nSelect target text: ")) (strcat "SB" (LM:rtos (- ref dif) 2 2)) )
 );END defun
+(defun c:6() (c:garden_gradient))
 (defun c:m() (command "move" pause "" (cadr (grread 't)) pause) )
 (defun c:mo() (command "move"))
 (defun c:mm() (command "move"))
+(defun c:p00()
+  (command
+    "_pasteblock" "0,0"
+    "_scale" "L" "" "0,0" "1000"
+    "_explode" "L" ""
+    "_zoom" "O" "L" ""
+  )
+  (princ)
+)
