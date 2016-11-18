@@ -207,7 +207,7 @@
   ; Save and prompt message
   (command "_qsave")
   (princ "\nDrawing saved.")
-  (alert "Drawing audited and saved.")
+  (alert "Drawing saved.")
   (princ)
   ; v0.0 - 2016.11.17 - First issue
   ; Author: David Torralba
