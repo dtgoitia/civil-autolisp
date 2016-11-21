@@ -41,7 +41,18 @@
   (if (/= reference_circle2 nil) (vla-delete (vlax-ename->vla-object reference_circle2)))
 
   ; INPUT - Point 1
-  (setq p1 (getpoint "\nSelect point A: "))
+  (if (not (setq p1 (getpoint "\nSelect point A: ")))
+    (if (not INT_lastPoints)
+      ; Force user to input a point if there is no INT_lastPoints saved yet
+      (while (not p1) (setq p1 (getpoint "\nSelect point A: ")) )
+      (setq
+        p1 (nth 0 INT_lastPoints)
+        z1 (nth 1 INT_lastPoints)
+        p2 (nth 2 INT_lastPoints)
+        z2 (nth 3 INT_lastPoints)
+      )
+    );END if
+  );END if
 
   ; OPERATION - Create auxiliary data and objects
   (setq
@@ -52,12 +63,17 @@
     reference_circle1 ( _Reference_Circle p1 radius)
   )
 
-  ;INPUT - Point 1 level
-  (setq z1 (DT:clic_or_type_level))
+  ; INPUT - Point 1 level, if not taken from INT_lastPoints
+  (if (not z1)
+    (setq z1 (DT:clic_or_type_level))
+  );END if
+
   (princ "\nLevel A = ")(princ z1)(princ "m")
 
-  ; INPUT - Point 2
-  (setq p2 (getpoint "\nSelect point B: "))
+  ; INPUT - Point 2, if not taken from INT_lastPoints
+  (if (not p2)
+    (setq p2 (getpoint "\nSelect point B: "))
+  );END if
 
   ; OPERATION - Create auxiliary data and objects
   (setq
@@ -65,11 +81,14 @@
     reference_circle2 ( _Reference_Circle p2 radius)
   )
 
-  ; INPUT - Point 2 level
-  (setq z2 (DT:clic_or_type_level))
+  ; INPUT - Point 2 level, if not taken from INT_lastPoints
+  (if (not z2)
+    (setq z2 (DT:clic_or_type_level))
+  );END if
   (princ "\nLevel B = ")(princ z2)(princ "m")
 
-
+  ; Save input as global variables
+  (setq INT_lastPoints (list p1 z1 p2 z2) )
   ; OPERATION - Calculate gradient and print it
   (setq d12 (distance p1 p2))                ; Distance 1-2
   (princ (strcat "\nDistance = " (LM:rtos d12 2 3) "m" ) )
@@ -174,6 +193,7 @@
   ; End without double messages
   (princ)
 
+  ; v1.2 - 2016.11.21 - Remember previous point (if any)
   ; v1.1 - 2016.11.17 - Unnecesary instructions removed
   ; v1.0 - 2016.09.28 - Distance added to information print at INT function
   ; v0.9 - 2016.05.20 - Inserted block scale reduced for clarity.
@@ -194,5 +214,5 @@
   ; v0.1 - 2016.03.14 - Loop added to select multiple points to interpolate.
   ; v0.0 - 2015.12.14 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.11.17
+  ; Last revision: 2016.11.21
 )
