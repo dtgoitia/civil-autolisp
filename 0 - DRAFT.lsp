@@ -3069,3 +3069,34 @@ defun
   ; Author: David Torralba
   ; Last revision: 2016.11.17
 );END defun
+
+; How to insert a block with attributes without "(command)"
+(entmake
+  (list
+    '(0 . "INSERT")
+    '(66 . 1); has attribute(s)
+    (cons 2 "YourBlockName")
+    (cons 10 YourInsertionPoint)
+    '(41 . 1.0); X
+    '(42 . 1.0); Y
+    '(43 . 1.0); Z
+;      (cons 50 YourRotation); if not default 0
+  ); list
+)
+(entmake
+  (list
+    '(0 . "ATTRIB")
+    (cons 10 YourBaseLineLeftEnd);;;;; get from Attribute data within Block definition
+    (cons 40 YourHeight)
+    (1 . "YourTextContent")
+;      (cons 50 YourRotation); if not default 0
+    (cons 72 YourValue); part of justification
+    (cons 11 YourInsertionPoint);;;;; get from Attribute data within Block definition
+    (cons 2 "YOURTAG")
+    '(70 . 0); I don't know what, but necessary
+    (cons 73 YourValue); part of justification
+  )
+)
+(entmake
+  '((0 . "SEQEND"))
+)
