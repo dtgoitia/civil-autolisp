@@ -398,6 +398,18 @@
         (vlax-invoke blk 'getdynamicblockproperties)
     )
 )
+(defun LM:vl-getattributevalue ( blk tag )
+;; Get Attribute Value  -  Lee Mac
+;; Returns the value held by the specified tag within the supplied block, if present.
+;; blk - [vla] VLA Block Reference Object
+;; tag - [str] Attribute TagString
+;; Returns: [str] Attribute value, else nil if tag is not found.
+    (setq tag (strcase tag))
+    (vl-some '(lambda ( att ) (if (= tag (strcase (vla-get-tagstring att))) (vla-get-textstring att)))
+        (vlax-invoke blk 'getattributes)
+    )
+)
+
 (defun LM:vl-setattributevalue ( blk tag val )
   ;; Set Attribute Value  -  Lee Mac
   ;; Sets the value of the first attribute with the given tag found within the block, if present.
