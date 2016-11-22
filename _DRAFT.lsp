@@ -3100,3 +3100,53 @@ defun
 (entmake
   '((0 . "SEQEND"))
 )
+
+; Block, Xref or Layout
+; Credit to Lee Ambrosius
+; http://hyperpics.blogs.com/beyond_the_ui/2012/04/are-you-a-block-an-xref-or-a-layout.html
+(vl-load-com)
+(defun c:WhatKindOfBlockAmI ( / acadObj doc msg block)
+    (setq acadObj (vlax-get-acad-object))
+    (setq doc (vla-get-ActiveDocument acadObj))
+
+    (setq msg "")
+
+    ;; Step through all the blocks in the Blocks table
+    (vlax-for block (vla-get-Blocks doc)
+        (cond
+            ;; Standard or dynamic block?
+            ((and (= (vla-get-IsLayout block) :vlax-false)
+                  (= (vla-get-IsXRef block) :vlax-false))
+                (if (= (vla-get-IsDynamicBlock block) :vlax-false)
+                    (setq msg (strcat msg (vla-get-Name block) ": Standard"))
+                    (setq msg (strcat msg (vla-get-Name block) ": Dynamic"))
+                )
+
+                ;; Has attributes?
+                (setq attsExist "")
+                (vlax-for ent block
+                    (if (= (vla-get-ObjectName ent) "AcDbAttributeDefinition")
+                        (setq attsExist " with attributes")
+                    )
+                )
+
+                (setq msg (strcat msg attsExist))
+            )
+            ;; Xref?
+            ((= (vla-get-IsXRef block) :vlax-true)
+                (setq msg (strcat msg (vla-get-Name block) ": Xref"))
+                (if (= (vla-get-IsLayout block) :vlax-true)
+                    (setq msg (strcat msg (vla-get-Name block) " and layout"))
+                )
+            )
+            ;; Layout?
+            ((= (vla-get-IsLayout block) :vlax-true)
+                (setq msg (strcat msg (vla-get-Name block) ": Layout only"))
+            )
+        )
+        (setq msg (strcat msg "\n"))
+    )
+
+    ;; Display the block information for this drawing
+    (alert (strcat "This drawing contains blocks of the following types: " msg))
+)
