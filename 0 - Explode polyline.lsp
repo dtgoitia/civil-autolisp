@@ -34,13 +34,14 @@
     ptList (GetPolylinePointList ent_name)
     width (GetPolylineWidth ent_name)
     color (GetPolylineColor ent_name)
+    lineType (GetPolylineStyle ent_name)
   )
   (while (< i (- (length ptList) 1) )
     (setq
       p1 (nth i ptList)
       p2 (nth (+ i 1) ptList)
     )
-    (if (DrawPolylineSegment p1 p2 width color layerName)
+    (if (DrawPolylineSegment p1 p2 width color layerName lineType)
       (setq i (+ i 1) )
       (progn
         (princ "\nError drawing polyline segment from ")
@@ -78,19 +79,28 @@
 (defun GetPolylineLayer (ent_name)
   (cdr (assoc 8 (entget ent_name)))
 )
-(defun DrawPolylineSegment (p1 p2 width color layerName)
+(defun GetPolylineStyle (ent_name)
+  (if (not (assoc 6 (entget ent_name)))
+    nil
+    (cdr (assoc 6 (entget ent_name)))
+  );END if
+)
+(defun DrawPolylineSegment (p1 p2 width color layerName lineType)
   (entmakex
-    (list
-      (cons 0 "LWPOLYLINE")
-      (cons 100 "AcDbEntity")
-      (cons 100 "AcDbPolyline")
-      (cons 8 layerName)
-      (cons 90 2)     ; Number of vertex
-      (cons 70 128)  ; Not closed polyline
-      (cons 43 width)
-      (cons 62 color)
-      (cons 10 (list (nth 0 p1) (nth 1 p1) ))
-      (cons 10 (list (nth 0 p2) (nth 1 p2) ))
-    );END list
+    (append
+      (list
+        (cons 0 "LWPOLYLINE")
+        (cons 100 "AcDbEntity")
+        (cons 100 "AcDbPolyline")
+        (cons 8 layerName)
+        (cons 90 2)     ; Number of vertex
+        (cons 70 128)  ; Not closed polyline
+        (cons 43 width)
+        (cons 62 color)
+        (cons 10 (list (nth 0 p1) (nth 1 p1) ))
+        (cons 10 (list (nth 0 p2) (nth 1 p2) ))
+      );END list
+      (if lineType (list (cons 6 lineType)) )
+    );END append
   );END entmakex
 )
