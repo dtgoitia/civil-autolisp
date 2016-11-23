@@ -43,3 +43,5 @@
   )
   (princ)
 )
+(defun c:o3() (setvar "osmode" 33) )
+(defun c:o4() (setvar "osmode" 4) )
