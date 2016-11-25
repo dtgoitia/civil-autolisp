@@ -390,18 +390,41 @@
   ; Author: David Torralban
   ; Last revision: 2016.09.28
 )
-(defun c:PK( / ent VL_ent_name pt ch)
+(defun c:PK( / ent centreline_VL_ent_name pt ch)
+  ; INPUT - Select centreline
   (while (not ent)
-    (setq ent (entsel "\nSelect centerline: "))
+    (setq ent (entsel "\nSelect centreline: "))
     (if (not ent)
       (princ "nothing selected.")
-      (setq centerline_VL_ent_name (vlax-ename->vla-object (car ent)))
+      (setq centreline_VL_ent_name (vlax-ename->vla-object (car ent)))
     ); END if
-  ); END while centerline selection
+  ); END while centreline selection
 
+  ; INPUT - Ask user what to do: type a chainage and mark it or clic and get the chainage
+  (initget "Type Pick")
+  (setq
+    ans (getkword "\nSelect input mode [Type/Pick] <Pick>:")
+    i 0
+  )
+  (if (not ans) (setq ans "Pick") )
+
+  ; OPERATION - Start infinite loop with selected option:
   (while (not kkkk)
-    (setq ch (DT:PK centerline_VL_ent_name (getpoint "\nSelect a point: ")))
-    (princ (strcat "\nChainage = " (LM:rtos ch 2 3)))
+    (cond
+      ((= ans "Type")
+        (setq
+          dist (getreal "\nIntroduce distance to mark:")
+          pt (vlax-curve-getPointAtDist centreline_VL_ent_name dist)
+        )
+        (entmakex (list (cons 0 "CIRCLE") (cons 10 pt) (cons 40 0.1) ))
+      );END subcond
+      ((= ans "Pick")
+        (setq
+          ch (DT:PK centreline_VL_ent_name (getpoint "\nSelect a point: "))
+        )
+        (princ (strcat "\nChainage " i " = " (LM:rtos ch 2 3)))
+    );END subcond
+    );END cond
   );END while
   (princ)
 )
