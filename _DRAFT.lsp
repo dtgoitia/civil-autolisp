@@ -3100,7 +3100,39 @@ defun
 (entmake
   '((0 . "SEQEND"))
 )
-
+; Levels and drainage shortcuts 24.11.2016
+(defun c:1() (c:BYC))
+(defun c:2() (c:INT))
+(defun c:3() (c:SDIP))
+(defun c:4( / ref dif)
+  ; Update target text with reference level minus 0.310
+  (princ "\nSubase below BLOCK (light traffic):\n")
+  (setq ref (DT:clic_or_type_level) dif 0.310)
+  (princ (strcat (LM:rtos (- ref dif) 2 2) "m\n"))
+  (DT:SetText (car (entsel "\nSelect target text: ")) (strcat "SB" (LM:rtos (- ref dif) 2 2)) )
+);END defun
+(defun c:44( / ref dif)
+  ; Update target text with reference level minus 0.380
+  (princ "\nSubase below BLOCK (heavy traffic):\n")
+  (setq ref (DT:clic_or_type_level) dif 0.380)
+  (princ (strcat (LM:rtos (- ref dif) 2 2) "m\n"))
+  (DT:SetText (car (entsel "\nSelect target text: ")) (strcat "SB" (LM:rtos (- ref dif) 2 2)) )
+);END defun
+(defun c:5( / ref dif)
+  ; Update target text with reference level minus 0.290
+  (princ "\nSubase below TARMAC paving (light traffic):\n")
+  (setq ref (DT:clic_or_type_level) dif 0.290)
+  (princ (strcat (LM:rtos (- ref dif) 2 2) "m\n"))
+  (DT:SetText (car (entsel "\nSelect target text: ")) (strcat "SB" (LM:rtos (- ref dif) 2 2)) )
+);END defun
+(defun c:55( / ref dif)
+  ; Update target text with reference level minus 0.360
+  (princ "\nSubase below TARMAC paving (heavy traffic):\n")
+  (setq ref (DT:clic_or_type_level) dif 0.360)
+  (princ (strcat (LM:rtos (- ref dif) 2 2) "m\n"))
+  (DT:SetText (car (entsel "\nSelect target text: ")) (strcat "SB" (LM:rtos (- ref dif) 2 2)) )
+);END defun
+(defun c:6() (c:garden_gradient))
 ; Block, Xref or Layout
 ; Credit to Lee Ambrosius
 ; http://hyperpics.blogs.com/beyond_the_ui/2012/04/are-you-a-block-an-xref-or-a-layout.html

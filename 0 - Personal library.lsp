@@ -26,6 +26,19 @@
 (defun c:iso() (command "isolateobjects")(princ))
 (defun c:uiso() (command "unisolateobjects")(princ))
 (defun c:c() (command "copy")(princ))
+(defun c:m() (command "move" pause "" (cadr (grread 't)) pause) )
+(defun c:mo() (command "move"))
+(defun c:move() (command "move"))
+(defun c:mm() (command "move"))
+(defun c:p00()
+  (command
+    "_pasteblock" "0,0"
+    "_scale" "L" "" "0,0" "1000"
+    "_explode" "L" ""
+    "_zoom" "O" "L" ""
+  )
+  (princ)
+)
 (defun c:ci()	(command "circle")(princ))
 (defun c:n() (command "NCOPY" pause "" "" ""))
 (defun c:xu() (command "-xref" "u" "*")(alert "Xref Unload finished!")(princ)) ;Unload all Xrefs
