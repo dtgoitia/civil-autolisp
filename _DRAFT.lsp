@@ -2204,41 +2204,6 @@ defun
 (defun c:3() (c:DT:move_KTF_SettingOutLabel))
 (defun c:4() (princ "\nRadius dimension: ") (command "_dimradius" pause "") )
 (defun c:9()(c:ROAD_SETOUT))
-(defun c:PK( / ent VL_ent_name pt ch)
-  ; INPUT - Ask user what to do: type a chainage and mark it or clic and get the chainage
-  (initget "Type Pick")
-  (setq
-    ans (getkword "\nSelect input mode [Type/Pick] <Pick>:")
-    i 0
-  )
-  (if (not ans) (setq ans "Pick") )
-
-  ; OPERATION - Select centreline
-  (while (not ent)
-    (setq ent (entsel "\nSelect centreline: "))
-    (if (not ent)
-      (princ "nothing selected.")
-      (setq centreline_VL_ent_name (vlax-ename->vla-object (car ent)))
-    ); END if
-  ); END while centreline selection
-
-  ; OPERATION - Start loop with selected option:
-  (while (not kkkk)
-    (cond
-      ((= ans "Type")
-        (alert "Sorry, still this option is not available.")
-        (exit)
-      );END subcond
-      ((= ans "Pick")
-        (setq
-          ch (DT:PK centreline_VL_ent_name (getpoint "\nSelect a point: "))
-        )
-        (princ (strcat "\nChainage " i " = " (LM:rtos ch 2 3)))
-    );END subcond
-    );END cond
-  );END while
-  (princ)
-)
 ; ENTMAKE REFERENCE, ENTMAKE FUNCTIONS -----------------------------------------------------------------------
 (defun 3DFace (p1 p2 p3 p4)
   (entmakex (list (cons 0 "3DFACE")
