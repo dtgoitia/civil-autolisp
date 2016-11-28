@@ -39,16 +39,19 @@
   )
   (defun DT:RoadLevel (pt ang z)
     (entmakex
-      (list
-        (cons 0 "TEXT")
-        (cons 10 '(0.0 0.0 0.0))
-        (cons 40 0.35)
-        (cons 1  (strcat "%%U" (LM:rtos z 2 3)))
-        (cons 50 ang)
-        (cons 11  pt)
-        (cons 72 1)
-        (cons 73 2)
-      );END list
+      (append
+        (list
+          (cons 0 "TEXT")
+          (cons 10 '(0.0 0.0 0.0))
+          (cons 40 0.35)
+          (cons 1  (strcat "%%U" (LM:rtos z 2 3)))
+          (cons 50 ang)
+          (cons 11  pt)
+          (cons 72 1)
+          (cons 73 2)
+        );END list
+        (if (tblsearch "style" "ROMANS") (list (cons 7 "ROMANS")) ) ; Text style: ROMANS, if it exists
+      );END append
     );END entmakex
   )
 
