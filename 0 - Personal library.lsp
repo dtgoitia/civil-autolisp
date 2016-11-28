@@ -412,10 +412,13 @@
   (while (not kkkk)
     (cond
       ((= ans "Type")
-        (setq
-          pt (vlax-curve-getPointAtDist centreline_VL_ent_name (getreal "\nIntroduce distance to mark:"))
-        )
-        (entmakex (list (cons 0 "CIRCLE") (cons 10 pt) (cons 40 0.1) ))
+        (if (setq dist (getreal "\nIntroduce distance to mark:") )
+          (progn
+            (setq pt (vlax-curve-getPointAtDist centreline_VL_ent_name dist) )
+            (entmakex (list (cons 0 "CIRCLE") (cons 10 pt) (cons 40 0.1) ))
+          );END progn
+          (exit)
+        );END if
       );END subcond
       ((= ans "Pick")
         (if (setq pt (getpoint "\nSelect a point: ") )
