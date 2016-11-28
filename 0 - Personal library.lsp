@@ -418,11 +418,16 @@
         (entmakex (list (cons 0 "CIRCLE") (cons 10 pt) (cons 40 0.1) ))
       );END subcond
       ((= ans "Pick")
-        (setq
-          ch (DT:PK centreline_VL_ent_name (getpoint "\nSelect a point: "))
-          i (+ i 1)
-        )
-        (princ (strcat "\nChainage " (itoa i) " = " (LM:rtos ch 2 3)))
+        (if (setq pt (getpoint "\nSelect a point: ") )
+          (progn
+            (setq
+              ch (DT:PK centreline_VL_ent_name pt)
+              i (+ i 1)
+            )
+            (princ (strcat (itoa i) " chainage = " (LM:rtos ch 2 3)))
+          );END progn
+          (exit)
+        );END if
     );END subcond
     );END cond
   );END while
