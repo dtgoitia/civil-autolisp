@@ -43,14 +43,21 @@
 (defun c:n() (command "NCOPY" pause "" "" ""))
 (defun c:xu() (command "-xref" "u" "*")(alert "Xref Unload finished!")(princ)) ;Unload all Xrefs
 (defun c:xr() (command "-xref" "r" "*")(alert "Xref Reload finished!")(princ)) ;Reload all Xrefs
-(defun c:nt( / pt oldtextstyle)
+(defun c:nt( / oldtextstyle olderror pt)
   (setq
     oldtextstyle (getvar "textstyle")
+    olderror *error*
     pt (getpoint "\nSelect text insertion point: ")
+  )
+  (defun *error* ( msg )
+    (setvar "textstyle" oldtextstyle)
+    (setq *error* olderror)
+    (princ)
   )
   (command "-text" "S" "ARIAL" "J" "MC" pt 3 90 (getstring t "\nEnter text: "))
   (command "scale" "L" "" pt pause)
   (setvar "textstyle" oldtextstyle)
+  (setq *error* olderror)
   (princ)
 ); Add note
 (defun c:pp()(command "_publish"))
