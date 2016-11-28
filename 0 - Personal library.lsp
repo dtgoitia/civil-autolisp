@@ -390,7 +390,7 @@
   ; Author: David Torralban
   ; Last revision: 2016.09.28
 )
-(defun c:PK( / ent centreline_VL_ent_name pt ch)
+(defun c:PK( / ent centreline_VL_ent_name ans i pt ch)
   ; INPUT - Select centreline
   (while (not ent)
     (setq ent (entsel "\nSelect centreline: "))
@@ -413,8 +413,7 @@
     (cond
       ((= ans "Type")
         (setq
-          dist (getreal "\nIntroduce distance to mark:")
-          pt (vlax-curve-getPointAtDist centreline_VL_ent_name dist)
+          pt (vlax-curve-getPointAtDist centreline_VL_ent_name (getreal "\nIntroduce distance to mark:"))
         )
         (entmakex (list (cons 0 "CIRCLE") (cons 10 pt) (cons 40 0.1) ))
       );END subcond
@@ -422,7 +421,7 @@
         (setq
           ch (DT:PK centreline_VL_ent_name (getpoint "\nSelect a point: "))
         )
-        (princ (strcat "\nChainage " i " = " (LM:rtos ch 2 3)))
+        (princ (strcat "\nChainage " (itoa i) " = " (LM:rtos ch 2 3)))
     );END subcond
     );END cond
   );END while
