@@ -419,11 +419,11 @@
   (while (not kkkk)
     (cond
       ((= ans "Type")
-        (if (setq dist (getreal "\nIntroduce distance to mark:") )
-          (progn
-            (setq pt (vlax-curve-getPointAtDist centreline_VL_ent_name dist) )
+        (if (setq dist (getreal "\nIntroduce distance to mark: ") )
+          (if (setq pt (vlax-curve-getPointAtDist centreline_VL_ent_name dist) )
             (entmakex (list (cons 0 "CIRCLE") (cons 10 pt) (cons 40 0.1) ))
-          );END progn
+            (princ (strcat "Point no marked. "(LM:rtos dist 2 3) "m distance bigger than selected centreline length."))
+          );END if
           (exit)
         );END if
       );END subcond
