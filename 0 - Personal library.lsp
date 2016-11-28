@@ -420,6 +420,7 @@
       ((= ans "Pick")
         (setq
           ch (DT:PK centreline_VL_ent_name (getpoint "\nSelect a point: "))
+          i (+ i 1)
         )
         (princ (strcat "\nChainage " (itoa i) " = " (LM:rtos ch 2 3)))
     );END subcond
