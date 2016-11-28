@@ -422,7 +422,7 @@
         (if (setq dist (getreal "\nIntroduce distance to mark: ") )
           (if (setq pt (vlax-curve-getPointAtDist centreline_VL_ent_name dist) )
             (entmakex (list (cons 0 "CIRCLE") (cons 10 pt) (cons 40 0.1) ))
-            (princ (strcat "Point no marked. "(LM:rtos dist 2 3) "m distance bigger than selected centreline length."))
+            (princ (strcat "Point no marked. "(LM:rtos dist 2 3) "m falls out of selected centreline length."))
           );END if
           (exit)
         );END if
