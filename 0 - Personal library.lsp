@@ -1159,7 +1159,7 @@
   (princ)
 )
 (defun DT:mid3dPoint ( p1 p2 )
-  ; Returns the middle point (in 3D) between points p1 and p2
+  ; Return the middle point (in 3D) between points p1 and p2
   ; p1 [pt] - Point 1
   ; p2 [pt] - Point 2
   (list
@@ -1167,4 +1167,9 @@
     (* 0.5 (+ (cadr  p1) (cadr  p2) ))
     (* 0.5 (+ (caddr p1) (caddr p2) ))
   );END list
+)
+(defun DT:ReduceAngle ( ang )
+  ; Return the provided angle equivalent between 0 and 2π
+  ; ang [rad] - Angle to reduce
+  (setq ang (- ang (* (float (fix (/ ang (* 2 pi)) )) 2 pi) ) )
 )
