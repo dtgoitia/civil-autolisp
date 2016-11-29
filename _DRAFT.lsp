@@ -3147,3 +3147,45 @@ defun
     ;; Display the block information for this drawing
     (alert (strcat "This drawing contains blocks of the following types: " msg))
 )
+(defun c:1() (DT:AddSewerLabel (car (entsel)) ) )
+(defun DT:AddSewerLabel( ent_name / p1 p2 ang lay )
+  ; NOT FINISHED -------------------------------------------------- NOT FINISHED
+  ; Add a readable text aligned with the selected line and centered
+  ; ent_name [ename] - Reference line entity name
+  (setq
+    p1 (cdr (assoc 10 (entget ent_name)) )
+    p2 (cdr (assoc 11 (entget ent_name)) )
+    ang (angle p1 p2)
+    p_ins (DT:mid3dPoint p1 p2)
+  )
+  (entmakex
+    (list
+      (cons 0 "TEXT")                       ; entity type
+      (cons 1 "test text")                  ; content
+      (cons 40 0.35)                        ; text size
+      (cons 11 p_ins)                          ; insertion point
+      (cons 50 (DT:ReadableTextAngle ang) ) ; rotation
+      (cons 10 '(0.0 0.0 0.0))
+      (cons 72 1)
+      (cons 73 2)
+      (if (not (tblsearch "style" "ARIAL")) (cons 7 "standard") (cons 7 "ARIAL")) ; Text style: ARIAL, if possible
+    );END list
+  );END entmakex
+  ; NOT FINISHED -------------------------------------------------- NOT FINISHED
+)
+(defun c:1() (setvar "clayer" "e-asd-PH2") (DT:LinkedBlocks "0000"))
+(defun c:2() (setvar "clayer" "e-psd-PH2") (DT:LinkedBlocks "00rwp"))
+(defun c:3() (command "_erase" "L" ""))
+(defun DT:LinkedBlocks ( blockName / p1 p2)
+  (setq p2 (getpoint) )
+  (entmakex (list (cons 0 "INSERT") (cons 2 blockName) (cons 10 p2 ) ))
+  (while (not kkkk)
+    (setq
+      p1 p2
+      p2 (getpoint)
+    )
+    (entmakex (list (cons 0 "LINE") (cons 10 p1) (cons 11 p2) ))
+    (entmakex (list (cons 0 "INSERT") (cons 2 blockName) (cons 10 p2 ) ))
+  );END while
+  (princ)
+);END defun
