@@ -15,7 +15,7 @@
   );END while
   (princ)
 );END defun
-(defun c:4( / p )
+(defun c:4( / p ent_name)
   (c:N)
   (setq
     ent_name (entlast)
@@ -28,10 +28,10 @@
         )
       )
   )
-  (vla-offset (vlax-ename->vla-object ent_name) 0.5)  (setq ent_name1 (entlast))
-  (vla-offset (vlax-ename->vla-object ent_name) 1)    (setq ent_name2 (entlast))
-  (vla-offset (vlax-ename->vla-object ent_name) -0.5) (setq ent_name3 (entlast))
-  (vla-offset (vlax-ename->vla-object ent_name) -1)   (setq ent_name4 (entlast))
+  (vla-offset (vlax-ename->vla-object ent_name) 0.5)
+  (vla-offset (vlax-ename->vla-object ent_name) 1)
+  (vla-offset (vlax-ename->vla-object ent_name) -0.5)
+  (vla-offset (vlax-ename->vla-object ent_name) -1)
   (vla-delete (vlax-ename->vla-object ent_name))
 
 )
