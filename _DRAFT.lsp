@@ -3189,3 +3189,18 @@ defun
   );END while
   (princ)
 );END defun
+; How to wrap groups of commands and UNDO them as a group:
+;|
+(command "._UNDO" "_Begin") ; or (command "UNDO" "BE")
+  (setq old_osmode (getvar "OSMODE"))
+  (setvar "OSMODE" 0)
+  (command "._circle" "5,5" "2")    ;Draws a circle
+  (command "._line" "3,5" "7,5" "") ;Draws a line
+  (setq el (entlast))               ;Gets the last entity added
+                                    ; to the drawing
+  (setq pt '(5 7))                  ;Sets the trim point
+  (command "._trim" el "" pt "")    ;Performs the trim
+  (setvar "OSMODE" old_osmode)
+  (command "._UNDO" "_End"); or (command "UNDO" "END") 
+)
+|;
