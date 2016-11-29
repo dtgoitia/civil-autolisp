@@ -1173,3 +1173,15 @@
   ; ang [rad] - Angle to reduce
   (setq ang (- ang (* (float (fix (/ ang (* 2 pi)) )) 2 pi) ) )
 )
+(defun DT:ReadableTextAngle ( ang / a )
+  ; Return text angle in radians corrected for readability
+  ; ang [rad] - Angle to correct for readability, from 0 to 2π
+  (setq a (DT:ReduceAngle ang)) ; reduce angle
+  (if (and (> a (* 0.5 pi) ) (< a (* 1.5 pi) ) )
+    (if (< a pi )
+      (+ a pi)  ; unreadable angle, add 180º
+      (- a pi)  ; unreadable angle, substract 180º
+    );END if
+    a           ; readable angle, return as is
+  );END if
+)
