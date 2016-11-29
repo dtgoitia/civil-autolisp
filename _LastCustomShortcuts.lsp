@@ -1,16 +1,17 @@
 ; DO NOT REMOVE THIS LINE. It's a checking.
-(defun c:1() (c:BYC))
-(defun c:2( / p1 p1a p1b)
-  ; Insert rear door block between two points, and rotate 90 degree.
-  (setvar "osmode" 513)
-  (setq
-   p1a (getpoint "\nPoint 1a:")
-   p1b (getpoint "\nPoint 1b:")
-   p1 (polar p1a (angle p1a p1b) (* 0.5 (distance p1a p1b)) )
-  )
-  (setvar "osmode" 0)
-  ;(command "-insert" "Part-m-secondary" p1 1 1 (* (/ 180 pi) (angle p1a p1b)) )
-  (command "-insert" "Part-m-secondary" p1 1 1 (* (/ 180 pi) (+ (angle p1a p1b) (* -0.5 pi) ) -1 ) )
-  (command "rotate" (entlast) "" p1 "-90")
-  (setvar "osmode" 513)
-)
+(defun c:1() (setvar "clayer" "e-asd-PH2") (DT:LinkedBlocks "0000"))
+(defun c:2() (setvar "clayer" "e-psd-PH2") (DT:LinkedBlocks "00rwp"))
+(defun c:3() (command "_erase" "L" ""))
+(defun DT:LinkedBlocks ( blockName / p1 p2)
+  (setq p2 (getpoint) )
+  (entmakex (list (cons 0 "INSERT") (cons 2 blockName) (cons 10 p2 ) ))
+  (while (not kkkk)
+    (setq
+      p1 p2
+      p2 (getpoint)
+    )
+    (entmakex (list (cons 0 "LINE") (cons 10 p1) (cons 11 p2) ))
+    (entmakex (list (cons 0 "INSERT") (cons 2 blockName) (cons 10 p2 ) ))
+  );END while
+  (princ)
+);END defun
