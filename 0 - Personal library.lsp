@@ -1158,3 +1158,13 @@
   ;(CleanCommandLine)
   (princ)
 )
+(defun DT:mid3dPoint ( p1 p2 )
+  ; Returns the middle point (in 3D) between points p1 and p2
+  ; p1 [pt] - Point 1
+  ; p2 [pt] - Point 2
+  (list
+    (* 0.5 (+ (car   p1) (car   p2) ))
+    (* 0.5 (+ (cadr  p1) (cadr  p2) ))
+    (* 0.5 (+ (caddr p1) (caddr p2) ))
+  );END list
+)
