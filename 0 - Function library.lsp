@@ -409,7 +409,6 @@
         (vlax-invoke blk 'getattributes)
     )
 )
-
 (defun LM:vl-setattributevalue ( blk tag val )
   ;; Set Attribute Value  -  Lee Mac
   ;; Sets the value of the first attribute with the given tag found within the block, if present.
@@ -424,6 +423,15 @@
                 (progn (vla-put-textstring att val) val)
             )
         )
+        (vlax-invoke blk 'getattributes)
+    )
+)
+(defun LM:vl-getattributes ( blk )
+  ;; Get Attributes  -  Lee Mac
+  ;; Returns an association list of attributes present in the supplied block.
+  ;; blk - [vla] VLA Block Reference Object
+  ;; Returns: [lst] Association list of ((<Tag> . <Value>) ... )
+    (mapcar '(lambda ( att ) (cons (vla-get-tagstring att) (vla-get-textstring att)))
         (vlax-invoke blk 'getattributes)
     )
 )
