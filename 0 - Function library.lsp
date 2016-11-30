@@ -937,6 +937,12 @@
   (repeat 400 (princ (strcat "\n" (chr 160) ) ) )
   (princ)
 )
+(defun DT:CheckIfBlockExists( blockName )
+  (if (tblsearch "block" blockName)
+    T
+    nil
+  );END if
+)
 ; ERROR HANDLING FUNCTIONS -----------------------------------------------------
 (defun get_sysvars(targets)
     ; Return variable's values
