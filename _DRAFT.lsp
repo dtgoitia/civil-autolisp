@@ -3201,6 +3201,6 @@ defun
   (setq pt '(5 7))                  ;Sets the trim point
   (command "._trim" el "" pt "")    ;Performs the trim
   (setvar "OSMODE" old_osmode)
-  (command "._UNDO" "_End"); or (command "UNDO" "END") 
+  (command "._UNDO" "_End"); or (command "UNDO" "END")
 )
 |;
