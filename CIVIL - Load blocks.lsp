@@ -54,40 +54,44 @@
   (setvar "insunitsdeftarget" 0)
   (setvar "insunitsdefsource" 0)
 
-  ; MAIN ROUTINE
-  (cond
-    ((= blk nil)
-      (princ "\nNo block defined.")
-    );END cond - no block
-    (t ; if any block specified:
-      (if (/= lay "")
-        (progn
-          (setq oldclayer (getvar "clayer"))
-          (command "-layer" "M" lay "")
-        ); END progn
-      );END if change CLAYER
-      (if (/= osm "")
-        (progn
-          (setq oldosmode (getvar "osmode"))
-          (setvar "osmode" osm)
-        ); END progn
-      );END if change OSMODE
-      (cond
-        ( (= rot "")
-          (command "-insert" blk pause 1 1 0)
-        ); END cond no rotation
-        ( (= rot "P")
-          (command "-insert" blk pause 1 1 pause)
-        ); END cond with rotation
-        ( (and (/= rot "") (/= rot "P"))
-          (princ "\nrot")
-          (command "-insert" blk pause 1 1 rot)
-        ); END cond no rotation
-      );END cond rot
-      (if (/= lay "") (setvar "clayer" oldclayer))
-      (if (/= osm "") (setvar "osmode" oldosmode))
-    );END cond - block OK
-  );END cond
+  ; Chek if block exists
+  (if (DT:CheckIfBlockExists blk)
+    ; MAIN ROUTINE
+    (cond
+      ((= blk nil)
+        (princ "\nNo block defined.")
+      );END cond - no block
+      (t ; if any block specified:
+        (if (/= lay "")
+          (progn
+            (setq oldclayer (getvar "clayer"))
+            (command "-layer" "M" lay "")
+          ); END progn
+        );END if change CLAYER
+        (if (/= osm "")
+          (progn
+            (setq oldosmode (getvar "osmode"))
+            (setvar "osmode" osm)
+          ); END progn
+        );END if change OSMODE
+        (cond
+          ( (= rot "")
+            (command "-insert" blk pause 1 1 0)
+          ); END cond no rotation
+          ( (= rot "P")
+            (command "-insert" blk pause 1 1 pause)
+          ); END cond with rotation
+          ( (and (/= rot "") (/= rot "P"))
+            (princ "\nrot")
+            (command "-insert" blk pause 1 1 rot)
+          ); END cond no rotation
+        );END cond rot
+        (if (/= lay "") (setvar "clayer" oldclayer))
+        (if (/= osm "") (setvar "osmode" oldosmode))
+      );END cond - block OK
+    );END cond
+    (alert "Sorry, this block is not loaded.\nGo to:\nMenu bar\n   MJA Engineering\n      Load all blocks\nThis will load all the missing blocks.")
+  );END if
 
   ; RESTORE PREVIOUS SETTINGS
   (setvar "attdia" oldattdia)
