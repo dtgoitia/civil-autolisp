@@ -2730,32 +2730,6 @@ defun
   ); END vlax-for
   (princ)
 );END defun​​
-(defun bb ( blockName )
-;(defun DT:CheckIfBlockExists( blockName )
-  (setq
-    acadObject (vlax-get-acad-object)
-    acadDocument (vla-get-ActiveDocument acadObject)
-    acadBlocks (vla-get-blocks acadDocument)
-  )
-  (vlax-for item acadBlocks
-    (progn
-      (if
-        (and
-          (equal (vla-get-IsLayout item) :vlax-false)
-          (equal (vla-get-IsXref item) :vlax-false)
-        );END and
-        (progn
-          (if (= blockName (vlax-get-property item (if (vlax-property-available-p item 'EffectiveName) 'EffectiveName 'Name) ) )
-            T   ; The block exists
-            nil ; The doesn't block exist
-          );END if
-        );END progn
-      );END cond
-    );END progn
-  ); END vlax-for
-  (princ)
-);END defun​​
-(bb "testBlock")
 (defun c:1() (c:e-work-layers))
 (LoadWithoutSecureload "C:/Users/davidt/Dropbox/MJA/LISP/TORRALBA/CIV_e-work_layers.lsp" "OnFailMessage")
 (defun c:2() (c:e-work-copyscaleblock))
