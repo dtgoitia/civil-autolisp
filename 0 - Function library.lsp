@@ -952,7 +952,7 @@
 ;    nil
 ;  );END if
 ;)
-(defun DT:CheckIfBlockExists( blockName )
+(defun DT:CheckIfBlockExists ( blockName / exists)
   ; Returns T if any block named as blockName (not Layout or Xref) exists within
   ; the Block Table, otherwise returns nil
   ; blockName [str] - Name of the block to search
@@ -964,12 +964,13 @@
           (= (vla-get-IsXref x)   :vlax-false) ; is not an xref
         );END and
         (if (= blockName (vlax-get-property x (if (vlax-property-available-p x 'EffectiveName) 'EffectiveName 'Name) ) )
-          T   ; the block exists
-          nil ; the block doesn't exist
+          (setq exists T) ; the block exists
+          nil             ; the block doesn't exist
         );END if
-      );END cond
+      );END if
     );END progn
   );END vlax-for
+  exists
 )
 ; ERROR HANDLING FUNCTIONS -----------------------------------------------------
 (defun get_sysvars(targets)
