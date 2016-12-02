@@ -945,11 +945,31 @@
   (repeat 400 (princ (strcat "\n" (chr 160) ) ) )
   (princ)
 )
+; SIMPLE VERSION
+;(defun DT:CheckIfBlockExists( blockName )
+;  (if (tblsearch "block" blockName)
+;    T
+;    nil
+;  );END if
+;)
 (defun DT:CheckIfBlockExists( blockName )
-  (if (tblsearch "block" blockName)
-    T
-    nil
-  );END if
+  ; Returns T if any block named as blockName (not Layout or Xref) exists within
+  ; the Block Table, otherwise returns nil
+  ; blockName [str] - Name of the block to search
+  (vlax-for x (vla-get-blocks (vla-get-ActiveDocument (vlax-get-acad-object)))
+    (progn
+      (if
+        (and
+          (= (vla-get-IsLayout x) :vlax-false) ; is not a layout
+          (= (vla-get-IsXref x)   :vlax-false) ; is not an xref
+        );END and
+        (if (= blockName (vlax-get-property x (if (vlax-property-available-p x 'EffectiveName) 'EffectiveName 'Name) ) )
+          T   ; the block exists
+          nil ; the block doesn't exist
+        );END if
+      );END cond
+    );END progn
+  );END vlax-for
 )
 ; ERROR HANDLING FUNCTIONS -----------------------------------------------------
 (defun get_sysvars(targets)
