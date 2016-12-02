@@ -2697,39 +2697,6 @@ defun
   (DT:SetText ent_name (strcat "%%U" (LM:rtos (+ (atof (substr (DT:GetText ent_name) 4)) -0.025) 2 3) ) )
   (command "move" ent_name "" (cadr (grread 't)) pause)
 )
-(defun c:ListAllBlocks()
-;(defun bb ( blockName )
-;(defun DT:CheckIfBlockExists( blockName )
-  (setq
-    acadObject (vlax-get-acad-object)
-    acadDocument (vla-get-ActiveDocument acadObject)
-    acadBlocks (vla-get-blocks acadDocument)
-  )
-  (vlax-for item acadBlocks
-    (progn
-      (princ "\n")
-      (princ item)
-      (cond
-        ((equal (vla-get-IsLayout item) :vlax-true)
-          (princ " (modelspace/layout)")
-        );END subcond
-        ((equal (vla-get-IsXref item) :vlax-true)
-          (princ " (xref)")
-        );END subcond
-        (t
-          (princ " (")
-          (princ
-            (vlax-get-property item
-              (if (vlax-property-available-p item 'EffectiveName) 'EffectiveName 'Name)
-            )
-          )
-          (princ ")")
-        );END subcond
-      );END cond
-    );END progn
-  ); END vlax-for
-  (princ)
-);END defun​​
 (defun c:1() (c:e-work-layers))
 (LoadWithoutSecureload "C:/Users/davidt/Dropbox/MJA/LISP/TORRALBA/CIV_e-work_layers.lsp" "OnFailMessage")
 (defun c:2() (c:e-work-copyscaleblock))
