@@ -18,7 +18,7 @@
             *error*
             oldosmode oldclayer oldattdia oldattreq oldinsunits oldinsunitsdeftarget oldinsunitsdefsource
             )
-  ; (DT:ib "block_name" "layer_name" "rotation_value" "osmode_value")
+  ; (DT:ib block_name layer_name rotation_value osmode_value)
   ; layer_name = ""       --> use current layer
   ; rotation_value = ""   --> rotation = 90 degree
   ; rotation_value = "P"  --> let user select rotation
@@ -101,11 +101,12 @@
   (setvar "insunitsdefsource" oldinsunitsdefsource)
   (princ)
 
+  ; v0.3 - 2016.11.30 - Check if the block exists before you insert it
   ; v0.2 - 2016.07.28 - Update system variable management
   ; v0.1 - 2016.04.15 - ATTDIA and ATTREQ system variable control added
   ; v0.0 - 2016.04.14 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.04.14
+  ; Last revision: 2016.11.30
 )
 ;
 ;---------------------------------------------------------------------------
@@ -140,24 +141,34 @@
   ; Last revision: 2016.03.29
 )
 (defun title_block_insert ( blk /  )
-  (command "-insert" blk "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) "" "" "" "" "PRELIMINARY" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "")
+  (if (DT:CheckIfBlockExists blk)
+    (command "-insert" blk "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) "" "" "" "" "PRELIMINARY" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "")
+    (alert "Sorry, this block is not loaded.\nGo to:\nMenu bar\n   MJA Engineering\n      Load all blocks\nThis will load all the missing blocks.")
+  );END if
+  ; v0.1 - 2016.12.02 - Check if the block exists before you insert it
   ; v0.0 - 2016.03.29 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.03.29
+  ; Last revision: 2016.12.02
 )
-(defun title_block_D_insert ( blk /  oldosmode)
-  (setq oldosmode (getvar "osmode"))
-  (setvar "osmode" 0)
-  (command "-insert" blk "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) "" "" "" "" "PRELIMINARY")
-  (while (> (getvar "CMDACTIVE") 0) (command ""))
-  (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
-  (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
-  (setvar "osmode" oldosmode)
+(defun title_block_D_insert ( blk / oldosmode )
+  (if (DT:CheckIfBlockExists blk)
+    (progn
+      (setq oldosmode (getvar "osmode"))
+      (setvar "osmode" 0)
+      (command "-insert" blk "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) "" "" "" "" "PRELIMINARY")
+      (while (> (getvar "CMDACTIVE") 0) (command ""))
+      (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
+      (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
+      (setvar "osmode" oldosmode)
+    );END progn
+    (alert "Sorry, this block is not loaded.\nGo to:\nMenu bar\n   MJA Engineering\n      Load all blocks\nThis will load all the missing blocks.")
+  );END if
   (princ)
+  ; v0.2 - 2016.12.02 - Check if the block exists before you insert it
   ; v0.1 - 2016.08.23 - OSMODE, layer and color management added
   ; v0.0 - 2016.03.29 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.08.23
+  ; Last revision: 2016.12.02
 )
 (defun c:MJA_A0_landscape () (title_block_insert "A0-Landscape") (princ))
 (defun c:MJA_A1_landscape () (title_block_insert "A1-Landscape") (princ))
@@ -168,23 +179,33 @@
 (defun c:MJA_A2_Portrait () (title_block_insert "A2-Portrait") (princ))
 (defun c:MJA_A3_Portrait () (title_block_insert "A3-Portrait") (princ))
 (defun c:MJA_A4_landscape ( / oldosmode )
-  (setq oldosmode (getvar "osmode"))
-  (setvar "osmode" 0)
-  (command "-insert" "A4-Landscape" "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) )
-  (while (> (getvar "CMDACTIVE") 0) (command ""))
-  (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
-  (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
-  (setvar "osmode" oldosmode)
+  (if (DT:CheckIfBlockExists blk)
+    (progn
+      (setq oldosmode (getvar "osmode"))
+      (setvar "osmode" 0)
+      (command "-insert" "A4-Landscape" "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) )
+      (while (> (getvar "CMDACTIVE") 0) (command ""))
+      (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
+      (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
+      (setvar "osmode" oldosmode)
+    );END progn
+    (alert "Sorry, this block is not loaded.\nGo to:\nMenu bar\n   MJA Engineering\n      Load all blocks\nThis will load all the missing blocks.")
+  );END if
   (princ)
 )
 (defun c:MJA_A4_portrait ( / oldosmode )
-  (setq oldosmode (getvar "osmode"))
-  (setvar "osmode" 0)
-  (command "-insert" "A4-Portrait" "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) )
-  (while (> (getvar "CMDACTIVE") 0) (command ""))
-  (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
-  (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
-  (setvar "osmode" oldosmode)
+  (if (DT:CheckIfBlockExists blk)
+    (progn
+      (setq oldosmode (getvar "osmode"))
+      (setvar "osmode" 0)
+      (command "-insert" "A4-Portrait" "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) )
+      (while (> (getvar "CMDACTIVE") 0) (command ""))
+      (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
+      (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
+      (setvar "osmode" oldosmode)
+    );END progn
+    (alert "Sorry, this block is not loaded.\nGo to:\nMenu bar\n   MJA Engineering\n      Load all blocks\nThis will load all the missing blocks.")
+  );END if
   (princ)
 )
 (defun c:MJA_A0_landscape_D () (title_block_D_insert "A0-Landscape_D") (princ))
@@ -196,23 +217,33 @@
 (defun c:MJA_A2_Portrait_D () (title_block_D_insert "A2-Portrait_D") (princ))
 (defun c:MJA_A3_Portrait_D () (title_block_D_insert "A3-Portrait_D") (princ))
 (defun c:MJA_A4_landscape_D ( / oldosmode )
-  (setq oldosmode (getvar "osmode"))
-  (setvar "osmode" 0)
-  (command "-insert" "A4-Landscape_D" "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) )
-  (while (> (getvar "CMDACTIVE") 0) (command ""))
-  (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
-  (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
-  (setvar "osmode" oldosmode)
+  (if (DT:CheckIfBlockExists blk)
+    (progn
+      (setq oldosmode (getvar "osmode"))
+      (setvar "osmode" 0)
+      (command "-insert" "A4-Landscape_D" "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) )
+      (while (> (getvar "CMDACTIVE") 0) (command ""))
+      (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
+      (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
+      (setvar "osmode" oldosmode)
+    );END progn
+    (alert "Sorry, this block is not loaded.\nGo to:\nMenu bar\n   MJA Engineering\n      Load all blocks\nThis will load all the missing blocks.")
+  );END if
   (princ)
 )
 (defun c:MJA_A4_portrait_D ( / oldosmode )
-  (setq oldosmode (getvar "osmode"))
-  (setvar "osmode" 0)
-  (command "-insert" "A4-Portrait_D" "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) )
-  (while (> (getvar "CMDACTIVE") 0) (command ""))
-  (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
-  (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
-  (setvar "osmode" oldosmode)
+  (if (DT:CheckIfBlockExists blk)
+    (progn
+      (setq oldosmode (getvar "osmode"))
+      (setvar "osmode" 0)
+      (command "-insert" "A4-Portrait_D" "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) )
+      (while (> (getvar "CMDACTIVE") 0) (command ""))
+      (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
+      (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
+      (setvar "osmode" oldosmode)
+    );END progn
+    (alert "Sorry, this block is not loaded.\nGo to:\nMenu bar\n   MJA Engineering\n      Load all blocks\nThis will load all the missing blocks.")
+  );END if
   (princ)
 )
 (defun c:revision_box_D() (DT:ib "Revision-box" "MJA-Title" "" ""))
@@ -273,17 +304,17 @@
 (defun c:krwp()   (c:rwp) (c:psd))
 
 ; Private blocks - Generic
-(defun c:PrivateManhole_315mm_1()  (fbi "Manhole-315-1" ))   ; Private Circular 315 Manhole - 1 inlet
-(defun c:PrivateManhole_315mm_2a() (fbi "Manhole-315-2a"))   ; Private Circular 315 Manhole - 2 inlets (A)
-(defun c:PrivateManhole_315mm_2b() (fbi "Manhole-315-2b"))   ; Private Circular 315 Manhole - 2 inlets (B)
-(defun c:PrivateManhole_315mm_3a() (fbi "Manhole-315-3a"))   ; Private Circular 315 Manhole - 3 inlets (A)
-(defun c:PrivateManhole_315mm_3b() (fbi "Manhole-315-3b"))   ; Private Circular 315 Manhole - 3 inlets (B)
-(defun c:PrivateManhole_315mm_4a() (fbi "Manhole-315-4a"))   ; Private Circular 315 Manhole - 4 inlets (A)
-(defun c:PrivateManhole_315mm_4b() (fbi "Manhole-315-4b"))   ; Private Circular 315 Manhole - 4 inlets (B)
-(defun c:PrivateManhole_450mm_1()  (fbi "Manhole-450-1" ))   ; Private Circular 450 Manhole - 1 inlet
-(defun c:PrivateManhole_450mm_3a() (fbi "Manhole-450-3a"))   ; Private Circular 450 Manhole - 3 inlets (A)
-(defun c:PrivateManhole_450mm_3b() (fbi "Manhole-450-3b"))   ; Private Circular 450 Manhole - 3 inlets (B)
-(defun c:PrivateManhole_450mm_5()  (fbi "Manhole-450-5" ))   ; Private Circular 450 Manhole - 1 inlet
+(defun c:PrivateManhole_315mm_1()  (DT:ib "Manhole-315-1" "" "P" ""))   ; Private Circular 315 Manhole - 1 inlet
+(defun c:PrivateManhole_315mm_2a() (DT:ib "Manhole-315-2a" "" "P" ""))  ; Private Circular 315 Manhole - 2 inlets (A)
+(defun c:PrivateManhole_315mm_2b() (DT:ib "Manhole-315-2b" "" "P" ""))  ; Private Circular 315 Manhole - 2 inlets (B)
+(defun c:PrivateManhole_315mm_3a() (DT:ib "Manhole-315-3a" "" "P" ""))  ; Private Circular 315 Manhole - 3 inlets (A)
+(defun c:PrivateManhole_315mm_3b() (DT:ib "Manhole-315-3b" "" "P" ""))  ; Private Circular 315 Manhole - 3 inlets (B)
+(defun c:PrivateManhole_315mm_4a() (DT:ib "Manhole-315-4a" "" "P" ""))  ; Private Circular 315 Manhole - 4 inlets (A)
+(defun c:PrivateManhole_315mm_4b() (DT:ib "Manhole-315-4b" "" "P" ""))  ; Private Circular 315 Manhole - 4 inlets (B)
+(defun c:PrivateManhole_450mm_1()  (DT:ib "Manhole-450-1" "" "P" ""))   ; Private Circular 450 Manhole - 1 inlet
+(defun c:PrivateManhole_450mm_3a() (DT:ib "Manhole-450-3a" "" "P" ""))  ; Private Circular 450 Manhole - 3 inlets (A)
+(defun c:PrivateManhole_450mm_3b() (DT:ib "Manhole-450-3b" "" "P" ""))  ; Private Circular 450 Manhole - 3 inlets (B)
+(defun c:PrivateManhole_450mm_5()  (DT:ib "Manhole-450-5" "" "P" ""))   ; Private Circular 450 Manhole - 1 inlet
 
 ; Private blocks - Manhole label
 (defun c:manlab()    (DT:ib "manhole-label" "" "" ""))
