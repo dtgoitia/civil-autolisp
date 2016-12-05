@@ -972,6 +972,19 @@
   );END vlax-for
   exists
 )
+(defun DT:replaceBlock ( ent_name newBlockName / entList)
+  ; Replaces the insert ent_name for a new insert of newBlockName block. If successful returnt T, otherwise nil.
+  ; ent_name [ename] - entity to be replaced
+  ; newBlockName [str] - new block name
+  (setq
+    entList (entget ent_name)
+    entList (subst (cons 2 newBlockName) (assoc 2 entList) entList)
+  )
+  (if (entmod entList)
+    T
+    nil
+  )
+)
 ; ERROR HANDLING FUNCTIONS -----------------------------------------------------
 (defun get_sysvars(targets)
     ; Return variable's values
