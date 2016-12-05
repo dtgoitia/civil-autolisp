@@ -18,3 +18,12 @@
     )
   );END append
 )
+
+; INSERT
+(entmakex
+  (list
+    (cons  0 "INSERT")
+    (cons  2 blockName)           ; Block name
+    (cons 10 insertionPoint)      ; Insertion point coordinates
+  )
+)
