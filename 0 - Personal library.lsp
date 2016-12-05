@@ -1185,3 +1185,25 @@
     a           ; readable angle, return as is
   );END if
 )
+(defun c:ReplaceBlocks( / newBlockName)
+  ; Replaces all selected blocks for an existing block
+  (setq newBlockName (getstring "\nType new block name: ") )
+  (princ "\nCheking if selected block exists... ")
+  (if (DT:CheckIfBlockExists newBlockName)
+    (progn
+      (princ "block found!")
+      (command "._UNDO" "_Begin")
+      (princ "\nTell me which blocks you want me to replace.")
+      (foreach a (ssnamex (ssget))
+        (if (= 'ename (type (cadr a)))
+          (if (= "INSERT" (cdr (assoc 0 (entget (cadr a)) )) )
+            (DT:replaceBlock (cadr a) newBlockName)
+          );END if
+        );END if1
+      );END foreach
+      (command "._UNDO" "_End")
+    );END progn
+    (princ "block not found.")
+  );END if
+  (princ)
+)
