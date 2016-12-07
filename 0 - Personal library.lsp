@@ -62,6 +62,7 @@
 ); Add note
 (defun c:pp()(command "_publish"))
 (defun c:las() (command "layerstate")(princ))
+(defun c:r() (princ "\nRegenerating...")(command "_regen") (princ " done.")(princ))
 (defun c:RTM ()
 	; RT and move together
 	(C:RT)
