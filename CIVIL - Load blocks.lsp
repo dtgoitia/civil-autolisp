@@ -18,11 +18,12 @@
             *error*
             oldosmode oldclayer oldattdia oldattreq oldinsunits oldinsunitsdeftarget oldinsunitsdefsource
             )
+  ; Inserts the block according to the following set of parameters
   ; (DT:ib block_name layer_name rotation_value osmode_value)
-  ; layer_name = ""       --> use current layer
-  ; rotation_value = ""   --> rotation = 90 degree
-  ; rotation_value = "P"  --> let user select rotation
-  ; osmode_value = ""     --> use current osmode
+  ;   layer_name = nil      --> use current layer
+  ;   rotation_value = ""   --> rotation = 90 degree
+  ;   rotation_value = "P"  --> let user select rotation
+  ;   osmode_value = nil    --> use current osmode
 
   ; ERROR HANDLING FUNCTION
   (defun *error* ( msg )
@@ -44,7 +45,8 @@
     oldinsunits (getvar "insunits")
     oldinsunitsdeftarget (getvar "insunitsdeftarget")
     oldinsunitsdefsource (getvar "insunitsdefsource")
-
+    oldclayer (getvar "clayer")
+    oldosmode (getvar "osmode")
   )
 
   ; MODIFY SETTINGS
@@ -55,41 +57,32 @@
   (setvar "insunitsdefsource" 0)
 
   ; Chek if block exists
-  (if (DT:CheckIfBlockExists blk)
+  (if (tblsearch "block" blk)
     ; MAIN ROUTINE
-    (cond
-      ((= blk nil)
-        (princ "\nNo block defined.")
-      );END cond - no block
-      (t ; if any block specified:
-        (if (/= lay "")
-          (progn
-            (setq oldclayer (getvar "clayer"))
-            (command "-layer" "M" lay "")
-          ); END progn
-        );END if change CLAYER
-        (if (/= osm "")
-          (progn
-            (setq oldosmode (getvar "osmode"))
-            (setvar "osmode" osm)
-          ); END progn
-        );END if change OSMODE
-        (cond
-          ( (= rot "")
-            (command "-insert" blk pause 1 1 0)
-          ); END cond no rotation
-          ( (= rot "P")
-            (command "-insert" blk pause 1 1 pause)
-          ); END cond with rotation
-          ( (and (/= rot "") (/= rot "P"))
-            (princ "\nrot")
-            (command "-insert" blk pause 1 1 rot)
-          ); END cond no rotation
-        );END cond rot
-        (if (/= lay "") (setvar "clayer" oldclayer))
-        (if (/= osm "") (setvar "osmode" oldosmode))
-      );END cond - block OK
-    );END cond
+    (progn
+      ; Layer control
+      (if lay (command "-layer" "M" lay "") )
+
+      ; OSMODE control
+      (if osm (setvar "osmode" osm) )
+
+      ; Rotation control
+      (cond
+        ; Set rotation to 90º
+        ( (= rot nil)
+          (command "-insert" blk pause 1 1 0)
+        )
+        ; Allow user to input rotation
+        ( (= rot "P")
+          (command "-insert" blk pause 1 1 pause)
+        )
+        ; Fixed rotation, no user input
+        ( (and (/= rot nil) (/= rot "P"))
+          (princ "\nrot")
+          (command "-insert" blk pause 1 1 rot)
+        )
+      );END cond
+    );END progn
     (alert "Sorry, this block is not loaded.\nGo to:\nMenu bar\n   MJA Engineering\n      Load all blocks\nThis will load all the missing blocks.")
   );END if
 
@@ -99,14 +92,18 @@
   (setvar "insunits" oldinsunits)
   (setvar "insunitsdeftarget" oldinsunitsdeftarget)
   (setvar "insunitsdefsource" oldinsunitsdefsource)
+  (setvar "clayer" oldclayer)
+  (setvar "osmode" oldosmode)
   (princ)
 
+  ; v0.4 - 2016.12.02 - Function argument interpretation updated
+  ;                   - System variable managment updated
   ; v0.3 - 2016.11.30 - Check if the block exists before you insert it
   ; v0.2 - 2016.07.28 - Update system variable management
   ; v0.1 - 2016.04.15 - ATTDIA and ATTREQ system variable control added
   ; v0.0 - 2016.04.14 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.11.30
+  ; Last revision: 2016.12.02
 )
 ;
 ;---------------------------------------------------------------------------
@@ -133,7 +130,7 @@
     ((= mo "09") (setq mo "Sep"))
     ((= mo "10") (setq mo "Oct"))
     ((= mo "11") (setq mo "Nov"))
-    ((= mo "12") (setq mo "Dic"))
+    ((= mo "12") (setq mo "Dec"))
   ); END cond
   (strcat mo "\'" yr)
   ; v0.0 - 2016.03.29 - First issue
@@ -246,14 +243,14 @@
   );END if
   (princ)
 )
-(defun c:revision_box_D() (DT:ib "Revision-box" "MJA-Title" "" ""))
+(defun c:revision_box_D() (DT:ib "Revision-box" "MJA-Title" nil nil))
 ; v0.1 - 2016.04.07 - Dynamic functins added
 ; v0.0 - 2016.03.29 - First issue
 ; Author: David Torralba
 ; Last revision: 2016.04.07
 ;
 ; North-Arrow insertion function
-(defun c:NorthArrow() (DT:ib "North-Arrow" "MJA-Title" "" ""))
+(defun c:NorthArrow() (DT:ib "North-Arrow" "MJA-Title" nil nil))
 ;---------------------------------------------------------------------------
 ;
 ; DRAINAGE INSERTION AND DRAWING FUNCTIONS
@@ -291,33 +288,33 @@
 (defun c:psd() (DT:drainage_line "e-psd" 132))
 
 ; Private blocks - Foul OLD
-(defun c:svp()    (DT:ib "e-pfd-svp"                        "e-pfd"                   ""  5))   ; SVP
-(defun c:svp300() (DT:ib "Private-Square300-Foul-Manhole"   "e-pfd"                   ""  5))   ; Private Square 300 Foul Manhole
-(defun c:svp475() (DT:ib "Private-Square475-Foul-Manhole"   "e-pfd"                   ""  5))   ; Private Square 475 Foul Manhole
-(defun c:svp600() (DT:ib "Adoptable-Round600-Foul-Manhole"  "e-pfd-adoptable-lateral" ""  5))   ; Private Square 600 Foul Manhole
+(defun c:svp()    (DT:ib "e-pfd-svp"                        "e-pfd"                   nil 5))   ; SVP
+(defun c:svp300() (DT:ib "Private-Square300-Foul-Manhole"   "e-pfd"                   nil 5))   ; Private Square 300 Foul Manhole
+(defun c:svp475() (DT:ib "Private-Square475-Foul-Manhole"   "e-pfd"                   nil 5))   ; Private Square 475 Foul Manhole
+(defun c:svp600() (DT:ib "Adoptable-Round600-Foul-Manhole"  "e-pfd-adoptable-lateral" nil 5))   ; Private Square 600 Foul Manhole
 
 ; Private blocks - Storm OLD
-(defun c:rwp()    (DT:ib "e-psd-rwp"                        "e-psd"                   ""  5))   ; RWP
-(defun c:rwp2()   (DT:ib "Private-Round475-Storm-Manhole"   "e-psd"                   ""  5))   ; Private round storm manhole
-(defun c:rwp3()   (DT:ib "Private-Round300-Storm-Manhole"   "e-psd"                   ""  5))   ; Private round storm manhole
+(defun c:rwp()    (DT:ib "e-psd-rwp"                        "e-psd"                   nil 5))   ; RWP
+(defun c:rwp2()   (DT:ib "Private-Round475-Storm-Manhole"   "e-psd"                   nil 5))   ; Private round storm manhole
+(defun c:rwp3()   (DT:ib "Private-Round300-Storm-Manhole"   "e-psd"                   nil 5))   ; Private round storm manhole
 (defun c:reye()   (DT:ib "Rodding-Eye"                      "e-psd"                   "P" 129)) ; Rodding eye
 (defun c:krwp()   (c:rwp) (c:psd))
 
 ; Private blocks - Generic
-(defun c:PrivateManhole_315mm_1()  (DT:ib "Manhole-315-1" "" "P" ""))   ; Private Circular 315 Manhole - 1 inlet
-(defun c:PrivateManhole_315mm_2a() (DT:ib "Manhole-315-2a" "" "P" ""))  ; Private Circular 315 Manhole - 2 inlets (A)
-(defun c:PrivateManhole_315mm_2b() (DT:ib "Manhole-315-2b" "" "P" ""))  ; Private Circular 315 Manhole - 2 inlets (B)
-(defun c:PrivateManhole_315mm_3a() (DT:ib "Manhole-315-3a" "" "P" ""))  ; Private Circular 315 Manhole - 3 inlets (A)
-(defun c:PrivateManhole_315mm_3b() (DT:ib "Manhole-315-3b" "" "P" ""))  ; Private Circular 315 Manhole - 3 inlets (B)
-(defun c:PrivateManhole_315mm_4a() (DT:ib "Manhole-315-4a" "" "P" ""))  ; Private Circular 315 Manhole - 4 inlets (A)
-(defun c:PrivateManhole_315mm_4b() (DT:ib "Manhole-315-4b" "" "P" ""))  ; Private Circular 315 Manhole - 4 inlets (B)
-(defun c:PrivateManhole_450mm_1()  (DT:ib "Manhole-450-1" "" "P" ""))   ; Private Circular 450 Manhole - 1 inlet
-(defun c:PrivateManhole_450mm_3a() (DT:ib "Manhole-450-3a" "" "P" ""))  ; Private Circular 450 Manhole - 3 inlets (A)
-(defun c:PrivateManhole_450mm_3b() (DT:ib "Manhole-450-3b" "" "P" ""))  ; Private Circular 450 Manhole - 3 inlets (B)
-(defun c:PrivateManhole_450mm_5()  (DT:ib "Manhole-450-5" "" "P" ""))   ; Private Circular 450 Manhole - 1 inlet
+(defun c:PrivateManhole_315mm_1()  (DT:ib "Manhole-315-1"  nil "P" nil))  ; Private Circular 315 Manhole - 1 inlet
+(defun c:PrivateManhole_315mm_2a() (DT:ib "Manhole-315-2a" nil "P" nil))  ; Private Circular 315 Manhole - 2 inlets (A)
+(defun c:PrivateManhole_315mm_2b() (DT:ib "Manhole-315-2b" nil "P" nil))  ; Private Circular 315 Manhole - 2 inlets (B)
+(defun c:PrivateManhole_315mm_3a() (DT:ib "Manhole-315-3a" nil "P" nil))  ; Private Circular 315 Manhole - 3 inlets (A)
+(defun c:PrivateManhole_315mm_3b() (DT:ib "Manhole-315-3b" nil "P" nil))  ; Private Circular 315 Manhole - 3 inlets (B)
+(defun c:PrivateManhole_315mm_4a() (DT:ib "Manhole-315-4a" nil "P" nil))  ; Private Circular 315 Manhole - 4 inlets (A)
+(defun c:PrivateManhole_315mm_4b() (DT:ib "Manhole-315-4b" nil "P" nil))  ; Private Circular 315 Manhole - 4 inlets (B)
+(defun c:PrivateManhole_450mm_1()  (DT:ib "Manhole-450-1"  nil "P" nil))  ; Private Circular 450 Manhole - 1 inlet
+(defun c:PrivateManhole_450mm_3a() (DT:ib "Manhole-450-3a" nil "P" nil))  ; Private Circular 450 Manhole - 3 inlets (A)
+(defun c:PrivateManhole_450mm_3b() (DT:ib "Manhole-450-3b" nil "P" nil))  ; Private Circular 450 Manhole - 3 inlets (B)
+(defun c:PrivateManhole_450mm_5()  (DT:ib "Manhole-450-5"  nil "P" nil))  ; Private Circular 450 Manhole - 1 inlet
 
 ; Private blocks - Manhole label
-(defun c:manlab()    (DT:ib "manhole-label" "" "" ""))
+(defun c:manlab()    (DT:ib "manhole-label" nil nil nil))
 
 ; v0.2 - 2016.07.29 - "Adoptable Round 600 Foul Manhole" added.
 ; v0.1 - 2016.07.21 - "manhole-label" added.
@@ -332,7 +329,7 @@
 ;
 ;---------------------------------------------------------------------------
 ; Manhole Schedule Header insertion function
-(defun c:ManHeader() (DT:ib "ManScheduleHeader" "e-manhole-schedule" "" ""))
+(defun c:ManHeader() (DT:ib "ManScheduleHeader" "e-manhole-schedule" nil nil))
 ;
 ;
 ;---------------------------------------------------------------------------
@@ -400,5 +397,5 @@
 
 (defun c:mpart1() (DT:ib "Part-m-primary"     "e-part-m"  "P" 514)) ; Part-m-primary-0 block insertion function
 (defun c:mpart3() (DT:ib "Part-m-secondary"   "e-part-m"  "P" 514)) ; Part-m-secondary-0 block insertion function
-(defun c:streetplate() (DT:ib "street-plate"  "e-postal"  ""  0))   ; Street plate block insertion function
+(defun c:streetplate() (DT:ib "street-plate"  "e-postal"  nil 0  )) ; Street plate block insertion function
 (princ)
