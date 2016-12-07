@@ -3130,6 +3130,36 @@ defun
   );END while
   (princ)
 );END defun
+(defun c:3() (command "_erase" "L" ""))
+(defun DT:LinkedBlocks ( blockName / p1 p2)
+  (if blockName
+    (if (setq p2 (getpoint) )
+      (progn
+        (if (entmakex (list (cons 0 "INSERT") (cons 2 blockName) (cons 10 p2 ) ))
+          (while (not kkkk)
+            (setq
+              p1 p2
+              p2 (getpoint)
+            )
+            (if (and p1 p2)
+              (if (entmakex (list (cons 0 "LWPOLYLINE") (cons 100 "AcDbEntity") (cons 100 "AcDbPolyline") (cons 90 2) (cons 10 p1) (cons 10 p2) ) )
+                (if (entmakex (list (cons 0 "INSERT") (cons 2 blockName) (cons 10 p2 ) ))
+                  T
+                  (princ "ERROR: second INESRT entmakex didn't work")
+                );END if
+                (princ "ERROR: LWPOLYLINE entmakex didn't work")
+              );END if
+              (princ "ERRRO: p1 or p2 not defined within while loop")
+            );END if
+          );END while
+        );END if
+      );END progn
+      (princ "\nERROR: p2=nil")
+    );END if
+    (princ "\nERROR: not blockName defined.")
+  );END if
+  (princ)
+)
 ; How to wrap groups of commands and UNDO them as a group:
 ;|
 (command "._UNDO" "_Begin") ; or (command "UNDO" "BE")
