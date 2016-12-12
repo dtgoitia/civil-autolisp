@@ -575,39 +575,60 @@
   ); END if
   (princ)
 )
-(defun DT:SDIP( / p1 z0 dist grad)
-  ; Light version for DIP
+(defun DT:SDIP ( p1 p2 gradient / z1 p1_2D p2_2D distance2D z2 )
+  ; Return a point with the level updated
+  ; p1 [pt] - start point (3D)
+  ; p2 [pt] - end point (Z coordinate not relevant)
+  ; grad [real] - gradient (1/grad) from p1 to p2
+  ;   0 < grad = running up, p2 is above p1
+  ;   0 > grad = running down, p2 is below p1
   (setq
-    z0 (DT:clic_or_type_level)
-	)
-	(princ (strcat "\nz1 = " (LM:rtos z0 2 3) "m"))
-	(setq
-    dist (distance (getpoint "\npoint 1: ") (setq p1 (getpoint "\npoint 2: ")))
-    grad (getreal "\nGradient= 1/")
+    z1 (nth 2 p1)
+    p1_2D (list (nth 0 p1) (nth 1 p1) 0.0)
+    p2_2D (list (nth 0 p2) (nth 1 p2) 0.0)
+    distance2D (distance p1_2D p2_2D)
+    z2 (+ z1 (/ distance2D gradient))
+    p2 (list (nth 0 p2) (nth 1 p2) z2)
   )
-	(list (+ z0 (/ dist grad)) p1)
+  p2
 )
-(defun c:sDIP_near50( / p1)
-	; For plot or private drainage levels
-	; Light version for DIP rounding the result to the nearest 0.05, inserting a level block and copying it to the ClipBoard
-	(setq p1 (DT:SDIP))
-	(princ "\nLevel = ")(princ (car p1))
-	(if (/= nil (tblsearch "block" "PI_DT"))
-		(command "._insert" "PI_DT" (cadr p1) "0.25" "0.25" "" (LM:rtos (* 0.050 (atof (LM:rtos (/ (car p1) 0.050) 2 0))) 2 2))
+(defun c:SDIP( / z1 p1_2D p1 p2_2D p2 dist gradient)
+  ; Get level with fixed gradient between 2 points, and
+  ; insert a level block and copy level to ClipBoard
+  (setq z1 (DT:clic_or_type_level))
+	(princ (strcat "\nStart level = " (LM:rtos z1 2 3) "m"))
+	(setq
+    p1_2D (getpoint "\npoint 1: ")
+    p1 (list (nth 0 p1_2D) (nth 1 p1_2D) z1)
+    p2_2D (getpoint "\npoint 2: ")
+    gradient (getreal "\nGradient= 1/")
+    p2 (DT:SDIP p1 p2_2D gradient)
+  )
+	(if (tblsearch "block" "PI_DT")
+		(command "._insert" "PI_DT" (list (nth 0 p2) (nth 1 p2) 0.0) "0.25" "0.25" "" (LM:rtos (nth 2 p2) 2 3))
 	);END if
   (princ "\nto clipboard: ")
-  (CopyToClipboard (LM:rtos (* 0.050 (atof (LM:rtos (/ (car p1) 0.050) 2 0))) 2 2))
+  (CopyToClipboard (LM:rtos (nth 2 p2) 2 3))
 )
-(defun c:SDIP( / p1)
-	; For plot or private drainage levels
-	; Light version for DIP rounding the result to the 3rd decimal, inserting a level block and copying it to the ClipBoard
-	(setq p1 (DT:SDIP))
-	(princ "\nLevel = ")(princ (car p1))
-	(if (/= nil (tblsearch "block" "PI_DT"))
-		(command "._insert" "PI_DT" (cadr p1) "0.25" "0.25" "" (LM:rtos (car p1) 2 3))
+(defun c:sDIP_near50( / z1 p1_2D p1 p2_2D p2 z2 gradient)
+  ; Get level with fixed gradient between 2 points, and
+  ; insert a level block and copy level to ClipBoard.
+  ; It rounds the result to the nearest 0.05m
+  (setq z1 (DT:clic_or_type_level))
+	(princ (strcat "\nStart level = " (LM:rtos z1 2 3) "m"))
+	(setq
+    p1_2D (getpoint "\npoint 1: ")
+    p1 (list (nth 0 p1_2D) (nth 1 p1_2D) z1)
+    p2_2D (getpoint "\npoint 2: ")
+    gradient (getreal "\nGradient= 1/")
+    p2 (DT:SDIP p1 p2_2D gradient)
+    z2 (LM:rtos (* 0.050 (atof (LM:rtos (/ (nth 2 p2) 0.050) 2 0))) 2 2)
+  )
+	(if (tblsearch "block" "PI_DT")
+		(command "._insert" "PI_DT" (list (nth 0 p2) (nth 1 p2) 0.0) "0.25" "0.25" "" z2)
 	);END if
   (princ "\nto clipboard: ")
-  (CopyToClipboard (LM:rtos (car p1) 2 3))
+  (CopyToClipboard z2)
 )
 (defun c:garden_gradient (
                           /
