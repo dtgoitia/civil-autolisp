@@ -3175,21 +3175,11 @@ defun
   (command "._UNDO" "_End"); or (command "UNDO" "END")
 )
 |;
-(defun DT:RoadOffsetForDrainage( / p ent_name ent_name_block)
+(defun DT:RoadOffsetForDrainage( / p ent_name )
   ; Select a polyline within an Xref, and offset it by 0.5m and 1m either side
   (c:N)
   ; Check if groups exists
-  (setq
-    ent_name (entlast)
-    ent_name_block
-      (entmakex
-        (list
-          (cons 0 "BLOCK")
-          (cons 10 (list 0 0 0))
-          (cons 2 "lalalala")
-        )
-      )
-  )
+  (setq ent_name (entlast) )
   (vla-offset (vlax-ename->vla-object ent_name) 0.5)
   (command "_groupedit" "N" "road_offsets" "A" (entlast) "")
   (vla-offset (vlax-ename->vla-object ent_name) 1)
