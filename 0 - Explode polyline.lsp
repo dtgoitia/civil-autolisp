@@ -23,7 +23,7 @@
   ; Author: David Torralba
   ; Last revision: 2016.11.14
 )
-(defun ExplodeSinglePolyline (ent_name / i ptList width color)
+(defun ExplodeSinglePolyline (ent_name / i layerName ptList width color lineType)
   (setq
     i 0
     layerName (GetPolylineLayer ent_name)
