@@ -1,10 +1,6 @@
-(defun c:ep ( / i ent_name ptList width )
+(defun c:ep ( / ent_name ptList width )
   ; Draws individually every single segment of selected polylines
-  (setq
-    i 0
-    ss (ssget '((-4 . "<OR") (0 . "LWPOLYLINE") (-4 . "OR>")))
-  )
-  (foreach a (ssnamex ss)
+  (foreach a (ssnamex (ssget '((-4 . "<OR") (0 . "LWPOLYLINE") (-4 . "OR>"))))
     (if (= 'ENAME (type (cadr a)))
       (progn
         (ExplodeSinglePolyline (cadr a))
