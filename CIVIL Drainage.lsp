@@ -93,3 +93,35 @@
   ; TODO
   (princ)
 )
+;(defun DT:GetManholeIL ( ent_name )
+;  ;(LM:getdynprops (vlax-ename->vla-object ent_name) )
+;  (LM:vl-getattributes  (vlax-ename->vla-object ent_name))
+;)
+;(defun c:1()
+;  (DT:GetManholeIL (car (entsel)))
+;)
+(defun c:1( / stringManholeIL)
+; String handling functions:
+; http://help.autodesk.com/view/ACD/2015/ENU/?guid=GUID-8543549B-F0D7-43CD-87A3-F6B827FF0B88
+  (setq stringManholeIL "75.175(450%%C)")
+  ;(setq stringManholeIL "75.175(450∅)") THIS ONE SHOULD BE PARSE PROPERLY TOO!
+
+  (DT:ParseManholeIL stringManholeIL)
+)
+(defun DT:ParseManholeIL ( stringManholeIL )
+  ; Return a pair list with the IL and the pipe diameter
+  (setq
+    stringLength (strlen stringManholeIL)
+    openParenthesisPosition (vl-string-position 40 stringManholeIL)
+    closeParenthesisPosition (vl-string-position 41 stringManholeIL)
+    contentBetweenParenthesis (substr stringManholeIL openParenthesisPosition (- closeParenthesisPosition openParenthesisPosition))
+  )
+  (princ "\ncontentBetweenParenthesis = ")(princ contentBetweenParenthesis)
+
+  (setq
+    invertLevel "75.175"
+    pipeSize "0.450" ; don't add "DN", that's outside this function
+  )
+
+  (list (cons "IL" invertLevel) (cons "Pipe size" pipeSize))
+)
