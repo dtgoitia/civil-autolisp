@@ -114,7 +114,7 @@
     stringLength (strlen stringManholeIL)
     openParenthesisPosition (vl-string-position 40 stringManholeIL)
     closeParenthesisPosition (vl-string-position 41 stringManholeIL)
-    contentBetweenParenthesis (substr stringManholeIL openParenthesisPosition (- closeParenthesisPosition openParenthesisPosition))
+    contentBetweenParenthesis (substr stringManholeIL (+ 2 openParenthesisPosition) (- (- closeParenthesisPosition openParenthesisPosition) 1))
   )
   (princ "\ncontentBetweenParenthesis = ")(princ contentBetweenParenthesis)
 
