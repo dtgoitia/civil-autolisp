@@ -1207,7 +1207,7 @@
 )
 (defun c:cpath( / filePath )
   ; Print and copy current file path
-  (setq filePath (strcat (getvar "dwgprefix")) )
+  (setq filePath (getvar "dwgprefix") )
   (CopyToClipboard filePath)
   (princ (strcat "\n" filePath "   \(copied to ClipBoard\)") )
   (princ)
