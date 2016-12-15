@@ -103,7 +103,10 @@
 (defun c:1( / stringManholeIL)
 ; String handling functions:
 ; http://help.autodesk.com/view/ACD/2015/ENU/?guid=GUID-8543549B-F0D7-43CD-87A3-F6B827FF0B88
-  (setq stringManholeIL "75.175(450%%C)")
+  (setq
+    ;stringManholeIL "75.175(450%%C)"
+    stringManholeIL "75.175(450∅)"
+  )
   ;(setq stringManholeIL "75.175(450∅)") THIS ONE SHOULD BE PARSE PROPERLY TOO!
 
   (DT:ParseManholeIL stringManholeIL)
@@ -112,11 +115,16 @@
   ; Return a pair list with the IL and the pipe diameter
   (setq
     stringLength (strlen stringManholeIL)
-    openParenthesisPosition (vl-string-position 40 stringManholeIL)
-    closeParenthesisPosition (vl-string-position 41 stringManholeIL)
+    openParenthesisPosition (vl-string-search "(" stringManholeIL)
+    closeParenthesisPosition (vl-string-search ")" stringManholeIL)
     contentBetweenParenthesis (substr stringManholeIL (+ 2 openParenthesisPosition) (- (- closeParenthesisPosition openParenthesisPosition) 1))
+    diameterPosition (vl-string-search "Ø" "aØa")
   )
+  (princ "\nstringManholeIL = ")(princ stringManholeIL)
+  (princ "\nopenParenthesisPosition = ")(princ openParenthesisPosition)
+  (princ "\ncloseParenthesisPosition = ")(princ closeParenthesisPosition)
   (princ "\ncontentBetweenParenthesis = ")(princ contentBetweenParenthesis)
+  (princ "\ndiameterPosition = ")(princ diameterPosition)
 
   (setq
     invertLevel "75.175"
@@ -124,4 +132,5 @@
   )
 
   (list (cons "IL" invertLevel) (cons "Pipe size" pipeSize))
+  (princ)
 )
