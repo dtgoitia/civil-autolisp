@@ -1178,14 +1178,19 @@
   (strcat (substr d 1 4) "." (substr d 5 2) "." (substr d 7 2) " " (substr d 10 2) ":" (substr d 12 2) ":" (substr d 14 2))
 )
 (defun PrintDate( / d)
-  ; Returns a string with the time formated as hh:mm:ss
+  ; Returns a string with the time formated as YYYY.MM.DD
   (setq d (rtos (getvar "CDATE") 2 6))
   (strcat (substr d 1 4) "." (substr d 5 2) "." (substr d 7 2))
 )
 (defun PrintTime( / d)
-  ; Returns a string with the date formated as YYYY.MM.DD
+  ; Returns a string with the date formated as hh:mm:ss
   (setq d (rtos (getvar "CDATE") 2 6))
   (strcat (substr d 10 2) ":" (substr d 12 2) ":" (substr d 14 2))
+)
+(defun PrintSupersedDate( / d)
+  ; Returns a string with the date formated as DD.MM.YY
+  (setq d (rtos (getvar "CDATE") 2 6))
+  (strcat (substr d 7 2) "." (substr d 5 2) "." (substr d 3 2))
 )
 (defun ReloadXref (file)
   (command "-xref" "R" file)
