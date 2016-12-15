@@ -2330,7 +2330,7 @@ defun
 ;;;
 (defun PL:Text (_TEXT _INS _ANG _HIGH _J _ST _LA / _J72 _J73 _SP _RE _TAB)
  (setq
-   _J (if (not _J) "LEFT" (strcase _J) ) ;_ end of if
+   _J (if (not _J) "LEFT" (strcase _J) );END if
    _ST (tblsearch
          "STYLE"
          (if (or
@@ -2339,25 +2339,25 @@ defun
              );END or
            (getvar "TEXTSTYLE")
            _ST
-         ) ;_ end of if
-       ) ;_ end of tblsearch
+         );END if
+       );END tblsearch
    _SP _ANG
- ) ;_ end of setq
+ );END setq
  (if (or (= _J "ALIGN") (= _J "A") (= _J "FIT") (= _J "F"))
    (if (= (type _ANG) 'list)
      (setq _ANG (angle _INS _ANG))
      (setq _J "LEFT")
-   ) ;_ end of if
+   );END if
    (setq
      _ANG  (if (= (type _ANG) 'list)
              (angle _INS _ANG)
              (progn
                (setq _SP _INS)
                (* pi (/ _ANG 180.0))
-             ) ;_ end of progn
-           ) ;_ end of if
-   ) ;_ end of setq
- ) ;_ end of if
+             );END progn
+           );END if
+   );END setq
+ );END if
  (cond
    ((or (= _J "LEFT") (= _J "L")) (setq _J72 0 _J73 0))
    ((or (= _J "CENTER") (= _J "C")) (setq _J72 1 _J73 0 _RE t))
@@ -2375,7 +2375,7 @@ defun
    ((or (= _J "BCENTER") (= _J "BC")) (setq _J72 1 _J73 1 _RE t))
    ((or (= _J "BRIGHT") (= _J "BR")) (setq _J72 2 _J73 1 _RE t))
    (t (setq _J72 0 _J73 0))
- ) ;_ end of cond
+ );END cond
  (entmakex
    (list
      '(0 . "TEXT")
@@ -2384,15 +2384,15 @@ defun
        (if (= (setq _TAB (getvar "CTAB")) "Model")
          0
          1
-       ) ;_ end of if
-     ) ;_ end of cons
+       );END if
+     );END cons
      (cons 410 _TAB)
      (cons 8
        (if (not _LA)
          (getvar "CLAYER")
          _LA
-       ) ;_ end of if
-     ) ;_ end of cons
+       );END if
+     );END cons
      '(100 . "AcDbText")
      (cons 10 _INS)
      (cons 40
@@ -2400,8 +2400,8 @@ defun
          ((and _HIGH (/= _HIGH 0)) _HIGH)
          ((/= 0 (setq _HIGH (cdr (assoc 40 _ST)))) _HIGH)
          (t (getvar "TEXTSIZE"))
-       ) ;_ end of cond
-     ) ;_ end of cons
+       );END cond
+     );END cons
      (cons 1 _TEXT)
      (cons 50 _ANG)
      (assoc 41 _ST)
@@ -2413,12 +2413,12 @@ defun
        (if _RE
          _INS
          _SP
-       ) ;_ end of if
-     ) ;_ end of cons
+       );END if
+     );END cons
      (cons 73 _J73)
-   ) ;_ end of list
-) ;_ end of entmake
-) ;_ end of defun
+   );END list
+);END entmake
+);END defun
 ;;;
 ;;; EOF
 (defun c:1( / p )
@@ -3190,4 +3190,20 @@ defun
   (command "_groupedit" "N" "road_offsets" "A" (entlast) "")
   (vla-delete (vlax-ename->vla-object ent_name))
   (princ)
+)
+(defun c:1( / x )
+  (defun LM:getdynprops ( blk )
+    (mapcar '(lambda ( x ) (cons (vla-get-propertyname x) (vlax-get x 'value)))
+        (vlax-invoke blk 'getdynamicblockproperties)
+    )
+  )
+  (setq x (vlax-ename->vla-object (car (entsel))) )
+  (LM:getdynprops x )
+)
+(defun DT:GetHandle( ent_name )
+  ; Returns a string with provided entity's handle
+  ; ent_name [ename] - Entity name
+  (if ent_name
+    (cdr (assoc 5 (entget ent_name)))
+  );END if
 )
