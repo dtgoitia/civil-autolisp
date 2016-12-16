@@ -162,6 +162,8 @@
     manholeAttributeList (LM:vl-getattributes (vlax-ename->vla-object ent_name))
     ID (cdr (assoc "ID" manholeAttributeList))
     CL (cdr (assoc "CL" manholeAttributeList))
+    ; type is missing
+    lay (cdr (assoc 8 (entget ent_name)))
   )
   ; Get IL values and process them
   (foreach a manholeAttributeList
@@ -177,5 +179,5 @@
       );END progn
     );END if
   );END foreach
-  (list ID CL ILs DNs)
+  (list ID CL lay ILs DNs)
 )
