@@ -170,28 +170,16 @@
         ;(princ "\na = ")(princ a)
         ;(princ "\n(DT:ParseManholeIL (cdr a)) = ")(princ (DT:ParseManholeIL (cdr a)))
         (if (assoc "IL" (DT:ParseManholeIL (cdr a)) )
-          (progn
-            (setq IL (cdr (assoc "IL" (DT:ParseManholeIL (cdr a)) )) )
-            (princ "\nIL found = ")(princ IL)
-          );END progn
+          (setq ILs (append ILs (list (cdr (assoc "IL" (DT:ParseManholeIL (cdr a)) )))))
         );END if
         (if (assoc "DN" (DT:ParseManholeIL (cdr a)) )
-          (progn
-            (setq DN (cdr (assoc "DN" (DT:ParseManholeIL (cdr a)) )) )
-            (princ "\nDN found = ")(princ DN)
-          );END progn
+          (if (cdr (assoc "DN" (DT:ParseManholeIL (cdr a)) ))
+            (setq DNs (append DNs (list (cdr (assoc "DN" (DT:ParseManholeIL (cdr a)) )))) )
+            (setq DNs (append DNs (list "noDN")) )
+          );END if
         );END if
-        ;(setq
-        ;  ILpair (assoc "IL" (DT:ParseManholeIL (cdr a)) )
-        ;  DNpair (assoc "DN" (DT:ParseManholeIL (cdr a)) )
-        ;  ILs (append ILs (list (car  (DT:ParseManholeIL (cdr a)) )) )
-        ;  DNs (append DNs (list (cadr (DT:ParseManholeIL (cdr a)) )) )
-        ;)
       );END progn
     );END if
   );END foreach
-
-  (princ "\nILs = ")(princ ILs)
-  (princ "\nDNs = ")(princ DNs)
-  (princ)
+  (list ID CL ILs DNs)
 )
