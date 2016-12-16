@@ -93,44 +93,105 @@
   ; TODO
   (princ)
 )
-;(defun DT:GetManholeIL ( ent_name )
-;  ;(LM:getdynprops (vlax-ename->vla-object ent_name) )
-;  (LM:vl-getattributes  (vlax-ename->vla-object ent_name))
-;)
-;(defun c:1()
-;  (DT:GetManholeIL (car (entsel)))
-;)
-(defun c:1( / stringManholeIL)
-; String handling functions:
-; http://help.autodesk.com/view/ACD/2015/ENU/?guid=GUID-8543549B-F0D7-43CD-87A3-F6B827FF0B88
-  (setq
-    ;stringManholeIL "75.175(450%%C)"
-    stringManholeIL "75.175(450∅)"
-  )
-  ;(setq stringManholeIL "75.175(450∅)") THIS ONE SHOULD BE PARSE PROPERLY TOO!
+(defun DT:ParseManholeIL ( stringManholeIL
+                          /
+                          openParenthesisPosition closeParenthesisPosition contentBeforeParenthesis contentBetweenParenthesis
+                          invertLevel DN
+                         )
+  ; Return a pair list with the IL and the pipe diameter.
+  ; Cases understands:
+  ;  - IL without parenthesis
+  ;  - IL with pipe size between parenthesis
+  ;  - IL with pipe size + "%%C" between parenthesis.
+  ;  - IL with pipe size + "Ø" between parenthesis.
+  ;  - IL with pipe size + "∅" between parenthesis.
+  ;  - IL with non-numeric string between parenthesis.
 
-  (DT:ParseManholeIL stringManholeIL)
+  (if stringManholeIL
+    (progn
+      ; if any diameter symbol found, substitute it
+      (cond
+        ((vl-string-search "Ø" stringManholeIL) (setq stringManholeIL (vl-string-subst "%%C" "Ø" stringManholeIL)) )
+        ((vl-string-search "∅" stringManholeIL) (setq stringManholeIL (vl-string-subst "%%C" "∅" stringManholeIL)) )
+      );END cond
+      (setq stringLength (strlen stringManholeIL) )
+      (if (setq openParenthesisPosition (vl-string-search "(" stringManholeIL))
+        (progn
+          ; Parenthesis found within the string
+          (setq
+            closeParenthesisPosition (vl-string-search ")" stringManholeIL)
+            contentBeforeParenthesis (substr stringManholeIL 1 openParenthesisPosition)
+            contentBetweenParenthesis (substr stringManholeIL (+ 2 openParenthesisPosition) (- (- closeParenthesisPosition openParenthesisPosition) 1))
+            invertLevel (atof contentBeforeParenthesis)
+          )
+
+          ; Parse content between parenthesis
+          (cond
+            ; Number with %%C at the end between parenthesis
+            ((= "%%C" (DT:GetStringLastNChar contentBetweenParenthesis 3))
+              (setq
+                DN (* 0.001 (atof (substr contentBetweenParenthesis 1 (- (strlen contentBetweenParenthesis) 3)) ))
+              )
+            );END subcond
+            ; Number between parenthesis
+            ((/= nil (numberp (read contentBetweenParenthesis)) )
+              (setq
+                DN (* 0.001 (atof contentBetweenParenthesis))
+              )
+            );END subcond
+            ; Non-numeric string between parenthesis
+            (t
+              (princ "\nSorry, pipe diameter not understood :(")
+            )
+          );END cond
+        );END progn
+
+        ; No parenthesis within the string
+        (setq invertLevel (atof stringManholeIL) )
+      );END if
+      (list (cons "IL" invertLevel) (cons "DN" DN))
+    );END progn
+    nil
+  );END if
 )
-(defun DT:ParseManholeIL ( stringManholeIL )
-  ; Return a pair list with the IL and the pipe diameter
+(defun c:1() (GetManholeData (car (entsel))))
+(defun GetManholeData ( ent_name / manholeAttributeList ID CL IL ILs DN DNs)
+; Returns a list with manhole data with the following format:
+; ( ent_name ID type layer CL ILs DNs )
   (setq
-    stringLength (strlen stringManholeIL)
-    openParenthesisPosition (vl-string-search "(" stringManholeIL)
-    closeParenthesisPosition (vl-string-search ")" stringManholeIL)
-    contentBetweenParenthesis (substr stringManholeIL (+ 2 openParenthesisPosition) (- (- closeParenthesisPosition openParenthesisPosition) 1))
-    diameterPosition (vl-string-search "Ø" "aØa")
+    manholeAttributeList (LM:vl-getattributes (vlax-ename->vla-object ent_name))
+    ID (cdr (assoc "ID" manholeAttributeList))
+    CL (cdr (assoc "CL" manholeAttributeList))
   )
-  (princ "\nstringManholeIL = ")(princ stringManholeIL)
-  (princ "\nopenParenthesisPosition = ")(princ openParenthesisPosition)
-  (princ "\ncloseParenthesisPosition = ")(princ closeParenthesisPosition)
-  (princ "\ncontentBetweenParenthesis = ")(princ contentBetweenParenthesis)
-  (princ "\ndiameterPosition = ")(princ diameterPosition)
+  ; Get IL values and process them
+  (foreach a manholeAttributeList
+    (if (= "IL" (substr (car a) 1 2))
+      (progn
+        ;(princ "\na = ")(princ a)
+        ;(princ "\n(DT:ParseManholeIL (cdr a)) = ")(princ (DT:ParseManholeIL (cdr a)))
+        (if (assoc "IL" (DT:ParseManholeIL (cdr a)) )
+          (progn
+            (setq IL (cdr (assoc "IL" (DT:ParseManholeIL (cdr a)) )) )
+            (princ "\nIL found = ")(princ IL)
+          );END progn
+        );END if
+        (if (assoc "DN" (DT:ParseManholeIL (cdr a)) )
+          (progn
+            (setq DN (cdr (assoc "DN" (DT:ParseManholeIL (cdr a)) )) )
+            (princ "\nDN found = ")(princ DN)
+          );END progn
+        );END if
+        ;(setq
+        ;  ILpair (assoc "IL" (DT:ParseManholeIL (cdr a)) )
+        ;  DNpair (assoc "DN" (DT:ParseManholeIL (cdr a)) )
+        ;  ILs (append ILs (list (car  (DT:ParseManholeIL (cdr a)) )) )
+        ;  DNs (append DNs (list (cadr (DT:ParseManholeIL (cdr a)) )) )
+        ;)
+      );END progn
+    );END if
+  );END foreach
 
-  (setq
-    invertLevel "75.175"
-    pipeSize "0.450" ; don't add "DN", that's outside this function
-  )
-
-  (list (cons "IL" invertLevel) (cons "Pipe size" pipeSize))
+  (princ "\nILs = ")(princ ILs)
+  (princ "\nDNs = ")(princ DNs)
   (princ)
 )
