@@ -155,7 +155,7 @@
   );END if
 )
 (defun c:1() (GetManholeData (car (entsel))))
-(defun GetManholeData ( ent_name / manholeAttributeList ID CL IL ILs DN DNs)
+(defun GetManholeData ( ent_name / manholeAttributeList ID CL ILs DNs)
 ; Returns a list with manhole data with the following format:
 ; ( ent_name ID type layer CL ILs DNs )
   (setq
@@ -167,16 +167,12 @@
   (foreach a manholeAttributeList
     (if (= "IL" (substr (car a) 1 2))
       (progn
-        ;(princ "\na = ")(princ a)
-        ;(princ "\n(DT:ParseManholeIL (cdr a)) = ")(princ (DT:ParseManholeIL (cdr a)))
         (if (assoc "IL" (DT:ParseManholeIL (cdr a)) )
           (setq ILs (append ILs (list (cdr (assoc "IL" (DT:ParseManholeIL (cdr a)) )))))
         );END if
-        (if (assoc "DN" (DT:ParseManholeIL (cdr a)) )
-          (if (cdr (assoc "DN" (DT:ParseManholeIL (cdr a)) ))
-            (setq DNs (append DNs (list (cdr (assoc "DN" (DT:ParseManholeIL (cdr a)) )))) )
-            (setq DNs (append DNs (list "noDN")) )
-          );END if
+        (if (cdr (assoc "DN" (DT:ParseManholeIL (cdr a)) ))
+          (setq DNs (append DNs (list (cdr (assoc "DN" (DT:ParseManholeIL (cdr a)) )))) )
+          (setq DNs (append DNs (list "noDN")) )
         );END if
       );END progn
     );END if
