@@ -1332,3 +1332,7 @@
   );END if
   (princ)
 )
+(defun DT:GetStringLastNChar ( string n )
+  ; Return string last n characters
+  (substr string (- (strlen string) (- n 1)) )
+)
