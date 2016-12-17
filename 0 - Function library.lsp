@@ -321,8 +321,9 @@
         )
         (LM:setdynpropvalue blk vis val)
     )
+)
 (defun LM:effectivename ( obj )
-);; Effective Block Name  -  Lee Mac
+;; Effective Block Name  -  Lee Mac
 ;; obj - [vla] VLA Block Reference object
     (vlax-get-property obj
         (if (vlax-property-available-p obj 'effectivename)
