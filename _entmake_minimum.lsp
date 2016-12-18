@@ -1,5 +1,16 @@
 ; Minimum elements necessary to create an object with (entmakex)
-
+(defun MinDxfDef ( ent_name / result temp )
+  ; Return minimum DXF definition of provided ent_name
+  ; Credit to T.Willey and MP (The Swamp)
+  ;;  will create crap if the current or parent
+  ;;  layer of the candidate entity is locked
+  (foreach pair (setq result (entget ent_name))
+    (if (entmake (setq temp (vl-remove pair result)))
+      (progn (entdel (entlast))(setq result temp))
+      result
+    )
+  )
+)
 ; LWPOLYLINE: lightweight polyline
 (entmakex
   (append
