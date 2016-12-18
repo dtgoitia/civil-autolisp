@@ -154,30 +154,56 @@
     nil
   );END if
 )
-(defun c:1() (GetManholeData (car (entsel))))
-(defun GetManholeData ( ent_name / manholeAttributeList ID CL ILs DNs)
+(defun c:1() (DT:GetManholeData (car (entsel))))
+(defun DT:GetManholeData ( ent_name
+                      /
+                      manholeAttributeList
+                      ID CL ILs DNs
+                      item itemPosition checkedILamount
+                      )
 ; Returns a list with manhole data with the following format:
 ; ( ent_name ID type layer CL ILs DNs )
-  (setq
-    manholeAttributeList (LM:vl-getattributes (vlax-ename->vla-object ent_name))
-    ID (cdr (assoc "ID" manholeAttributeList))
-    CL (cdr (assoc "CL" manholeAttributeList))
-    ; type is missing
-    lay (cdr (assoc 8 (entget ent_name)))
-  )
-  ; Get IL values and process them
-  (foreach a manholeAttributeList
-    (if (= "IL" (substr (car a) 1 2))
-      (progn
-        (if (assoc "IL" (DT:ParseManholeIL (cdr a)) )
-          (setq ILs (append ILs (list (cdr (assoc "IL" (DT:ParseManholeIL (cdr a)) )))))
-        );END if
-        (if (cdr (assoc "DN" (DT:ParseManholeIL (cdr a)) ))
-          (setq DNs (append DNs (list (cdr (assoc "DN" (DT:ParseManholeIL (cdr a)) )))) )
-          (setq DNs (append DNs (list "noDN")) )
-        );END if
-      );END progn
+; or nil if the object ent_name is not an INSERT
+  (if ent_name
+    (if (= "INSERT" (cdr (assoc 0 (entget ent_name))))
+      (if (LM:getvisibilityparametername (vlax-ename->vla-object ent_name))
+        (progn
+          (setq
+            manholeAttributeList (LM:vl-getattributes (vlax-ename->vla-object ent_name))
+            ID (cdr (assoc "ID" manholeAttributeList))
+            CL (cdr (assoc "CL" manholeAttributeList))
+            type (LM:effectivename (vlax-ename->vla-object ent_name))
+            lay (cdr (assoc 8 (entget ent_name)))
+            shownILamount (atoi (LM:getvisibilitystate (vlax-ename->vla-object ent_name)))
+          )
+          ; Get IL and DN values
+          (setq
+            itemPosition 0
+            checkedILamount 0
+          )
+          (while (< checkedILamount shownILAmount)
+            (setq
+              item (nth itemPosition manholeAttributeList)
+              itemPosition (+ itemPosition 1)
+            )
+            (if (= "IL" (substr (car item) 1 2))
+              (progn
+                (setq checkedILamount (+ checkedILamount 1))
+                (if (assoc "IL" (DT:ParseManholeIL (cdr item)) )
+                  (setq ILs (append ILs (list (cdr (assoc "IL" (DT:ParseManholeIL (cdr item)) )))))
+                );END if
+                (if (cdr (assoc "DN" (DT:ParseManholeIL (cdr item)) ))
+                  (setq DNs (append DNs (list (cdr (assoc "DN" (DT:ParseManholeIL (cdr item)) )))) )
+                  (setq DNs (append DNs (list "noPipeSize")) )
+                );END if
+              );END progn
+            );END if
+          );END repeat
+          ; Return manhole data
+          (list ID CL type lay ILs DNs)
+        );END progn
+      );END if
     );END if
-  );END foreach
-  (list ID CL lay ILs DNs)
+    nil
+  );END if
 )
