@@ -27,3 +27,16 @@
     (cons 10 insertionPoint)      ; Insertion point coordinates
   )
 )
+
+; ATTDEF
+(entmakex
+  (list
+    (cons  0 "ATTDEF")  ; Entity type [ename]
+    (cons  1 def)       ; Value [str], spaces allowed
+    (cons  2 tag)       ; Tag [str], spaces not allowed
+    (cons  3 pr)        ; Prompt [str], spaces allowed
+    (cons 10 pt)        ; Text first base point [pt]
+    (cons 40 h)         ; Text height [real]
+    (cons 70 f)         ; Attribute flag [int]: 0=No flags, 1=Invisible, 2=Constant, 4=Verification is Required, 8=Preset (no prompt)
+  )
+)
