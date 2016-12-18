@@ -3221,6 +3221,6 @@ defun
         (princ "\n.")
       );END progn
     );END if
-  );END repeat
+  );END while
   (princ)
 )
