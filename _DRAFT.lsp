@@ -3207,3 +3207,20 @@ defun
     (cdr (assoc 5 (entget ent_name)))
   );END if
 )
+(defun c:1( / ent_name blockName a b)
+  ; Return selected block attribute DXF data
+  (setq ent_name (car (entsel)) )  (princ "\nent_name = ")(princ ent_name)
+  (setq blockName (LM:effectivename (vlax-ename->vla-object ent_name)) )        (princ "\nblockName = ")(princ blockName)
+  (setq a (cdr (assoc -2 (tblsearch "block" blockName))) )                     (princ "\nblock definition ent_name = ")(princ a1)
+  (setq b a)
+    (while (setq b (entnext b))
+    (if (= "ATTDEF" (cdr (assoc 0 (entget b))))
+      (progn
+        (princ "\nsubentity = ")(princ b)(princ "   >> ")(princ (cdr (assoc 0 (entget b))))(princ " ")(princ (assoc 2 (entget b)))(princ (assoc 1 (entget b)))(princ (assoc 70 (entget b)))
+        ;(princ "\n")(princ (entget b))
+        (princ "\n.")
+      );END progn
+    );END if
+  );END repeat
+  (princ)
+)
