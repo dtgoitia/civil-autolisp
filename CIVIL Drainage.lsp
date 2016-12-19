@@ -82,16 +82,12 @@
     (cdr (assoc 43 (entget ent_name) ) )
   );END if
 )
-(defun c:1( / ent_name p_ins lay ss)
-  ; Selects the pipes connected to selected manhole block
-  (setq
-    ent_name (car (entsel "\nSelect manhole: "))
-    ss (DT:SelectConnectedPipes ent_name)
-  )
-  (sssetfirst nil ss)
-
-  ; TODO
-  (princ)
+(defun DT:GetPipeData ( ent_name / DN )
+  ; Return the pipe data
+  ; ( ent_name diameter )
+  (if ent_name
+    (list ent_name (cdr (assoc 43 (entget ent_name))))
+  );END if
 )
 (defun DT:ParseManholeIL ( stringManholeIL
                           /
@@ -161,9 +157,9 @@
                       ID CL ILs DNs
                       item itemPosition checkedILamount
                       )
-; Returns a list with manhole data with the following format:
-; ( ent_name ID type layer CL ILs DNs )
-; or nil if the object ent_name is not an INSERT
+  ; Returns a list with manhole data with the following format:
+  ; ( ent_name ID type layer CL ILs DNs )
+  ; or nil if the object ent_name is not an INSERT
   (if ent_name
     (if (= "INSERT" (cdr (assoc 0 (entget ent_name))))
       (if (LM:getvisibilityparametername (vlax-ename->vla-object ent_name))
@@ -206,4 +202,19 @@
     );END if
     nil
   );END if
+)
+(defun c:1( / ent_name p_ins lay ss)
+  ; Selects the pipes connected to selected manhole block
+  (setq
+    ent_name (car (entsel "\nSelect manhole: "))
+    manholeData (DT:GetManholeData ent_name)
+    ssConnectedPipes (DT:SelectConnectedPipes ent_name)
+  )
+  (foreach pipe (ssnamex ss)
+    (setq
+      connectedPipesData (append connectedPipesData (DT:GetPipeData (cadr pipe)))
+    )
+  );END foreach
+  ;(sssetfirst nil ss)
+  connectedPipesData
 )
