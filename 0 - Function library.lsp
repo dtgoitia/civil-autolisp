@@ -269,8 +269,8 @@
 )
 (defun LM:Round ( n ) (fix (+ n (if (minusp n) -0.5 0.5))))
 (defun LM:rtos ( real units prec / dimzin result )
-;; rtos wrapper  -  Lee Mac
-;; A wrapper for the rtos function to negate the effect of DIMZIN
+  ;; rtos wrapper  -  Lee Mac
+  ;; A wrapper for the rtos function to negate the effect of DIMZIN
     (setq dimzin (getvar 'dimzin))
     (setvar 'dimzin 0)
     (setq result (vl-catch-all-apply 'rtos (list real units prec)))
@@ -280,20 +280,20 @@
     )
 )
 (defun LM:getdynprops ( blk )
-;; Get Dynamic Block Properties  -  Lee Mac
-;; Returns an association list of Dynamic Block properties & values.
-;; blk - [vla] VLA Dynamic Block Reference object
-;; Returns: [lst] Association list of ((<prop> . <value>) ... )
+  ;; Get Dynamic Block Properties  -  Lee Mac
+  ;; Returns an association list of Dynamic Block properties & values.
+  ;; blk - [vla] VLA Dynamic Block Reference object
+  ;; Returns: [lst] Association list of ((<prop> . <value>) ... )
     (mapcar '(lambda ( x ) (cons (vla-get-propertyname x) (vlax-get x 'value)))
         (vlax-invoke blk 'getdynamicblockproperties)
     )
 )
 (defun LM:setdynprops ( blk lst / itm )
-;; Set Dynamic Block Properties  -  Lee Mac
-;; Modifies values of Dynamic Block properties using a supplied association list.
-;; blk - [vla] VLA Dynamic Block Reference object
-;; lst - [lst] Association list of ((<Property> . <Value>) ... )
-;; Returns: nil
+  ;; Set Dynamic Block Properties  -  Lee Mac
+  ;; Modifies values of Dynamic Block properties using a supplied association list.
+  ;; blk - [vla] VLA Dynamic Block Reference object
+  ;; lst - [lst] Association list of ((<Property> . <Value>) ... )
+  ;; Returns: nil
     (setq lst (mapcar '(lambda ( x ) (cons (strcase (car x)) (cdr x))) lst))
     (foreach x (vlax-invoke blk 'getdynamicblockproperties)
         (if (setq itm (assoc (strcase (vla-get-propertyname x)) lst))
@@ -302,18 +302,18 @@
     )
 )
 (defun LM:getvisibilitystate ( blk )
-;; Get Dynamic Block Visibility State  -  Lee Mac
-;; Returns the value of the Visibility Parameter of a Dynamic Block (if present)
-;; blk - [vla] VLA Dynamic Block Reference object
-;; Returns: [str] Value of Visibility Parameter, else nil
+  ;; Get Dynamic Block Visibility State  -  Lee Mac
+  ;; Returns the value of the Visibility Parameter of a Dynamic Block (if present)
+  ;; blk - [vla] VLA Dynamic Block Reference object
+  ;; Returns: [str] Value of Visibility Parameter, else nil
     (LM:getdynpropvalue blk (LM:getvisibilityparametername blk))
 )
 (defun LM:SetVisibilityState ( blk val / vis )
-;; Set Dynamic Block Visibility State  -  Lee Mac
-;; Sets the Visibility Parameter of a Dynamic Block (if present) to a specific value (if allowed)
-;; blk - [vla] VLA Dynamic Block Reference object
-;; val - [str] Visibility State Parameter value
-;; Returns: [str] New value of Visibility Parameter, else nil
+  ;; Set Dynamic Block Visibility State  -  Lee Mac
+  ;; Sets the Visibility Parameter of a Dynamic Block (if present) to a specific value (if allowed)
+  ;; blk - [vla] VLA Dynamic Block Reference object
+  ;; val - [str] Visibility State Parameter value
+  ;; Returns: [str] New value of Visibility Parameter, else nil
     (if
         (and
             (setq vis (LM:getvisibilityparametername blk))
@@ -323,8 +323,8 @@
     )
 )
 (defun LM:effectivename ( obj )
-;; Effective Block Name  -  Lee Mac
-;; obj - [vla] VLA Block Reference object
+  ;; Effective Block Name  -  Lee Mac
+  ;; obj - [vla] VLA Block Reference object
     (vlax-get-property obj
         (if (vlax-property-available-p obj 'effectivename)
             'effectivename
@@ -342,10 +342,10 @@
         )
 )
 (defun LM:getvisibilityparametername ( blk / vis )
-;; Get Visibility Parameter Name  -  Lee Mac
-;; Returns the name of the Visibility Parameter of a Dynamic Block (if present)
-;; blk - [vla] VLA Dynamic Block Reference object
-;; Returns: [str] Name of Visibility Parameter, else nil
+  ;; Get Visibility Parameter Name  -  Lee Mac
+  ;; Returns the name of the Visibility Parameter of a Dynamic Block (if present)
+  ;; blk - [vla] VLA Dynamic Block Reference object
+  ;; Returns: [str] Name of Visibility Parameter, else nil
     (if
         (and
             (vlax-property-available-p blk 'effectivename)
@@ -379,32 +379,32 @@
     )
 )
 (defun LM:getdynpropvalue ( blk prp )
-;; Get Dynamic Block Property Value  -  Lee Mac
-;; Returns the value of a Dynamic Block property (if present)
-;; blk - [vla] VLA Dynamic Block Reference object
-;; prp - [str] Dynamic Block property name (case-insensitive)
+  ;; Get Dynamic Block Property Value  -  Lee Mac
+  ;; Returns the value of a Dynamic Block property (if present)
+  ;; blk - [vla] VLA Dynamic Block Reference object
+  ;; prp - [str] Dynamic Block property name (case-insensitive)
     (setq prp (strcase prp))
     (vl-some '(lambda ( x ) (if (= prp (strcase (vla-get-propertyname x))) (vlax-get x 'value)))
         (vlax-invoke blk 'getdynamicblockproperties)
     )
 )
 (defun LM:getdynpropallowedvalues ( blk prp )
-;; Get Dynamic Block Property Allowed Values  -  Lee Mac
-;; Returns the allowed values for a specific Dynamic Block property.
-;; blk - [vla] VLA Dynamic Block Reference object
-;; prp - [str] Dynamic Block property name (case-insensitive)
-;; Returns: [lst] List of allowed values for property, else nil if no restrictions
+  ;; Get Dynamic Block Property Allowed Values  -  Lee Mac
+  ;; Returns the allowed values for a specific Dynamic Block property.
+  ;; blk - [vla] VLA Dynamic Block Reference object
+  ;; prp - [str] Dynamic Block property name (case-insensitive)
+  ;; Returns: [lst] List of allowed values for property, else nil if no restrictions
     (setq prp (strcase prp))
     (vl-some '(lambda ( x ) (if (= prp (strcase (vla-get-propertyname x))) (vlax-get x 'allowedvalues)))
         (vlax-invoke blk 'getdynamicblockproperties)
     )
 )
 (defun LM:vl-getattributevalue ( blk tag )
-;; Get Attribute Value  -  Lee Mac
-;; Returns the value held by the specified tag within the supplied block, if present.
-;; blk - [vla] VLA Block Reference Object
-;; tag - [str] Attribute TagString
-;; Returns: [str] Attribute value, else nil if tag is not found.
+  ;; Get Attribute Value  -  Lee Mac
+  ;; Returns the value held by the specified tag within the supplied block, if present.
+  ;; blk - [vla] VLA Block Reference Object
+  ;; tag - [str] Attribute TagString
+  ;; Returns: [str] Attribute value, else nil if tag is not found.
     (setq tag (strcase tag))
     (vl-some '(lambda ( att ) (if (= tag (strcase (vla-get-tagstring att))) (vla-get-textstring att)))
         (vlax-invoke blk 'getattributes)
@@ -437,12 +437,12 @@
     )
 )
 (defun LM:setdynpropvalue ( blk prp val )
-;; Set Dynamic Block Property Value  -  Lee Mac
-;; Modifies the value of a Dynamic Block property (if present)
-;; blk - [vla] VLA Dynamic Block Reference object
-;; prp - [str] Dynamic Block property name (case-insensitive)
-;; val - [any] New value for property
-;; Returns: [any] New value if successful, else nil
+  ;; Set Dynamic Block Property Value  -  Lee Mac
+  ;; Modifies the value of a Dynamic Block property (if present)
+  ;; blk - [vla] VLA Dynamic Block Reference object
+  ;; prp - [str] Dynamic Block property name (case-insensitive)
+  ;; val - [any] New value for property
+  ;; Returns: [any] New value if successful, else nil
     (setq prp (strcase prp))
     (vl-some
        '(lambda ( x )
@@ -466,11 +466,11 @@
         )
 )
 (defun LM:vl-getattributevalue ( blk tag )
-;; Get Attribute Value  -  Lee Mac
-;; Returns the value held by the specified tag within the supplied block, if present.
-;; blk - [vla] VLA Block Reference Object
-;; tag - [str] Attribute TagString
-;; Returns: [str] Attribute value, else nil if tag is not found.
+  ;; Get Attribute Value  -  Lee Mac
+  ;; Returns the value held by the specified tag within the supplied block, if present.
+  ;; blk - [vla] VLA Block Reference Object
+  ;; tag - [str] Attribute TagString
+  ;; Returns: [str] Attribute value, else nil if tag is not found.
     (setq tag (strcase tag))
     (vl-some '(lambda ( att ) (if (= tag (strcase (vla-get-tagstring att))) (vla-get-textstring att)))
         (vlax-invoke blk 'getattributes)
@@ -713,9 +713,9 @@
   (LM:acapp)
 )
 (defun invm ( m / c f p r )
-;; Matrix Inverse  -  gile & Lee Mac
-;; Uses Gauss-Jordan Elimination to return the inverse of a non-singular nxn matrix.
-;; Args: m - nxn matrix
+  ;; Matrix Inverse  -  gile & Lee Mac
+  ;; Uses Gauss-Jordan Elimination to return the inverse of a non-singular nxn matrix.
+  ;; Args: m - nxn matrix
 
     (defun f ( p m )
         (mapcar '(lambda ( x ) (mapcar '(lambda ( a b ) (- a (* (car x) b))) (cdr x) p)) m)
@@ -739,8 +739,8 @@
     (reverse r)
 )
 (defun imat ( n / i j l m )
-;; Identity Matrix  -  Lee Mac
-;; Args: n - matrix dimension
+  ;; Identity Matrix  -  Lee Mac
+  ;; Args: n - matrix dimension
     (repeat (setq i n)
         (repeat (setq j n)
             (setq l (cons (if (= i j) 1.0 0.0) l)
@@ -764,7 +764,7 @@
   (strcat day "." mo "." yr)
 )
 (defun fbi ( blk )
-;Fast Block Insert: point + rotation
+  ;Fast Block Insert: point + rotation
 	(command "-insert" blk pause 1 1 pause)
 	(princ)
   ; v0.0 - 2016.03.29 - First issue
@@ -772,14 +772,13 @@
   ; Last revision: 2016.03.29
 )
 (defun fbi2 ( blk )
-;Fast Block Insert: point
+  ;Fast Block Insert: point
 	(command "-insert" blk pause 1 1 0)
 	(princ)
   ; v0.0 - 2016.03.30 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.03.30
 )
-(princ)
 (defun CopyToClipboard (str / html result)
   (if (= 'STR (type str))
     (progn
@@ -988,18 +987,18 @@
 )
 ; ERROR HANDLING FUNCTIONS -----------------------------------------------------
 (defun get_sysvars(targets)
-    ; Return variable's values
-    (mapcar
-        '(lambda (variable) (list variable (getvar variable)))
-        targets
-    )
+  ; Return variable's values
+  (mapcar
+    '(lambda (variable) (list variable (getvar variable)))
+    targets
+  )
 ); END defun
 (defun set_sysvars(variables)
-    ; Given a list of pairs of var-value, it sets them
-    (mapcar
-        '(lambda (variable) (setvar (nth 0 variable) (nth 1 variable)))
-        variables
-    )
+  ; Given a list of pairs of var-value, it sets them
+  (mapcar
+    '(lambda (variable) (setvar (nth 0 variable) (nth 1 variable)))
+    variables
+  )
 ); END defun
 (defun get_environment(targets)
   ; Store current *error* function and requested system variables
@@ -1024,9 +1023,9 @@
   );END defun
 );END defun
 (defun save_environment (targets)
-    ; Store environment and set custom error handler
-    (get_environment targets)
-    (set_custom_error)
+  ; Store environment and set custom error handler
+  (get_environment targets)
+  (set_custom_error)
 );END defun
 ;| USE TEMPLATE
 (defun c:test (/ old_error old_sysvars)
