@@ -1,5 +1,6 @@
 (vl-load-com)
-(defun c:0() (princ "\nExecuting (DT:GetManholeData (car (entsel))))... ") (DT:GetManholeData (car (entsel))))
+(defun c:0() (princ "\nExecuting (DT:GetManholeData (car (entsel)))... ") (DT:GetManholeData (car (entsel))) )
+(defun c:9() (princ "\nExecuting (DT:SelectConnectedPipes (car (entsel)))... ") (DT:SelectConnectedPipes (car (entsel)) ) )
 (defun DT:SelectByDistance (pC dist layerName / pn pt pList ang ss )
   ; Return a selection set of all the objects within "dist" distance from "pC" point
   ; pC [pt] - Center point coordinates
@@ -208,18 +209,21 @@
     nil
   );END if
 )
-(defun c:1( / ent_name p_ins lay ss)
+(defun c:1( / ent_name p_ins lay ssConnectedPipes connectedPipesData)
   ; Selects the pipes connected to selected manhole block
   (setq
     ent_name (car (entsel "\nSelect manhole: "))
     manholeData (DT:GetManholeData ent_name)
     ssConnectedPipes (DT:SelectConnectedPipes ent_name)
   )
-  (foreach pipe (ssnamex ss)
-    (setq
-      connectedPipesData (append connectedPipesData (DT:GetPipeData (cadr pipe)))
-    )
+  (sssetfirst nil ssConnectedPipes)
+
+  (foreach pipe (ssnamex ssConnectedPipes)
+    (if (= 'ename (type (cadr pipe)))
+      (setq
+        connectedPipesData (append connectedPipesData (list (DT:GetPipeData (cadr pipe))))
+      )
+    );END if
   );END foreach
-  ;(sssetfirst nil ss)
   connectedPipesData
 )
