@@ -1,3 +1,5 @@
+(vl-load-com)
+(defun c:0() (princ "\nExecuting (DT:GetManholeData (car (entsel))))... ") (DT:GetManholeData (car (entsel))))
 (defun DT:SelectByDistance (pC dist layerName / pn pt pList ang ss )
   ; Return a selection set of all the objects within "dist" distance from "pC" point
   ; pC [pt] - Center point coordinates
@@ -86,7 +88,7 @@
   ; Return the pipe data
   ; ( ent_name diameter )
   (if ent_name
-    (list ent_name (cdr (assoc 43 (entget ent_name))))
+    (list ent_name (DT:GetPolylineGlobalWidth ent_name) )
   );END if
 )
 (defun DT:ParseManholeIL ( stringManholeIL
@@ -103,7 +105,6 @@
   ;  - IL with pipe size + "Ø" between parenthesis.
   ;  - IL with pipe size + "∅" between parenthesis.
   ;  - IL with non-numeric string between parenthesis.
-
   (if stringManholeIL
     (progn
       ; if any diameter symbol found, substitute it
@@ -138,7 +139,11 @@
             );END subcond
             ; Non-numeric string between parenthesis
             (t
-              (princ "\nSorry, pipe diameter not understood :(")
+              (if (atof contentBetweenParenthesis)
+                (setq
+                  DN (* 0.001 (atof contentBetweenParenthesis))
+                )
+              );END if
             )
           );END cond
         );END progn
@@ -151,15 +156,14 @@
     nil
   );END if
 )
-(defun c:1() (DT:GetManholeData (car (entsel))))
 (defun DT:GetManholeData ( ent_name
                       /
                       manholeAttributeList
-                      ID CL ILs DNs
+                      ID CL ILs DNs shownILamount
                       item itemPosition checkedILamount
                       )
   ; Returns a list with manhole data with the following format:
-  ; ( ent_name ID type layer CL ILs DNs )
+  ; ( ent_name ID manholeType layer CL ILs DNs )
   ; or nil if the object ent_name is not an INSERT
   (if ent_name
     (if (= "INSERT" (cdr (assoc 0 (entget ent_name))))
@@ -169,7 +173,7 @@
             manholeAttributeList (LM:vl-getattributes (vlax-ename->vla-object ent_name))
             ID (cdr (assoc "ID" manholeAttributeList))
             CL (cdr (assoc "CL" manholeAttributeList))
-            type (LM:effectivename (vlax-ename->vla-object ent_name))
+            manholeType (LM:effectivename (vlax-ename->vla-object ent_name))
             lay (cdr (assoc 8 (entget ent_name)))
             shownILamount (atoi (LM:getvisibilitystate (vlax-ename->vla-object ent_name)))
           )
@@ -195,9 +199,9 @@
                 );END if
               );END progn
             );END if
-          );END repeat
+          );END while
           ; Return manhole data
-          (list ID CL type lay ILs DNs)
+          (list ID CL manholeType lay ILs DNs)
         );END progn
       );END if
     );END if
