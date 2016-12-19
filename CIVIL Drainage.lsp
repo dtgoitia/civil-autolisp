@@ -91,6 +91,7 @@
 )
 (defun DT:ParseManholeIL ( stringManholeIL
                           /
+                          stringLength
                           openParenthesisPosition closeParenthesisPosition contentBeforeParenthesis contentBetweenParenthesis
                           invertLevel DN
                          )
