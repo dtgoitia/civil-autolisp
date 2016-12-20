@@ -3224,3 +3224,13 @@ defun
   );END while
   (princ)
 )
+(defun c:1( / xy z )
+  ; Insert 3D points with position and level on a loop
+  (while T
+    (setq
+      xy (getpoint "\nSelect XY coordinates: ")
+      z (DT:clic_or_type_level)
+    )
+    (point (list (nth 0 xy) (nth 1 xy) z))
+  );END while
+)
