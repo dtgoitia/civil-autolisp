@@ -3234,3 +3234,7 @@ defun
     (point (list (nth 0 xy) (nth 1 xy) z))
   );END while
 )
+(defun c:1()
+  ; Draw a leader with no text
+  (command "_leader" (getpoint) (getpoint) "" "" "N")
+)
