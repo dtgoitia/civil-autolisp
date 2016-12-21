@@ -201,12 +201,17 @@
     ; Other
     (t
       ;(alert "case 7")
-      (initget "Yes No")
-      (setq ans (getkword (strcat "\nNo standard format. Verify " txt "m level. [Yes/No] <Yes>:")))
-      (if (or (not ans) (= ans "Yes"))
+      (if (= 0.0 (atof txt))
+        (progn
+          (initget "Yes No")
+          (setq ans (getkword (strcat "\nNo standard format. Verify " txt "m level. [Yes/No] <Yes>:")))
+          (if (or (not ans) (= ans "Yes"))
+            (atof txt)
+            (exit)
+          )
+        );END progn
         (atof txt)
-        (exit)
-      )
+      );END if
     );END cond4
   ); END cond
 )
