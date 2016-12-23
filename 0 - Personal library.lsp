@@ -1375,6 +1375,9 @@
   (vlax-put-property VL_ent_name 'Coordinates newArray )
 )
 (defun GetEntityTransparency ( ent )
+  ; Get entity transparency
+  ; ent [ename/vla-object] - Entity name/VLA oject name
+  ; Returns transparency value as integer, or "ByLayer" as string
   (cond
     ((= 'vla-object (type ent))
       (vla-get-entitytransparency ent)
@@ -1383,4 +1386,25 @@
       (vla-get-entitytransparency (vlax-ename->vla-object ent))
     );END subcond
   );END cond
+)
+(defun SetEntityTransparency (ent transparency / entType )
+  ; Set entity transparency
+  ; ent [ename/vla-object] - Entity name/VLA oject name
+  ; transparency [int/str] - Transparecy value/"ByLayer"
+  ; Returns T if successful, nil if not
+  (if (or
+        (and (= 'str (setq entType (type transparency)))
+             (= "BYLAYER" (strcase transparency))
+        );END and
+        (and (= 'int entType) (<= 0 transparency 90))
+      );END or
+      (cond
+        ((= 'vla-object (setq entType (type ent)))
+          (not (vla-put-entitytransparency ent transparency))
+        );END subcond
+        ((= 'ename entType)
+          (SetEntityTransparency (vlax-ename->vla-object ent) transparency )
+        );END subcond
+      );END cond
+  );END if
 )
