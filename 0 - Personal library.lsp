@@ -176,6 +176,22 @@
   ; Author: David Torralba
   ; Last revision: 2016.06.15
 )
+(defun DT:ha ( ent_name pattern scale )
+  ; automatic HAtching
+  ; This function selects the polylines within the selection set,
+  ; closes them and creates an individual associative hatch for each polyline
+
+  (if (or (= "LWPOLYLINE" (cdr (assoc 0 (entget ent_name)))) (= "POLYLINE" (cdr (assoc 0 (entget ent_name)))))
+    (progn
+      (if (= :vlax-false (vla-get-closed (vlax-ename->vla-object ent_name))) (vla-put-closed (vlax-ename->vla-object ent_name) :vlax-true)) ; close if opened
+      (command "-hatch" "LA" "." "P" pattern scale "" "A" "A" "Y" "" "S" ent_name "" "")       ; add hatch
+    );END progn
+  );END if
+
+	; v0.0 - 2016.12.23 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2016.12.23
+)
 (defun c:BY ( / ss)
   ; Set by layer
   (setq ss (ssget))
