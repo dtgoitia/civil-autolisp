@@ -1374,3 +1374,13 @@
   (vlax-safearray-fill newArray newListArray)
   (vlax-put-property VL_ent_name 'Coordinates newArray )
 )
+(defun GetEntityTransparency ( ent )
+  (cond
+    ((= 'vla-object (type ent))
+      (vla-get-entitytransparency ent)
+    );END subcond
+    ((= 'ename (type ent))
+      (vla-get-entitytransparency (vlax-ename->vla-object ent))
+    );END subcond
+  );END cond
+)
