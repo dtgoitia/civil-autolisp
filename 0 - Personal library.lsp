@@ -174,10 +174,18 @@
   (if (or (= "LWPOLYLINE" (cdr (assoc 0 (entget ent_name)))) (= "POLYLINE" (cdr (assoc 0 (entget ent_name)))))
     (progn
       (if (= :vlax-false (vla-get-closed (vlax-ename->vla-object ent_name))) (vla-put-closed (vlax-ename->vla-object ent_name) :vlax-true)) ; close if opened
-      (command "-hatch" "LA" "." "P" pattern scale "" "A" "A" "Y" "" "S" ent_name "" "")       ; add hatch
+      (cond
+        ((= pattern "SOLID")
+          (command "-hatch" "LA" "." "P" pattern "A" "A" "Y" "" "S" ent_name "" "" )
+        );END subcond
+        (t
+          (command "-hatch" "LA" "." "P" pattern scale "" "A" "A" "Y" "" "S" ent_name "" "")
+        );END subcond
+      );END cond
     );END progn
   );END if
 
+  ; v0.1 - 2016.12.23 - Pattern management added
 	; v0.0 - 2016.12.23 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.12.23
