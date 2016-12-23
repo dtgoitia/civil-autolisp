@@ -48,3 +48,93 @@
   );ENd while
   (princ)
 )
+(defun c:1() (command "_laymcur" pause) (princ))
+(defun c:2()
+  (command "_-hatch" pause "")
+  (princ)
+)
+(defun c:1() (princ "\nTRIM: ") (command "_trim" pause))
+(defun c:2() (princ "\nJOIN: ") (command "_join"))
+(defun c:3() (c:BY))
+(defun c:4( / VL_ent_name )
+  ; Remove first vertex and close polyline
+  (if (setq ss (ssget '(( 0 . "LWPOLYLINE")) ))
+    (foreach a (ssnamex ss)
+      (if (= 'ename (type (cadr a)))
+        (if (= "LWPOLYLINE" (cdr (assoc 0 (entget (cadr a)))))
+          (if (= :vlax-false (vla-get-closed (vlax-ename->vla-object (cadr a))))
+            (progn
+              ; Check if first and last vertex are the same or very close points ------------------------------------------ TODO
+              ; Remove first vertex
+              (DT:RemovePolylineVertex (cadr a) (vlax-curve-getEndParam (vlax-ename->vla-object (cadr a))))
+              ; Close polyline
+              (vla-put-closed (vlax-ename->vla-object (cadr a)) :vlax-true)
+              (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 256)
+            );END progn
+          );END if
+        );END if
+      );END if
+    );END foreach
+  );END if
+  ;(princ)
+)
+(defun c:5( / VL_ent_name )
+  ; <Mark not closed polylines in blue
+  (if (setq ss (ssget '(( 0 . "LWPOLYLINE")) ))
+    (foreach a (ssnamex ss)
+      (if (= 'ename (type (cadr a)))
+        (if (= "LWPOLYLINE" (cdr (assoc 0 (entget (cadr a)))))
+          (if (= :vlax-false (vla-get-closed (vlax-ename->vla-object (cadr a))))
+            (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 5)
+          );END if
+        );END if
+      );END if
+    );END foreach
+  );END if
+  ;(princ)
+)
+(defun c:0( / startZ endZ z layerName)
+  ; Create the layers from "e-clash--0.3m" to "e-clash-2.2m"
+  (setq
+    startZ -0.3
+    endZ 2.2
+    z startZ
+  )
+  (while (<= z endZ)
+    (setq
+      layerName (strcat "e-clash-" (LM:rtos z 2 1) "m")
+      z (+ z 0.1)
+    )
+    (command "-layer" "m" layerName "")
+    (princ "\n")(princ layerName)
+  );ENd while
+  (princ)
+)
+(defun c:1 ()
+  ; This function selects the polylines within the selection set,
+  ; closes them and creates an individual associative hatch for each polyline in the polyline layer
+  ; and changes the transparency of the hatch to 0.3
+  (vl-load-com)
+  (foreach a (ssnamex (ssget '((-4 . "<OR") (0 . "LWPOLYLINE") (0 . "POLYLINE") (-4 . "OR>"))) )
+    (if (= 'ename (type (cadr a)))
+      (progn
+        ; If clayer is different ot object layer, update layer to object layer
+        (if (/= (getvar "clayer") (cdr (assoc 8 (entget (cadr a)))) )
+          (setvar "clayer" (cdr (assoc 8 (entget (cadr a)))))
+        );END if
+
+        ; Create hatch
+        (DT:ha (cadr a) "SOLID" "1")
+
+        ; Change hatch transparency
+        (if (= "HATCH" (cdr (assoc 0 (entget (entlast)))))
+          (progn
+            ;Change transparency
+            (princ "\nHatch created!")
+          );END progn
+          (princ "\nSelected object is not a hatch")
+        );END if
+      );END progn
+    );END if
+  );END foreach
+)
