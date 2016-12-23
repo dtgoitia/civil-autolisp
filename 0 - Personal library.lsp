@@ -148,33 +148,23 @@
 	(command "measuregeom" "D")
 	(princ)
 )
-(defun c:ha ( / ss i ent ent_name VL_ent_name)
+(defun c:ha ( )
   ; automatic HAtching
   ; This function selects the polylines within the selection set,
   ; closes them and creates an individual associative hatch for each polyline
   ;
-  ; Load VLA
   (vl-load-com)
+  (foreach a (ssnamex (ssget '((-4 . "<OR") (0 . "LWPOLYLINE") (0 . "POLYLINE") (-4 . "OR>"))) )
+    (if (= 'ename (type (cadr a)))
+      (DT:ha (cadr a) "ANSI31" "0.1")
+    );END if
+  );END foreach
 
-  ; INPUT - Select objects and keep just polylines
-  (setq ss (ssget '((-4 . "<OR") (0 . "LWPOLYLINE") (0 . "POLYLINE") (-4 . "OR>"))))
-
-  ; OPERATION - Loop to close
-  (setq i 0)
-  (while (< i (sslength ss) )
-    (setq
-      ent_name (ssname ss i)
-      VL_ent_name (vlax-ename->vla-object ent_name)
-    )
-    (if (= :vlax-false (vla-get-closed VL_ent_name)) (vla-put-closed VL_ent_name :vlax-true)) ; close if opened
-    (command "-hatch" "LA" "." "P" "ANSI31" "0.1" "" "A" "A" "Y" "" "S" ent_name "" "")       ; add hatch
-    (setq i (+ i 1))                                                                          ; continue to next polyline
-  ); END while
-
+  ; v0.2 - 2016.12.23 - DT:implemented
 	; v0.1 - 2016.06.15 - Force hatch to be in current layer.
   ; v0.0 - 2016.03.16 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.06.15
+  ; Last revision: 2016.12.23
 )
 (defun DT:ha ( ent_name pattern scale )
   ; automatic HAtching
