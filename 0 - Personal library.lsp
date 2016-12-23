@@ -1336,3 +1336,27 @@
   ; Return string last n characters
   (substr string (- (strlen string) (- n 1)) )
 )
+(defun DT:RemovePolylineVertex ( ent_name param / VL_ent_name array i paramCounter newListArray)
+  ; Removes the selected vertex of the polyline
+  ; ent_name [ename] - Polyline entity name
+  ; param [int] - Parameter of the vertex to remove on the polyline
+  (setq
+    VL_ent_name (vlax-ename->vla-object ent_name)
+    array (vlax-variant-value (vla-get-Coordinates VL_ent_name))
+    i 0
+    paramCounter 0
+  )
+  (foreach a (vlax-safearray->list array)
+    (if (= param paramCounter)
+      (princ "\nSelected vertex found!")
+      (setq newListArray (append newListArray (list a)))
+    );END if
+    (setq
+      i (+ i 1)
+      paramCounter (fix (/ i 2))
+    )
+  );END foreach
+  (setq newArray (vlax-make-safearray vlax-vbdouble (cons 0 (+ -1 (length newListArray)) )))
+  (vlax-safearray-fill newArray newListArray)
+  (vlax-put-property VL_ent_name 'Coordinates newArray )
+)
