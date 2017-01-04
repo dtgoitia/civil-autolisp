@@ -128,11 +128,7 @@
 
         ; Change hatch transparency
         (if (= "HATCH" (cdr (assoc 0 (entget (entlast)))))
-          (progn
-            ;Change transparency
-            (princ "\nHatch created!")
-          );END progn
-          (princ "\nSelected object is not a hatch")
+          (vla-put-entitytransparency (vlax-ename->vla-object (entlast)) "80")
         );END if
       );END progn
     );END if
