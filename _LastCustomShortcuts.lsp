@@ -138,3 +138,10 @@
     );END if
   );END foreach
 )
+(defun c:1() (command "hatchedit" (entlast) "AD" "S"))
+(defun c:2() (c:HA))
+(defun c:3() (command "COPYTOLAYER"))
+
+(defun c:1() (command "REGION"))
+(defun c:2() (command "SUBSTRACT"))
+(defun c:3() (command "UNION"))
