@@ -3175,6 +3175,7 @@ defun
   (command "._UNDO" "_End"); or (command "UNDO" "END")
 )
 |;
+(defun c:4() (princ "\nRoadOffsetForDrainage: ") (DT:RoadOffsetForDrainage))
 (defun DT:RoadOffsetForDrainage( / p ent_name )
   ; Select a polyline within an Xref, and offset it by 0.5m and 1m either side
   (c:N)
