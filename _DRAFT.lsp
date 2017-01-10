@@ -432,14 +432,26 @@ defun
   (vla-put-textstring VL_ent_name (strcat "%%U" (LM:rtos (+ z0 zdiff) 2 3)))
   (princ)
 )
-(defun c:xx() (while (not kkkk) (DT:move_part_m)) )
-(defun c:1() (DT:move_part_m))
-(defun DT:move_part_m( / VL_ent_name p p0 p1 ang)
+(defun c:1()
+  ; Move part-m individually
+  (DT:move_part_m (car (entsel "\nSelect part-m to move: ")))
+)
+(defun c:1()
+  ; Move part-m in group
+  (princ "\nSelect part-m to move: ")
+  (foreach a (ssnamex (ssget))
+    (if (= 'ename (type (cadr a)))
+      (if (= "INSERT" (cdr (assoc 0 (entget (cadr a)))) )
+        (DT:move_part_m (cadr a))
+      );END if
+    );END if
+  );END foreach
+)
+(defun DT:move_part_m( ent_name / VL_ent_name p p0 p1 ang)
   ; Move selected m-part block 0.302 toward the inner part of the building (its rotation - 90 degree)
   (setq oldosmode (getvar "osmode"))
   (setvar "osmode" 0)
   (setq
-    ent_name (car (entsel))
     VL_ent_name (vlax-ename->vla-object ent_name)
     ang (vlax-get-property VL_ent_name 'Rotation)
     p (vlax-safearray->list (vlax-variant-value (vlax-get-property VL_ent_name 'InsertionPoint)))
@@ -449,7 +461,6 @@ defun
   )
   (command "move" ent_name "" p0 p1)
   (setvar "osmode" oldosmode)
-  (princ)
 )
 (defun c:7( / VL_ent_name LastParam x1 xL arr larr newlarr)
   ; Eliminar vertices duplicados (solo mira primer y ultimo vertice)
