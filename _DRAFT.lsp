@@ -1,24 +1,3 @@
-; SET - Error handling function
-defun
-(defun
-(defun
-(defun *error* ( msg )
-  (cond
-    ((or
-      (= msg "Function cancelled")
-      (= msg "quit / exit abort")
-     );END or
-      (princ (strcat "\nFunction stopped by user."))
-    );END subcond
-    (t
-      (princ (strcat "\nERROR:" msg 2))
-    );END subcond
-  );END cond
-  ; Restore previous settings
-  (setvar "system_variable" oldsystem_variable)
-  (setq *error* olderror)
-  (princ)
-)
 (defun GetFromClipboard(/ html result)
   (setq html (vlax-create-object "htmlfile")
 	result (vlax-invoke (vlax-get (vlax-get html 'ParentWindow) 'ClipBoardData) 'GetData "Text")
@@ -3376,4 +3355,55 @@ defun
       );END progn
     );END if
   );END foreach
+)
+(defun c:1 ( / blockName p1 p2 nVertex)
+  ; This function selects LINES and POLYLINES,
+  ; and inserts in the middle an inline block,
+  ; keeping in mind readability angle.
+  (vl-load-com)
+  (defun DT:InsertAlignedBlock ( blockName p1 p2 )
+    (entmakex (list (cons 0 "INSERT") (cons 2 blockName) (cons 10 (DT:mid3dPoint p1 p2)) (cons 50 (DT:ReadableTextAngle (angle p1 p2))) ))
+  )
+  (setq blockName "000" )
+  (foreach a (ssnamex (ssget '((-4 . "<OR") (0 . "LINE") (0 . "LWPOLYLINE") (-4 . "OR>"))) )
+    (if (= 'ename (type (cadr a)))
+      (progn
+        ; Get insertion point and angle
+        (cond
+          ((= "LINE" (cdr (assoc 0 (entget (cadr a)))))
+            (setq
+              p1 (cdr (assoc 10 (entget (cadr a))))
+              p2 (cdr (assoc 11 (entget (cadr a))))
+            )
+            (DT:InsertAlignedBlock blockName p1 p2)
+          );END subcond
+          (t
+            ; Get ammount of vertexes
+            (setq nVertex (vlax-curve-getEndParam (vlax-ename->vla-object (cadr a))) )
+            (cond
+              ((= nVertex 1)
+                (setq
+                  p1 (vlax-curve-getPointAtParam (vlax-ename->vla-object (cadr a)) 0)
+                  p2 (vlax-curve-getPointAtParam (vlax-ename->vla-object (cadr a)) 1)
+                )
+                (DT:InsertAlignedBlock blockName p1 p2)
+              );END subcond
+              (t
+                ;Multiple vertexes
+                (while (> nVertex 0)
+                  (setq
+                    p1 (vlax-curve-getPointAtParam (vlax-ename->vla-object (cadr a)) nVertex)
+                    p2 (vlax-curve-getPointAtParam (vlax-ename->vla-object (cadr a)) (+ nVertex -1))
+                    nVertex (+ nVertex -1)
+                  )
+                  (DT:InsertAlignedBlock blockName p1 p2)
+                );END while
+              );END subcond
+            );END cond
+          );END subcond
+        );END cond
+      );END progn
+    );END if
+  );END foreach
+  (princ)
 )
