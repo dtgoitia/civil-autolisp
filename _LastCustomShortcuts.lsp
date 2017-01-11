@@ -30,3 +30,33 @@
   );END if
   (princ)
 )
+(defun c:pa()(fbi "Parking-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
+(defun c:ra()(fbi "Road-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
+(defun c:rr()(fbi2 "e-psd-rwp"))
+(defun c:os()(setvar "osmode" 513))
+(defun c:qqq( / ss pt rotation )
+  (if (setq ss (ssget '((-4 . "<AND") (0 . "INSERT") (8 . "e-part-m") (-4 . "AND>"))))
+    (foreach a (ssnamex ss)
+      (if (= 'ename (type (cadr a)))
+        (if (= "Part-m-primary-0" (LM:effectivename (vlax-ename->vla-object (cadr a))))
+          (progn
+            (setq
+              pt (cdr (assoc 10 (entget (cadr a))))
+              rotation (vlax-get-property (vlax-ename->vla-object (cadr a)) 'Rotation)
+            )
+            (princ "\nrotation = ")(princ rotation)
+            (if (and (>= rotation (* 0.5 pi)) (< rotation (* 1.5 pi)) )
+              (if (not (entmakex (list (cons 0 "INSERT") (cons 2 "primary-part-m-SCT_2") (cons 10 pt) (cons 50 rotation) )))
+                (princ "\nSomething went wrong!")
+              );END if
+              (if (not (entmakex (list (cons 0 "INSERT") (cons 2 "primary-part-m-SCT_1") (cons 10 pt) (cons 50 rotation) )))
+                (princ "\nSomething went wrong!")
+              );END if
+            );END if
+          );END progn
+        );END if
+      );END if
+    );END foreach
+  );END if
+  (princ)
+)
