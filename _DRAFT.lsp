@@ -3368,8 +3368,8 @@
   (foreach a (ssnamex (ssget '((-4 . "<OR") (0 . "LINE") (0 . "LWPOLYLINE") (-4 . "OR>"))) )
     (if (= 'ename (type (cadr a)))
       (progn
-        ; Get insertion point and angle
         (cond
+          ; If it's a line
           ((= "LINE" (cdr (assoc 0 (entget (cadr a)))))
             (setq
               p1 (cdr (assoc 10 (entget (cadr a))))
@@ -3377,10 +3377,12 @@
             )
             (DT:InsertAlignedBlock blockName p1 p2)
           );END subcond
+          ; If it's not a line (it's a lwpolyline)
           (t
             ; Get ammount of vertexes
             (setq nVertex (vlax-curve-getEndParam (vlax-ename->vla-object (cadr a))) )
             (cond
+              ; If it has 2 vertexes (single segment)
               ((= nVertex 1)
                 (setq
                   p1 (vlax-curve-getPointAtParam (vlax-ename->vla-object (cadr a)) 0)
@@ -3388,9 +3390,9 @@
                 )
                 (DT:InsertAlignedBlock blockName p1 p2)
               );END subcond
+              ; If other case (only can have more vertexes, multiple segments)
               (t
-                ;Multiple vertexes
-                (while (> nVertex 0)
+                (while (> nVertex 0) ; Run through all segments
                   (setq
                     p1 (vlax-curve-getPointAtParam (vlax-ename->vla-object (cadr a)) nVertex)
                     p2 (vlax-curve-getPointAtParam (vlax-ename->vla-object (cadr a)) (+ nVertex -1))
@@ -3405,5 +3407,33 @@
       );END progn
     );END if
   );END foreach
+  (princ)
+)
+(defun c:11 ( / targetLevel ent_name )
+  ; Get a FFL, substract -0.65m and overwrite the target text object content
+  ; with the calculated value properly formated: S16.70
+  (princ "\nGET STORM LEVEL FROM FFL\n")
+  (setq
+    targetLevel (+ (DT:clic_or_type_level) -0.65)
+    ent_name (car (entsel (strcat "\nSelect text to overwrite with \"S" (LM:rtos targetLevel 2 2) "\": ") ))
+  )
+  (if ent_name
+    (vlax-put-property (vlax-ename->vla-object ent_name) 'TextString (strcat "S" (LM:rtos targetLevel 2 2)) )
+    (princ "\nNo target entity selected.")
+  );END if
+  (princ)
+)
+(defun c:22 ( / targetLevel ent_name )
+  ; Get a FFL, substract -0.75m and overwrite the target text object content
+  ; with the calculated value properly formated: F16.70
+  (princ "\nGET FOUL LEVEL FROM FFL\n")
+  (setq
+    targetLevel (+ (DT:clic_or_type_level) -0.75)
+    ent_name (car (entsel (strcat "\nSelect text to overwrite with \"F" (LM:rtos targetLevel 2 2) "\": ") ))
+  )
+  (if ent_name
+    (vlax-put-property (vlax-ename->vla-object ent_name) 'TextString (strcat "F" (LM:rtos targetLevel 2 2)) )
+    (princ "\nNo target entity selected.")
+  );END if
   (princ)
 )
