@@ -622,7 +622,7 @@
       (setq ans (getreal (strcat "\nGradient= 1/<" (LM:rtos SDIPgradient 2 0) ">: ") ) )
       (if ans (setq SDIPgradient ans));END if
     );END progn
-    (getreal "\nGradient= 1/")
+    (setq SDIPgradient (getreal "\nGradient= 1/"))
   );END if
   (setq
     p2 (DT:SDIP p1 p2_2D SDIPgradient)
