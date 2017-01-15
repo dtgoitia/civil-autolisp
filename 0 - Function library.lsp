@@ -866,7 +866,7 @@
 (defun c:egurre( / filePath)
   ; Descarga mi libreria personal
   (setq filePath "C:/0%20-%20Personal%20library.lsp")
-  (if (= T (download "https://raw.githubusercontent.com/dtgoitia/civil-autolisp/master/0%20-%20Personal%20library.lsp" "C:/"))
+  (if (= T (download "https://raw.githubusercontent.com/dtgoitia/civil-autolisp/master/_PersonalLibrary.lsp" "C:/"))
     (progn
       ; Comprobar que el archivo es correcto
       (if (= T (CheckPersonalLibraryFirstLine filePath))
