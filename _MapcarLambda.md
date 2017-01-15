@@ -62,7 +62,7 @@ The command line will return us `("Jane Smith" "Ben Jones" "Tim Williams" "Anna 
 
 Everything clear? Let's jump know into the `(lambda)` function -`(mapcar)`'s perfect teammate.
 
-# `(lambda)` function
+## `(lambda)` function
 
 When you want to use a function, you need to define it first, so some memory is being used for that purpose. If the function will be reused many times... no problem, but what if you just need the function once? Is it worth the effort of declaring the name and arguments...such a waste of creativity! xD
 
@@ -77,14 +77,4 @@ As shown in the examples above, you need to reference a function within `(mapcar
 ```
 The code above will pass a temporary function to `(mapcar)`. This temporary function takes a single argumen (`a`) and executes the code inside. The code inside, in this case is `(alert a)`. This code could be more complex, but for the time begin, let's keep it simple. And to finish we pass to `(mapcar)` the values we want we want to use as arguments (as always, in a list format): `(list "Hi!" "I am a cheecky lambda!")`.
 
-.
-
-.
-
-.
-
-.
-
-.
-
-.
+Last update: 2017.01.15
