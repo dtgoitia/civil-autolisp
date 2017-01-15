@@ -23,57 +23,80 @@
   (princ)
 )
 (loadRT)
-(defun c:iso() (command "isolateobjects")(princ))
-(defun c:uiso() (command "unisolateobjects")(princ))
-(defun c:c() (command "copy" pause "" (cadr (grread 't)) pause) )
-(defun c:cc() (command "copy") )
-(defun c:m() (command "move" pause "" (cadr (grread 't)) pause) )
-(defun c:mo() (command "move"))
-(defun c:move() (command "move"))
-(defun c:mm() (command "move"))
+; UNDEFINE
+(command
+  "_.undefine" "intersect"
+  "_.undefine" "interfere"
+  "_.undefine" "redraw"
+  "_.undefine" "redrawall"
+  "_.undefine" "recombine"
+  "_.undefine" "fill"
+  "_.undefine" "filletedge"
+  "_.undefine" "surffillet"
+)
+(defun c:iso() (command "_.isolateobjects")(princ))
+(defun c:uiso() (command "_.unisolateobjects")(princ))
+(defun c:c() (command "_.copy" pause "" (cadr (grread 't)) pause) )
+(defun c:cc() (command "_.copy") )
+(defun c:m() (command "_.move" pause "" (cadr (grread 't)) pause) )
+(defun c:mo() (command "_.move"))
+(defun c:mm() (command "_.move"))
 (defun c:p00()
   (command
-    "_pasteblock" "0,0"
-    "_scale" "L" "" "0,0" "1000"
-    "_explode" "L" ""
-    "_zoom" "O" "L" ""
+    "_.pasteblock" "0,0"
+    "_.scale" "L" "" "0,0" "1000"
+    "_.explode" "L" ""
+    "_.zoom" "O" "L" ""
   )
   (princ)
 )
-(defun c:ci()	(command "circle")(princ))
-(defun c:n() (command "NCOPY" pause "" "" ""))
-(defun c:xu() (command "-xref" "u" "*")(alert "Xref Unload finished!")(princ)) ;Unload all Xrefs
-(defun c:xr() (command "-xref" "r" "*")(alert "Xref Reload finished!")(princ)) ;Reload all Xrefs
+(defun c:ci()	(command "_.circle")(princ))
+(defun c:n() (command "_.NCOPY" pause "" "" ""))
+(defun c:xu() (command "_-xref" "u" "*")(alert "Xref Unload finished!")(princ)) ;Unload all Xrefs
+(defun c:xr() (command "_-xref" "r" "*")(alert "Xref Reload finished!")(princ)) ;Reload all Xrefs
 (defun c:nt( / oldtextstyle olderror pt)
   (setq
     oldtextstyle (getvar "textstyle")
+    oldcmdecho (getvar "cmdecho")
     olderror *error*
+  )
+  (setvar "cmdecho" 0)
+  (setq
     pt (getpoint "\nSelect text insertion point: ")
   )
   (defun *error* ( msg )
     (setvar "textstyle" oldtextstyle)
+    (setvar "cmdecho" oldcmdecho)
     (setq *error* olderror)
     (princ)
   )
-  (command "-text" "S" "ARIAL" "J" "MC" pt 3 90 (getstring t "\nEnter text: "))
-  (command "scale" "L" "" pt pause)
+  (command
+    "-text" "S"
+    (if (tblsearch "STYLE" "ARIAL") "ARIAL" "Standard")
+    "J" "MC" pt 3
+    (* -1 (getvar "angbase") (/ 180 pi) )
+    (getstring t "\nEnter text: ")
+    "scale" "L" "" pt pause
+  )
   (setvar "textstyle" oldtextstyle)
+  (setvar "cmdecho" oldcmdecho)
   (setq *error* olderror)
   (princ)
 ); Add note
-(defun c:pp()(command "_publish"))
-(defun c:las() (command "layerstate")(princ))
-(defun c:r() (princ "\nRegenerating...")(command "_regen") (princ " done.")(princ))
+(defun c:pp()(command "_.publish"))
+(defun c:las() (command "_.layerstate")(princ))
+(defun c:r() (princ "\nRegenerating...")(command "_.regen") (princ " done.")(princ))
 (defun c:RTM ()
 	; RT and move together
-	(C:RT)
-	(command "move" "P" "" (cadr (grread 't)) pause)
+	(c:RT)
+	(command "_.move" "P" "" (cadr (grread 't)) pause)
 	(princ)
   ; v0.1 - 2016.04.07 - Move reference clic sustituted for current mouse position.
 	; v0.0 - 2016.03.29 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.04.07
 )
+(command )
 (defun c:ha45 ()
 	(garden_block_paving "0.45")
   ; v0.0 - 2016.03.29 - First issue
