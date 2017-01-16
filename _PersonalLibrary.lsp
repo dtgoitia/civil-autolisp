@@ -96,7 +96,6 @@
   ; Author: David Torralba
   ; Last revision: 2016.04.07
 )
-(command )
 (defun c:ha45 ()
 	(garden_block_paving "0.45")
   ; v0.0 - 2016.03.29 - First issue
