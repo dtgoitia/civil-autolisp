@@ -72,9 +72,9 @@
   )
   (command
     "-text" "S"
-    (if (tblsearch "STYLE" "ARIAL") "ARIAL" "Standard")
+    (if (tblsearch "STYLE" "ARIAL") "ARIAL" "Standard")                   ; Text style management
     "J" "MC" pt 3
-    (* -1 (getvar "angbase") (/ 180 pi) )
+    (* (if (= 1 (getvar "angdir")) 1 -1) (getvar "angbase") (/ 180 pi) )  ; Text rotation management
     (getstring t "\nEnter text: ")
     "scale" "L" "" pt pause
   )
