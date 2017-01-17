@@ -957,6 +957,33 @@
   (repeat 400 (princ (strcat "\n" (chr 160) ) ) )
   (princ)
 )
+(defun FindCharRightToLeft ( path pattern / pos len i)
+  ; Return the position of the first character that matches
+  (if path
+    (progn
+      (setq i 0)
+      (while (vl-string-position (ascii pattern) path)
+        (setq
+          pos (vl-string-position (ascii pattern) path)
+          len (strlen path)
+          path (strcat (substr path 1 pos) (substr path (+ pos 2)) )
+          i (+ i 1)
+        )
+      );END while
+      (+ pos i)
+    );END progn
+  );END if
+)
+(defun SplitUrlDirectoryFile ( path )
+  ; Return file directory and file name in a list
+  (if path
+    (list
+      (substr path 1 (FindCharRightToLeft path "/"))
+      (substr path (+ (FindCharRightToLeft path "/") 1))
+    );END list
+    (progn (princ "\nERROR @ SplitUrlDirectoryFile: provided path is incorrect.") (princ) )
+  );END if
+)
 ; SIMPLE VERSION
 ;(defun DT:CheckIfBlockExists( blockName )
 ;  (if (tblsearch "block" blockName)
