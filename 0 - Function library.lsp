@@ -924,7 +924,7 @@
       (princ "\nDownload error.")
       (progn
         (setq cp (strcat rep (vl-filename-base lien) (vl-filename-extension lien)))
-        (if (findfile cp)
+        (if (findfile cp) ; If a previos file with the same name exists, delete it.
           (vl-file-delete cp)
         );END if
         (if (vl-catch-all-error-p (vl-catch-all-apply 'vl-file-copy (list tmp cp)))
@@ -938,14 +938,19 @@
           );END progn
           (progn
             (vl-file-delete tmp)
-            (if (zerop (vl-file-size cp))
+            (if (vl-file-size cp)
+              (if (zerop (vl-file-size cp))
+                (progn
+                  (vl-file-delete cp)
+                  (princ "\nUnable to download the file.")
+                );END progn
+                (setq ok T)
+              );END if
               (progn
-                (vl-file-delete cp)
-                (princ "\nUnable to download the file.")
-              )
-              (setq ok T)
+                (princ "\nUnable to delete the file.")
+              );END progn
             );END if
-          )
+          );END progn
         );END if
       );END progn
     );END if
