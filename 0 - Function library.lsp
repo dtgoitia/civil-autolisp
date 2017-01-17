@@ -892,18 +892,25 @@
   (setvar "secureload" old_secureload)        ; reset SECURELOAD
   (princ)
 )
-(defun CheckPersonalLibraryFirstLine( filePath / fileID content )
-  (setq fileID (open (findfile filePath) "R") )
-
-  (if (= (read-line fileID) "; DO NOT REMOVE THIS LINE. It's a checking.")
-    (progn
-      (close fileID)
-      T
-    );END progn
-    (progn
-      (close fileID)
-      nil
-    );END progn
+(defun CheckPersonalLibraryFirstLine( filePath / fileID )
+  (if filePath
+    (if (findfile filePath)
+      (if (setq fileID (open (findfile filePath) "R") )
+        (if (= (read-line fileID) "; DO NOT REMOVE THIS LINE. It's a checking.")
+          (progn
+            (close fileID)
+            T
+          );END progn
+          (progn
+            (princ "\nERROR @ CheckPersonalLibraryFirstLine: downloaded file header is incorrect.")
+            (close fileID)
+            nil
+          );END progn
+        );END if
+      );END if
+      (progn (princ "\nERROR @ CheckPersonalLibraryFirstLine: supplied file can't be opened.") (princ) )
+    );END if
+    (progn (princ "\nERROR @ CheckPersonalLibraryFirstLine: no filePath argument supplied") (princ) )
   );END if
 )
 (defun download (lien rep / cp ok tmp util)
