@@ -34,6 +34,7 @@
 (defun c:ra()(fbi "Road-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
 (defun c:rr()(fbi2 "e-psd-rwp"))
 (defun c:os()(setvar "osmode" 513))
+(defun c:ne()(setvar "osmode" 512))
 (defun c:qqq( / ss pt rotation )
   (if (setq ss (ssget '((-4 . "<AND") (0 . "INSERT") (8 . "e-part-m") (-4 . "AND>"))))
     (foreach a (ssnamex ss)
@@ -58,5 +59,24 @@
       );END if
     );END foreach
   );END if
+  (princ)
+)
+(defun c:0 ( / targetLevel ent_name )
+  ; Get a FFL, substract -0.65m and overwrite the target text object content
+  ; with the calculated value properly formated: S16.70
+  (while T
+    (princ "\nGET -0.150mm FROM FFL\n")
+    (setq
+      targetLevel (+ (DT:clic_or_type_level) -0.15)
+      ent_name (car (entsel (strcat "\nSelect text to overwrite with \"%%U" (LM:rtos targetLevel 2 2) "\": ") ))
+    )
+    (if ent_name
+      (progn
+        (vlax-put-property (vlax-ename->vla-object ent_name) 'TextString (strcat "%%U" (LM:rtos targetLevel 2 2)) )
+        (vla-put-color (vlax-ename->vla-object ent_name) 1)
+      );END progn
+      (princ "\nNo target entity selected.")
+    );END if
+  );END while
   (princ)
 )
