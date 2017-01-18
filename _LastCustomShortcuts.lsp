@@ -80,3 +80,9 @@
   );END while
   (princ)
 )
+(defun c:1( / VL_ent_name)
+  (setq VL_ent_name (vlax-ename->vla-object (car (entsel))))
+  (while T
+    (DT:BlockPerpendicularToPolyline VL_ent_name "00000")
+  );END while
+)
