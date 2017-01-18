@@ -1,55 +1,13 @@
-(defun c:1( / info infoString infoStringSize i a b x y xx yy q qq)
-  ; TODO - Extract all the information on a list with a function
-  ; TODO - Create a function to process the list above and format it to print it
-  (princ "\nCheck nested layers:\n")
+(defun c:1() (c:DNLA))
+(defun c:DNLA( / info infoString infoStringSize txt)
+  ; Deep Nested Layer information
   (setq
-    ;pt (getpoint)
-    info (NestedEntityNames pt)
-    i -1
+    info (NestedEntityNames (getpoint "\nSelect object to see its nested layers:"))
+    infoString (ChangeEnameForLevel info)
+    infoStringSize (GetColumnLength infoString)
+    txt (NL_GetTextFormatted infoString infoStringSize)
   )
-  (princ "\nNON-FORMAT:")
-  (foreach a info
-    (princ "\n")
-    (foreach b a
-      (princ "\t")(princ b)
-      (princ " ")
-    );END foreach
-  );END foreach
-
-  (princ "\n.\nFORMATED:")
-  ; Change enames for levels in text format:
-  (foreach a info
-    (setq
-      infoString (append infoString (list (if (< i 0) a (LM:SubstNth (itoa i) 0 a)) ))
-      infoStringSize (append infoStringSize '((0 0 0 0)))
-      i (+ i 1)
-    )
-  );END foreach
-
-  (foreach a infoString
-    (princ "\n")
-    (foreach b a
-      (princ "\t")(princ b)
-      (princ " ")
-    );END foreach
-  );END foreach
-
-  ; Measure each field length
-  (mapcar
-    '(lambda ( x )
-      (setq q nil)
-      (mapcar
-        '(lambda ( xx yy ) (setq q (append q (list (max (strlen xx) yy)) )) )
-        x infoStringSize
-      );END mapcar
-      (setq infoStringSize q)
-    );END lambda
-    infoString ; funcion sobre la que se aplica lambda
-  );END mapcar
-
-  (princ "\ninfoStringSize = ")(princ infoStringSize)
-
-  ; TODO Format it correctly ------------------------------------------------- #
+  (princ txt)
   (princ)
 )
 (defun LM:SubstNth ( a n l / i )
@@ -59,7 +17,7 @@
 (defun EntityInfo (ent_name / blockName blockType )
   ; Return a list with useful information of the nested object
   ; (ename (Block/Xref Name Layer))
-  (if ent_name
+  (if (= 'ename (type ent_name))
     (if (= "INSERT" (cdr (assoc 0 (entget ent_name))))
       (progn
         (if (setq blockName (LM:effectivename (vlax-ename->vla-object ent_name)) )
@@ -68,41 +26,25 @@
             (setq blockType "BLOCK")
           );END if
         );END if
-        (list
-          ent_name
-          blockType
-          blockName
-          (cdr (assoc 8 (entget ent_name)))
-        );END list
+        (list ent_name blockType blockName (cdr (assoc 8 (entget ent_name))) )
       );END progn
-      (list
-        ent_name
-        (cdr (assoc 0 (entget ent_name)))
-        "-"
-        (cdr (assoc 8 (entget ent_name)))
-      );END list
+      (list ent_name (cdr (assoc 0 (entget ent_name))) "-" (cdr (assoc 8 (entget ent_name))) )
     );END if
     nil
   );END if
 )
 (defun NestedEntityNames ( pt / ent_name i info )
   ; Returns a list with nested entity names, being the parent first one and deepest child last one
-  (if pt ; if point provided, continue
+  (if (= 'list (type pt)) ; if point provided, continue
     (if (setq ent_name (nentselp pt)) ; if entity selected, continue
       (progn
         (setq
           i 0
-          info
-            (list
-              (list "Level" "Type" "Block name" "Object layer")
-              (EntityInfo (car ent_name))
-            );END list
-        );END setq
-        (if (nth 3 ent_name) ; if nested entity
+          info (list (list "Level" "Type" "Block name" "Object layer") (EntityInfo (car ent_name)) )
+        )
+        (if (nth 3 ent_name) ; if any nested entity
           (progn
-            (setq
-              nestedLevels (length (nth 3 ent_name))
-            )
+            (setq nestedLevels (length (nth 3 ent_name)) )
             (foreach x (nth 3 ent_name)
               (setq
                 i (+ i 1)
@@ -115,4 +57,62 @@
       );END progn
     );END if
   );END if
+)
+(defun ChangeEnameForLevel ( info / i x )
+  ; Return info replacing ename for level
+  (if (= 'list (type info))
+    (progn
+      (setq i -1)
+      (foreach a info
+        (setq
+          x (append x (list (if (< i 0) a (LM:SubstNth (itoa i) 0 a)) ))
+          i (+ i 1)
+        )
+      );END foreach
+      x
+    );END progn
+  );END if
+)
+(defun GetColumnLength ( infoString / q col )
+  ; Return list with the biggest length needed on each column
+  (if (= 'list (type infoString))
+    (progn
+      ; initialise an zero list to contain each column length
+      (repeat (length (car infoString))
+        (setq col (append col (list 0)) )
+      )
+
+      ; populate the list col with the biggest lengths found
+      (mapcar
+        '(lambda ( x )
+          (setq q nil)
+          (mapcar '(lambda ( xx yy ) (setq q (append q (list (max (strlen xx) yy)) )) ) x col )
+          (setq col q)
+        );END lambda
+        infoString
+      );END mapcar
+      col
+    );END progn
+  );END if
+)
+(defun NL_GetTextFormatted ( infoString infoStringSize / txt s )
+  ; Format text correctly and concatenate it
+  (setq txt "\n")
+  (mapcar
+    '(lambda (x)
+      (setq txt (strcat txt "\n"))
+      (mapcar
+        '(lambda (xx yy)
+          (setq s " ")
+          (if (< (strlen xx) yy)
+            (setq txt (strcat txt xx (repeat (+ 1 (- yy (strlen xx))) (setq s (strcat s " "))) ))
+            (setq txt (strcat txt xx "  "))
+          );END if
+        );END lambda
+        x infoStringSize
+      );END mapcar
+    );END lambda
+    infoString
+  );END mapcar
+  txt
 )
