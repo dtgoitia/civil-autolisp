@@ -34,28 +34,22 @@
     );END foreach
   );END foreach
 
-  (princ "\ninfoStringSize = ")(princ infoStringSize)
   ; Measure each field length
-  (setq
-    infoStringSize
-    (mapcar
-      '(lambda ( x y )
-        (princ "\n")(princ x)(princ " ")(princ y)(princ ":\n")
-        (setq qq nil)
-        (mapcar
-          '(lambda ( xx yy )
-            (princ "\n\t\t\t")
-            (princ "(max (strlen xx) (strlen (itoa yy))) = ")(princ (max (strlen xx) (strlen (itoa yy))))
-            (setq qq (append qq (list (max (strlen xx) (strlen (itoa yy)))) ))
-          );END lambda
-          x y
-        );END mapcar
-        (setq q (append q (list qq)))
-        (princ "\n")(princ q)
-      );END lambda
-      infoString infoStringSize
-    );END mapcar
-  );END setq
+  (mapcar
+    '(lambda ( x )
+      (setq q nil)
+      (mapcar
+        '(lambda ( xx yy ) (setq q (append q (list (max (strlen xx) yy)) )) )
+        x infoStringSize
+      );END mapcar
+      (setq infoStringSize q)
+    );END lambda
+    infoString ; funcion sobre la que se aplica lambda
+  );END mapcar
+
+  (princ "\ninfoStringSize = ")(princ infoStringSize)
+
+  ; TODO Format it correctly ------------------------------------------------- #
   (princ)
 )
 (defun LM:SubstNth ( a n l / i )
