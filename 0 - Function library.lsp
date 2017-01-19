@@ -717,6 +717,10 @@
   (eval (list 'defun 'LM:acapp 'nil (vlax-get-acad-object)))
   (LM:acapp)
 )
+(defun LM:SubstNth ( a n l / i )
+    (setq i -1)
+    (mapcar '(lambda ( x ) (if (= (setq i (1+ i)) n) a x)) l)
+)
 (defun invm ( m / c f p r )
   ;; Matrix Inverse  -  gile & Lee Mac
   ;; Uses Gauss-Jordan Elimination to return the inverse of a non-singular nxn matrix.
