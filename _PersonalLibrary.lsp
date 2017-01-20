@@ -33,6 +33,7 @@
   "_.undefine" "fill"
   "_.undefine" "filletedge"
   "_.undefine" "surffillet"
+  "_.undefine" "donut"
 )
 (defun c:iso() (command "_.isolateobjects")(princ))
 (defun c:uiso() (command "_.unisolateobjects")(princ))
