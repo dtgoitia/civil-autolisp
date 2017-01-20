@@ -632,19 +632,18 @@
 (defun c:SDIP( / z1 p1_2D p1 p2_2D p2 dist ans)
   ; Get level with fixed gradient between 2 points, and
   ; insert a level block and copy level to ClipBoard
-  (setq z1 (DT:clic_or_type_level))
-	(princ (strcat "\nStart level = " (LM:rtos z1 2 3) "m"))
 	(setq
-    p1_2D (getpoint "\npoint 1: ")
+    z1 (DT:clic_or_type_level)
+    p1_2D (getpoint (strcat "\nStart level = " (LM:rtos z1 2 3) "m\npoint 1: "))
     p1 (list (nth 0 p1_2D) (nth 1 p1_2D) z1)
-    p2_2D (getpoint "\npoint 2: ")
+    p2_2D (getpoint (strcat "\nStart level = " (LM:rtos z1 2 3) "m\npoint 1: OK\npoint 2: "))
   )
   (if SDIPgradient
     (progn
-      (setq ans (getreal (strcat "\nGradient= 1/<" (LM:rtos SDIPgradient 2 0) ">: ") ) )
+      (setq ans (getreal (strcat "\nStart level = " (LM:rtos z1 2 3) "m\npoint 1: OK\npoint 2: OK" "\nGradient= 1/<" (LM:rtos SDIPgradient 2 0) ">: ") ) )
       (if ans (setq SDIPgradient ans));END if
     );END progn
-    (setq SDIPgradient (getreal "\nGradient= 1/"))
+    (setq SDIPgradient (getreal (strcat "\nStart level = " (LM:rtos z1 2 3) "m\npoint 1: OK\npoint 2: OK\nGradient= 1/")))
   );END if
   (setq
     p2 (DT:SDIP p1 p2_2D SDIPgradient)

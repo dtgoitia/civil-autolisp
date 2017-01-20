@@ -90,16 +90,18 @@
   ; Save input as global variables
   (setq INT_lastPoints (list p1 z1 p2 z2) )
   ; OPERATION - Calculate gradient and print it
-  (setq d12 (distance p1 p2))                ; Distance 1-2
-  (princ (strcat "\nDistance = " (LM:rtos d12 2 3) "m" ) )
+  (setq
+    d12 (distance p1 p2)                ; Distance 1-2
+    msg (strcat "\nDistance = " (LM:rtos d12 2 3) "m" )
+  )
   (if (= z1 z2)
-    (princ "\nSelected points are at the same level.")
-    (princ (strcat "\nGradient = 1/" (itoa (LM:Round (abs (/ d12 (- z2 z1))))) " (" (LM:rtos (abs (* 100 (/ (- z2 z1) d12))) 2 2) "%)"))
+    (setq msg (strcat msg "\nSelected points are at the same level."))
+    (setq msg (strcat msg "\nGradient = 1/" (itoa (LM:Round (abs (/ d12 (- z2 z1))))) " (" (LM:rtos (abs (* 100 (/ (- z2 z1) d12))) 2 2) "%)"))
   )
 
   ; INPUT - Choose action: pick, find, lowpoint
   (initget "Pick Find Lowpoint")
-  (setq mode (getkword "\nSelect what to do [Pick/Find/Lowpoint] points <Pick>: "))
+  (setq mode (getkword (strcat msg "\nSelect what to do [Pick/Find/Lowpoint] points <Pick>: ")))
   (if (not mode) (setq mode "Pick"))
 
   (setq variable_vacia nil)
@@ -193,6 +195,7 @@
   ; End without double messages
   (princ)
 
+  ; v1.3 - 2017.01.20 - Adapt messages to Dynamic Input windows
   ; v1.2 - 2016.11.21 - Remember previous point (if any)
   ; v1.1 - 2016.11.17 - Unnecesary instructions removed
   ; v1.0 - 2016.09.28 - Distance added to information print at INT function
@@ -214,5 +217,5 @@
   ; v0.1 - 2016.03.14 - Loop added to select multiple points to interpolate.
   ; v0.0 - 2015.12.14 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.11.21
+  ; Last revision: 2017.01.20
 )
