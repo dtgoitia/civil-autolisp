@@ -3437,3 +3437,50 @@
   );END if
   (princ)
 )
+(defun c:11 ( / targetLevel ent_name )
+  ; Get a FFL, substract -0.65m and overwrite the target text object content
+  ; with the calculated value properly formated: S16.70
+  (princ "\nGET STORM LEVEL FROM FFL\n")
+  (setq
+    targetLevel (+ (DT:clic_or_type_level) -0.65)
+    ent_name (car (entsel (strcat "\nSelect text to overwrite with \"S" (LM:rtos targetLevel 2 2) "\": ") ))
+  )
+  (if ent_name
+    (vlax-put-property (vlax-ename->vla-object ent_name) 'TextString (strcat "S" (LM:rtos targetLevel 2 2)) )
+    (princ "\nNo target entity selected.")
+  );END if
+  (princ)
+)
+(defun c:22 ( / targetLevel ent_name )
+  ; Get a FFL, substract -0.75m and overwrite the target text object content
+  ; with the calculated value properly formated: F16.70
+  (princ "\nGET FOUL LEVEL FROM FFL\n")
+  (setq
+    targetLevel (+ (DT:clic_or_type_level) -0.75)
+    ent_name (car (entsel (strcat "\nSelect text to overwrite with \"F" (LM:rtos targetLevel 2 2) "\": ") ))
+  )
+  (if ent_name
+    (vlax-put-property (vlax-ename->vla-object ent_name) 'TextString (strcat "F" (LM:rtos targetLevel 2 2)) )
+    (princ "\nNo target entity selected.")
+  );END if
+  (princ)
+)
+(defun c:0 ( / targetLevel ent_name )
+  ; Get a FFL, substract -0.150m and overwrite the target text object content
+  ; with the calculated value properly formated: %%U16.70
+  (while T
+    (princ "\nGET -0.150mm FROM FFL\n")
+    (setq
+      targetLevel (+ (DT:clic_or_type_level) -0.15)
+      ent_name (car (entsel (strcat "\nSelect text to overwrite with \"%%U" (LM:rtos targetLevel 2 2) "\": ") ))
+    )
+    (if ent_name
+      (progn
+        (vlax-put-property (vlax-ename->vla-object ent_name) 'TextString (strcat "%%U" (LM:rtos targetLevel 2 2)) )
+        (vla-put-color (vlax-ename->vla-object ent_name) 1)
+      );END progn
+      (princ "\nNo target entity selected.")
+    );END if
+  );END while
+  (princ)
+)
