@@ -4,6 +4,6 @@
 (defun c:3() (princ "\nSDIP: ") (c:SDIP))
 (defun c:pa()(fbi "Parking-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
 (defun c:ra()(fbi "Road-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
-(defun c:rr()(fbi2 "e-psd-rwp"))
+(defun c:rr()(c:RTM))
 (defun c:os()(setvar "osmode" 4))
 (defun c:ne()(setvar "osmode" 512))
