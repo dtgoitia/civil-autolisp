@@ -677,6 +677,10 @@
   (princ "\nto clipboard: ")
   (CopyToClipboard z2)
 )
+(defun DT:flatPoint( pt )
+; Return the provided 3D point with Z=0
+  (list (nth 0 pt) (nth 1 pt) 0.0)
+)
 (defun c:SDIPP( /
   ; Recursive DT:SDIP along polyline vertexes
                 ent_name insertionMode
@@ -684,13 +688,9 @@
                 p1 p2 param
                 )
   ; AUXILIARY FUNCTIONS
-  ; Return the provided 3D point with Z=0
-  (defun DT:flatPoint( pt )
-    (list (nth 0 pt) (nth 1 pt) 0.0)
-  )
+  (defun DT:AskBlockInAllVertex( / ans )
   ; Returns T if the user wants blocks in every vertex,
   ; or nil if the user want just one block in the last vertex
-  (defun DT:AskBlockInAllVertex( / ans )
     (initget "All Last")
     (if (not (setq ans (getkword "\nSelect block vertexes to insert the blocks [All/Last] <Last>? ") ))
       (setq ans Last)
