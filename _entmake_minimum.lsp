@@ -51,3 +51,10 @@
     (cons 70 f)         ; Attribute flag [int]: 0=No flags, 1=Invisible, 2=Constant, 4=Verification is Required, 8=Preset (no prompt)
   )
 )
+(entmakex
+  (list
+    (cons 0 "CIRCLE") ; Entity type [ename]
+    (cons 10 c)       ; Circle centre point point [pt]
+    (cons 40 r)       ; Circle radius
+  )
+)
