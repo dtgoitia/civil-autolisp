@@ -413,33 +413,42 @@
 )
 (defun c:1()
   ; Move part-m individually
-  (DT:move_part_m (car (entsel "\nSelect part-m to move: ")))
+  (DT:OffsetPartM (car (entsel "\nSelect part-m to move: ")))
 )
-(defun c:1()
+(defun c:111()
   ; Move part-m in group
-  (princ "\nSelect part-m to move: ")
+  (princ "\nPART-M BLOCKS WILL BE FILTERED\nSelect part-m to move: ")
   (foreach a (ssnamex (ssget))
     (if (= 'ename (type (cadr a)))
       (if (= "INSERT" (cdr (assoc 0 (entget (cadr a)))) )
-        (DT:move_part_m (cadr a))
+        (DT:OffsetPartM (cadr a))
       );END if
     );END if
   );END foreach
 )
-(defun DT:move_part_m( ent_name / VL_ent_name p p0 p1 ang)
-  ; Move selected m-part block 0.302 toward the inner part of the building (its rotation - 90 degree)
-  (setq oldosmode (getvar "osmode"))
-  (setvar "osmode" 0)
-  (setq
-    VL_ent_name (vlax-ename->vla-object ent_name)
-    ang (vlax-get-property VL_ent_name 'Rotation)
-    p (vlax-safearray->list (vlax-variant-value (vlax-get-property VL_ent_name 'InsertionPoint)))
-    p0 (list (car p) (cadr p) 0.0)
-    p1 (polar p0 (- ang (* -0.5 pi )) 0.302)
-    ;p1 (polar p0 (- ang (* -0.5 pi )) 0.215)
-  )
-  (command "move" ent_name "" p0 p1)
-  (setvar "osmode" oldosmode)
+(defun DT:OffsetPartM( ent_name / VL_ent_name p p0 p1 ang)
+  ; Move Part M blocks 0.302 toward the inner part of the building (= BlockRotation - 90º)
+  (if
+    (or
+      (= "Part-m-primary-0"   (LM:effectivename (vlax-ename->vla-object ent_name)))
+      (= "Part-m-primary-180" (LM:effectivename (vlax-ename->vla-object ent_name)))
+      (= "Part-m-secondary"   (LM:effectivename (vlax-ename->vla-object ent_name)))
+    );END or
+    (progn
+      (setq oldosmode (getvar "osmode"))
+      (setvar "osmode" 0)
+      (setq
+        VL_ent_name (vlax-ename->vla-object ent_name)
+        ang (vlax-get-property VL_ent_name 'Rotation)
+        p (vlax-safearray->list (vlax-variant-value (vlax-get-property VL_ent_name 'InsertionPoint)))
+        p0 (list (car p) (cadr p) 0.0)
+        p1 (polar p0 (- ang (* -0.5 pi )) 0.302)
+        ;p1 (polar p0 (- ang (* -0.5 pi )) 0.215)
+      )
+      (command "move" ent_name "" p0 p1)
+      (setvar "osmode" oldosmode)
+    );END progn
+  );END if
 )
 (defun c:7( / VL_ent_name LastParam x1 xL arr larr newlarr)
   ; Eliminar vertices duplicados (solo mira primer y ultimo vertice)
