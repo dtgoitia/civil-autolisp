@@ -58,3 +58,9 @@
     (cons 40 r)       ; Circle radius
   )
 )
+(entmakex
+  (list (cons 0 "LINE") ; Entity type [ename]
+    (cons 10 p1)        ; Line point 1 [pt]
+    (cons 11 p2)        ; Line point 2 [pt]
+  )
+)
