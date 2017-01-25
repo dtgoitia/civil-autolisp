@@ -418,6 +418,7 @@
 (defun c:111()
   ; Move part-m in group
   (princ "\nPART-M BLOCKS WILL BE FILTERED\nSelect part-m to move: ")
+  (command "._UNDO" "_Begin")
   (foreach a (ssnamex (ssget))
     (if (= 'ename (type (cadr a)))
       (if (= "INSERT" (cdr (assoc 0 (entget (cadr a)))) )
@@ -425,6 +426,7 @@
       );END if
     );END if
   );END foreach
+  (command "._UNDO" "_End")
 )
 (defun DT:OffsetPartM( ent_name / VL_ent_name p p0 p1 ang)
   ; Move Part M blocks 0.302 toward the inner part of the building (= BlockRotation - 90º)
