@@ -1,3 +1,4 @@
+;|
 (dt:int (getpoint) (getpoint) (getpoint))
 (defun DT:int ( pA pB pC )
   ; Returns a 3D point with the interpolated value
@@ -34,6 +35,7 @@
     );END cond
   );END if
 )
+|;
 (defun c:SDIPforPrivateSewers( / z1 p1_2D p1 p2_2D p2 dist ans)
   ; Get level with fixed gradient between 2 points,
   ; write the level rounded to 2 decimals,
@@ -49,7 +51,9 @@
       (setq ans (getreal (strcat "\nStart level = " (LM:rtos z1 2 3) "m\npoint 1: OK\npoint 2: OK" "\nGradient= 1/<" (LM:rtos SDIPgradient 2 0) ">: ") ) )
       (if ans (setq SDIPgradient ans));END if
     );END progn
-    (setq SDIPgradient (getreal (strcat "\nStart level = " (LM:rtos z1 2 3) "m\npoint 1: OK\npoint 2: OK\nGradient= 1/")))
+    (while (not SDIPgradient)
+      (setq SDIPgradient (getreal (strcat "\nStart level = " (LM:rtos z1 2 3) "m\npoint 1: OK\npoint 2: OK\nGradient= 1/")))
+    );END while
   );END if
   (setq
     p2 (DT:SDIP p1 p2_2D SDIPgradient)
@@ -82,10 +86,7 @@
         gradient (abs (/ d12 (- z2 z1)))
         )
       (if (CopyToClipboard (LM:rtos gradient 2 0) )
-        (progn
-          (princ (strcat "\ngradient (1/..) to clipboard: " (LM:rtos gradient 2 0) ))
-          ()
-        );END progn
+        (princ (strcat "\ngradient (1/..) to clipboard: " (LM:rtos gradient 2 0) ))
         (princ "\nNo possible to copy the gradient to the clipboard.")
       );END if
       (princ)
@@ -120,4 +121,29 @@
   (princ "\nto clipboard: ")
   (CopyToClipboard (LM:rtos (nth 2 p2) 2 3))
   |;
+)
+(DT:ChangePrivateSewerGradient ent_name gradient)
+(defun DT:ChangePrivateSewerGradient ( ent_name gradient )
+  ; ent_name [ename] - Text entity with sewer data
+  ; gradient [real]
+
+  ;(entsel (strcat "\nSelect sewer text to update gradient to 1/" (LM:rtos gradient 2 0) ))
+  (if ent_name
+    (if (= 'ename (type (car targetGradient)))
+      (if (= "TEXT" (cdr (assoc 0 (entget ent_name))))
+        (progn
+          (setq
+            targetGradient (car targetGradient)
+            targetGradientText (cdr (assoc 1 (entget (car targetGradient))))
+            targetGradientTextPosition (+ 1 (vl-string-position (ascii "/") targetGradientText))
+            targetGradientText (substr targetGradientText 1 targetGradientTextPosition)
+          )
+          (princ "\ntargetGradientText = ")(princ targetGradientText)
+        );END progn
+        (princ "\nERROR @ DT:ChangePrivateSewerGradient : ent_name is not a text")
+      );END if
+      (princ "\nERROR @ DT:ChangePrivateSewerGradient : ent_name is not an entity")
+    );END if
+    (princ "\nERROR @ DT:ChangePrivateSewerGradient : ent_name=nil")
+  );END if
 )
