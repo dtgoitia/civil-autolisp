@@ -176,7 +176,7 @@
   );END if
 )
 (defun DT:DrawInvertLevelMark ( c )
-  (entmakex (list (cons 0 "CIRCLE")(cons 10 c)(cons 40 0.3)))
+  (entmakex (list (cons 0 "CIRCLE")(cons 8 "0")(cons 10 c)(cons 40 0.3)))
 )
 (defun DT:DrawStormInvertLevelBoxLine ( pBase lay )
   (entmakex (list
