@@ -281,15 +281,15 @@
                   ((= (substr (nth 1 manholeData) 1 1) "S")
                     (DT:DrawStormInvertLevelBoxLine pBase lay)
                     (DT:WriteInvertLevels (polar pBase (* 1.5 pi) 45) lay (nth 2 manholeData) (nth 3 manholeData) (nth 4 manholeData) (nth 5 manholeData))
-                    (DT:DrawVerticalAxis pBase (polar pBase (* 0.5 pi) 54) lay)
-                    (DT:WriteVerticalAxisLabel (polar pBase (* 0.5 pi) 54.5) lay (nth 1 manholeData))
+                    (DT:DrawVerticalAxis pBase (polar pBase (* 0.5 pi) 110) lay)
+                    (DT:WriteVerticalAxisLabel (polar pBase (* 0.5 pi) 110.5) lay (nth 1 manholeData))
                     (DT:MarkInvertLevel pBase (DT:GetILFromManholeData manholeData) datum verticalExageration)
                   );END subcond
                   ((= (substr (nth 1 manholeData) 1 1) "F")
                     (DT:DrawFoulInvertLevelBoxLine pBase lay)
                     (DT:WriteInvertLevels (polar pBase (* 1.5 pi) 51) lay (nth 2 manholeData) (nth 3 manholeData) (nth 4 manholeData) (nth 5 manholeData))
-                    (DT:DrawVerticalAxis pBase (polar pBase (* 0.5 pi) 54) lay)
-                    (DT:WriteVerticalAxisLabel (polar pBase (* 0.5 pi) 54.5) lay (nth 1 manholeData))
+                    (DT:DrawVerticalAxis pBase (polar pBase (* 0.5 pi) 110) lay)
+                    (DT:WriteVerticalAxisLabel (polar pBase (* 0.5 pi) 110.5) lay (nth 1 manholeData))
                     (DT:MarkInvertLevel pBase (DT:GetILFromManholeData manholeData) datum verticalExageration)
                   );END subcond
                 );END cond
