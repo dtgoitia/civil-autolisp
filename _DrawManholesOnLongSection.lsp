@@ -195,6 +195,7 @@
 (defun DT:InverLevelText (pt lay str)
   (entmakex (list
     (cons 0 "TEXT")
+    (if (tblsearch "style" "ARIAL") (cons 7 "ARIAL"))
     (cons 8 lay)
     (cons 10 (polar pt (* 1.5 pi) 2.2))
     (cons 11 pt) ; needed for text justification
@@ -226,6 +227,7 @@
 (defun DT:WriteVerticalAxisLabel (pt lay manholeName)
   (entmakex (list
     (cons 0 "TEXT")
+    (if (tblsearch "style" "ARIAL") (cons 7 "ARIAL"))
     (cons 8 lay)
     (cons 10 (polar pt (* 1.5 pi) 2.2))
     (cons 11 pt) ; needed for text justification
