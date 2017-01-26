@@ -270,8 +270,8 @@
 
             ; Select layer
             (cond
-              ((= (substr (nth 1 manholeData) 1 1) "S") (setq lay "e-asd-PhH2") )
-              ((= (substr (nth 1 manholeData) 1 1) "F") (setq lay "e-afd-PH2") )
+              ((= (substr (nth 1 manholeData) 1 1) "S") (setq lay layStorm) )
+              ((= (substr (nth 1 manholeData) 1 1) "F") (setq lay layFoul) )
             );END cond
 
             (if lay
