@@ -231,7 +231,7 @@
     (cons 8 lay)
     (cons 10 (polar pt (* 1.5 pi) 2.2))
     (cons 11 pt) ; needed for text justification
-    (cons 40 0.84 )
+    (cons 40 1.260 )
     (cons 1 manholeName)
     (cons 62 2) ; yellow color
     (cons 50 (* 0.5 pi))
