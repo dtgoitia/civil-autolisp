@@ -36,6 +36,7 @@
   "_.undefine" "donut"
   "_.undefine" "donutid"
   "_.undefine" "donutod"
+  "_.undefine" "targetpoint"
 )
 (defun c:iso() (command "_.isolateobjects")(princ))
 (defun c:uiso() (command "_.unisolateobjects")(princ))
