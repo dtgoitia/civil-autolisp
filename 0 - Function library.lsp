@@ -1085,3 +1085,7 @@
 );END defun
 |;
 ; ------------------------------------------------------------------------------
+(defun DT:flatPoint( pt )
+; Return the provided 3D point with Z=0
+  (list (nth 0 pt) (nth 1 pt) 0.0)
+)

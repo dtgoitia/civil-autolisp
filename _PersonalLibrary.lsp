@@ -679,10 +679,6 @@
   (princ "\nto clipboard: ")
   (CopyToClipboard z2)
 )
-(defun DT:flatPoint( pt )
-; Return the provided 3D point with Z=0
-  (list (nth 0 pt) (nth 1 pt) 0.0)
-)
 (defun c:SDIPP( /
   ; Recursive DT:SDIP along polyline vertexes
                 ent_name insertionMode
