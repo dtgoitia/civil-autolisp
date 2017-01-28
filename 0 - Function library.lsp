@@ -1168,3 +1168,24 @@
   ; Author: David Torralban
   ; Last revision: 2017.01.27
 )
+(defun DT:GetCharPositions ( str ch / i ls )
+  ; Return a list with the position of the character, 1-based numbering
+  ; or return nil if nothing found
+  (if (and ch str)
+    (progn
+      (setq i 0)
+      (while (<= i (strlen str))
+        (setq i (+ i 1))
+        (if (= ch (DT:GetCharFromPosition str i) )
+          (setq ls (append ls (list i) ))
+        );END if
+      );END while
+      ls
+    );END progn
+    (progn (princ "\nERROR @ DT:GetCharPosition > ch or str = nil")(princ))
+  );END if
+
+  ; v0.0 - 2017.01.27 - First issue
+  ; Author: David Torralban
+  ; Last revision: 2017.01.27
+)
