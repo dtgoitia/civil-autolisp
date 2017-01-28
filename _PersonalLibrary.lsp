@@ -437,7 +437,7 @@
 
   ; v0.1 - 2016.09.28 - Added 3D polyline management
   ; v0.0 - 2019.??.?? - First issue
-  ; Author: David Torralban
+  ; Author: David Torralba
   ; Last revision: 2016.09.28
 )
 (defun c:PK( / ent centreline_VL_ent_name ans i pt ch)
@@ -1327,7 +1327,7 @@
   (princ)
 
   ; v0.0 - 2016.08.30 - First issue
-  ; Author: David Torralban
+  ; Author: David Torralba
   ; Last revision: 2016.08.30
 );END defun
 (defun c:lb( / ans)
@@ -1347,7 +1347,7 @@
   );END cond
   (princ)
   ; v0.0 - 2016.09.08 - First issue
-  ; Author: David Torralban
+  ; Author: David Torralba
   ; Last revision: 2016.09.08
 );END defun
 (defun PrintDateTime( / d)
