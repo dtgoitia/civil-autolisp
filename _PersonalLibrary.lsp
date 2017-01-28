@@ -1683,3 +1683,53 @@
   ; Author: David Torralba
   ; Last revision: 2017-01-28
 )
+(defun DT:ChangePrivateSewerGradient ( ent_name gradient / targetGradientText targetGradientTextPosition)
+	; Change sewer label gradient to "gradient"
+	; ent_name [ename] - Text entity (sewer label)
+	; gradient [real/int] - Gradient value to put
+  (if (and ent_name gradient)
+    ; If ent_name and gradient are not nil:
+    (if (and (= 'ename (type ent_name)) (or (= 'real (type gradient)) (= 'int (type gradient))))
+      ; If ent_name and gradient type are correct:
+      (if (= "TEXT" (cdr (assoc 0 (entget ent_name))))
+        ; If ent_name object is a text:
+        (if (DT:GetCharPositions (cdr (assoc 1 (entget ent_name))) "/")
+          ; If the text contains "/" (ergo, is a sewer label):
+          (vlax-put-property
+            (vlax-ename->vla-object ent_name)
+            'TextString
+            (strcat ; Create text new content
+              (substr ; Get text before "/" character ("/" included)
+                (cdr (assoc 1 (entget ent_name)))
+                1
+                (+ 1 (vl-string-position (ascii "/") (cdr (assoc 1 (entget ent_name))))) ; "/" position in ent_name text
+              );END substr
+              (LM:rtos gradient 2 0)
+            );END strcat
+          );END vlax-put-property
+          (progn (princ "\nERROR @ DT:ChangePrivateSewerGradient > text is not sewer label\n") nil)
+        );END if
+        ; If ent_name object is not a text:
+        (progn (princ "\nERROR @ DT:ChangePrivateSewerGradient > ent_name is not a text\n") nil)
+      );END if
+      ; If ent_name or gradient type is not correct:
+      (cond
+        ((/= 'ename (type ent_name))
+          (princ "\nERROR @ DT:ChangePrivateSewerGradient > ent_name is not an entity\n") nil
+        );END subcond
+        ((and (/= 'real (type gradient)) (/= 'int (type gradient)))
+          (princ "\nERROR @ DT:ChangePrivateSewerGradient > gradient is not real or integer\n") nil
+        );END subcond
+      );END cond
+    );END if
+    ; If ent_name or gradient is nil:
+    (cond
+      ((not ent_name) (princ "\nERROR @ DT:ChangePrivateSewerGradient > ent_name = nil\n") nil)
+      ((not gradient) (princ "\nERROR @ DT:ChangePrivateSewerGradient > gradient = nil\n") nil)
+    );END cond
+  );END if
+
+  ; v0.0 - 2017.01.28 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.01.28
+)
