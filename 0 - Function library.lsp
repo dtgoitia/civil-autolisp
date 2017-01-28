@@ -1165,7 +1165,7 @@
   );END if
 
   ; v0.0 - 2017.01.27 - First issue
-  ; Author: David Torralban
+  ; Author: David Torralba
   ; Last revision: 2017.01.27
 )
 (defun DT:GetCharPositions ( str ch / i ls )
@@ -1186,7 +1186,7 @@
   );END if
 
   ; v0.0 - 2017.01.27 - First issue
-  ; Author: David Torralban
+  ; Author: David Torralba
   ; Last revision: 2017.01.27
 )
 (defun DT:StringToList ( str delimiter / ls previousPosition )
@@ -1234,6 +1234,6 @@
   );END if
 
   ; v0.0 - 2017.01.27 - First issue
-  ; Author: David Torralban
+  ; Author: David Torralba
   ; Last revision: 2017.01.27
 )
