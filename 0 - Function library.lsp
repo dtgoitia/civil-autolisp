@@ -1150,3 +1150,21 @@
   ; Author: David Torralba
   ; Last revision: 2017-01-28
 )
+(defun DT:GetCharFromPosition ( str n )
+  ; Return the character in the position n, 1-based numbering
+  ; or return nil if n is out of range
+  (if (and str n)
+    (progn
+      (if (= 'str (type n)) (setq n (atoi n)) ) ; convert n to integer
+      (if (and (<= n (strlen str)) (> n 0) )     ; check n is not bigger than str length or les than zero
+        (substr str n 1)
+        nil
+      );END if
+    );END progn
+    (progn (princ "\nERROR @ DT:GetCharPosition > str or n = nil")(princ))
+  );END if
+
+  ; v0.0 - 2017.01.27 - First issue
+  ; Author: David Torralban
+  ; Last revision: 2017.01.27
+)
