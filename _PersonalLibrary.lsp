@@ -1652,3 +1652,38 @@
     );END append
   );END entmakex
 )
+(defun DT:Gradient ( pA pB )
+  ; Return gradient [real] between pA and pB, being the slope expressed as 1/gradient
+  ; pA [pt] - 3D point of reference
+  ; pB [pt] - 3D point of reference
+  (if (and pA pB)
+    (progn ; True: 2 no-nil arguments passed
+      (if (and (= 'LIST (type pA)) (= 'LIST (type pB)) )
+        (progn ; True: 2 list-type arguments passed
+          (if (and (= 3 (length pA)) (= 3 (length pB)) )
+            ; True: 2 point-list type arguments passed
+            ; Return gradient value as real
+            (/ (distance (DT:flatPoint pA) (DT:flatPoint pB)) (- (nth 2 pB) (nth 2 pA)))
+            ; False: not 2 point-list-type arguments passed
+            (cond
+              ((/= 3 (length pA)) (princ "\nERROR @ DT:int : pA is not a point")(princ) )
+              ((/= 3 (length pB)) (princ "\nERROR @ DT:int : pB is not a point")(princ) )
+            );END cond
+          );END if
+        );END progn
+        (cond
+          ((/= 'LIST (type pA)) (princ "\nERROR @ DT:int : pA is not a list")(princ) )
+          ((/= 'LIST (type pB)) (princ "\nERROR @ DT:int : pB is not a list")(princ) )
+        );END cond
+      );END if
+    );END progn
+    (cond
+      ((not pA) (princ "\nERROR @ DT:int : pA=nil")(princ) )
+      ((not pB) (princ "\nERROR @ DT:int : pB=nil")(princ) )
+    );END cond
+  );END if
+
+  ; v0.0 - 2017-01-28 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017-01-28
+)
