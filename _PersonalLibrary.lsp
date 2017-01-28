@@ -763,6 +763,139 @@
   );END if
   (princ)
 )
+(defun c:SDIPforPrivateDrainage( / z1 p1 p2 dist ans targetPoint gradient ent_name)
+  ; Get level with fixed gradient between 2 points,
+  ; write the level rounded to 2 decimals,
+  ; and formated according to target text (foul/storm)
+	; Also return all the data in a list:
+	; ( p1 p2 gradient )
+	; 	p1 [pt] - Start point (3D)
+	; 	p2 [pt] - End point (3D)
+	; 	gradient [real] - Slope, being the slope 1/gradient
+
+	; SAVE SETTINGS
+	(save_environment (list "nomutt"))
+
+	; CHANGE SETTINGS
+	(setvar "nomutt" 1)
+
+	(setq
+		; Ask user start level
+    z1 (DT:clic_or_type_level)
+		; Ask user start point coordinates
+    p1 (getpoint (strcat "\nStart level = " (LM:rtos z1 2 3) "m\npoint 1: "))
+		; Asign z1 level to p1 3D point
+    p1 (list (nth 0 p1) (nth 1 p1) z1)
+		; Ask user target point coordinates
+    p2 (getpoint (strcat "\nStart level = " (LM:rtos z1 2 3) "m\npoint 1: OK\npoint 2: "))
+  )
+  ; Ask user gradient
+  (if SDIPgradient
+    ; If there is a gradient previously set offer it as default:
+    (progn
+      (setq ans (getreal (strcat "\nStart level = " (LM:rtos z1 2 3) "m\npoint 1: OK\npoint 2: OK" "\nGradient= 1/<" (LM:rtos SDIPgradient 2 0) ">: ") ) )
+      (if ans (setq SDIPgradient ans));END if
+    );END progn
+    ; If there is not any gradient previously set force the user introduce it:
+    (while (not SDIPgradient)
+      (setq SDIPgradient (getreal (strcat "\nStart level = " (LM:rtos z1 2 3) "m\npoint 1: OK\npoint 2: OK\nGradient= 1/")))
+    );END while
+  );END if
+
+	(setq
+		; Get p2 3D value
+		p2 (DT:SDIP p1 p2 SDIPgradient)
+		; Round Z coordinate of p2 to 2 decimals
+		p2 (list (nth 0 p2) (nth 1 p2) (atof (LM:rtos (nth 2 p2) 2 2)) )
+  )
+
+	; Print chosen gradient
+	(princ (strcat "\nRequested gradient: 1/" (LM:rtos SDIPgradient 2 0) "\n"))
+
+	; Ask user to select private manhole label to be updated:
+	(setq
+    targetPoint (getpoint (strcat "\nLevel = " (LM:rtos (nth 2 p2) 2 2) "m\nSelect target: "))
+  )
+  (cond
+    ; If private manhole label selected:
+    ( (and
+				targetPoint
+        (nentselp targetPoint)                                    ; Something selected in targetPoint point
+        (setq ent_name (car (nentselp targetPoint)))              ; If this something is an object
+        (or
+          (= "S" (substr (cdr (assoc 1 (entget ent_name) )) 1 1)) ; If this object is a text that starts with "S"
+          (= "F" (substr (cdr (assoc 1 (entget ent_name) )) 1 1)) ; or with "F"
+        )
+      );END and
+      ; Update private manhole label content:
+      (vlax-put-property
+        (vlax-ename->vla-object ent_name)
+        'TextString
+        (strcat
+          (substr (cdr (assoc 1 (entget ent_name) )) 1 1)
+          (LM:rtos (nth 2 p2) 2 2)
+        );END strcat
+      );END vlax-put-property
+
+			; Recalculate real gradient after rounding p2 level
+			(if (setq gradient (DT:Gradient p1 p2))
+        (if ; If a sewer label is selected
+					(setq ent_name ; Ask user to select sewer label to be updated
+						(car (entsel
+							(strcat
+								(if (or (= 1 (getvar "dynmode")) (= 3 (getvar "dynmode")))
+									"\nSelect sewer label to\nupdate gradient to 1/"
+									"\nSelect sewer label to update gradient to 1/"
+								);END if
+								(LM:rtos gradient 2 0)
+								":\n"
+							);END strcat
+						))
+					);END setq
+					; Change sewer label gradient
+	        (DT:ChangePrivateSewerGradient ent_name gradient)
+					; If nothing selected:
+					(progn (princ "\nNo sewer label selected.\n"))
+				);END if
+				; If no gradient:
+        (progn (princ "\nERROR @ c:SDIPforPrivateSewers > gradient = nil"))
+      );END if
+    );END subcond
+    ; If not private manhole label selected:
+    ( (or
+				(not targetPoint)									; if nothing is selected
+        (not (nentselp targetPoint))      ; if there are no objects in the targetPoint
+        (if (assoc 1 (entget ent_name) )  ; or there is a text, but doesn't start with "S" or "F"
+          (and
+            (/= "S" (substr (cdr (assoc 1 (entget ent_name) )) 1 1))
+            (/= "F" (substr (cdr (assoc 1 (entget ent_name) )) 1 1))
+          )
+        );END if
+      );END or
+      ; Try to insert block "PI_DT" with level, if it is defined in the drawing
+    	(if (tblsearch "block" "PI_DT")
+    		(command "._insert" "PI_DT" (list (nth 0 p2) (nth 1 p2) 0.0) "0.25" "0.25" "" (LM:rtos (nth 2 p2) 2 3))
+    	);END if
+    );END subcond
+  );END cond
+
+	; RESTORE SETTINGS
+	(restore_environment)
+
+	; Return all data
+	(list
+		p1 				; StartPoint
+		p2 				; EndPoint
+		gradient	; Real gradient
+	);END list
+
+  ; v0.1 - 2017.01.28 - DT:ChangePrivateSewerGradient implementation
+  ;                   - Code anotation and tidy up
+	;										- CommandLine messages suppressed
+  ; v0.0 - 2017.01.23 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.01.28
+)
 (defun c:garden_gradient (
                           /
                           p0 p1 z0 z1 ang ang_txt dif oldangdir oldosmode
