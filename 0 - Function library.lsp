@@ -1089,3 +1089,64 @@
 ; Return the provided 3D point with Z=0
   (list (nth 0 pt) (nth 1 pt) 0.0)
 )
+(defun DT:Interpolate ( pA pB pC / dAB dAC dAD aAB aAC aABC pC pD zA zB zD )
+  ; Returns a list with the reference points and the interpolated point
+  ; all of them as 3D points:
+  ; ( pA pB pD )
+  ; pA [pt] - 3D point of reference
+  ; pB [pt] - 3D point of reference
+  ; pC [pt] - 3D/2D point where to calculate the level
+  ; pD [pt] - 3D point with level already interpolated
+  ; NOTES:
+  ; - pC and pD match on plan.
+  ; - if pC (and pD) are not in line with pA and pB, the algorithm
+  ;   will find the closest point to the pA-pB virtual line and work
+  ;   as if pC (and pC) where that point.
+  (if (and pA pB pC)
+    (progn ; True: 3 no-nil arguments passed
+      (if (and (= 'LIST (type pA)) (= 'LIST (type pB)) (= 'LIST (type pC)) )
+        (progn ; True: 3 list-type arguments passed
+          (if (and (= 3 (length pA)) (= 3 (length pB)) (= 3 (length pC)) )
+            (progn ; True: 3 point-list-type arguments passed
+              (setq
+                dAB (distance (DT:flatPoint pA) (DT:flatPoint pB))  ; AB distance on plan
+                dAC (distance (DT:flatPoint pA) (DT:flatPoint pC))  ; AC distance on plan
+                aAB (angle pA pB)                                   ; AB direction (angle)
+                aAC (angle pA pC)                                   ; AC direction (angle)
+                aABC (- aAC aAB)                                    ; angle between AB and AC
+                dAD (* dAC (cos aABC))                              ; AD distance = AC distance on plan projected over AB line
+                pD (polar pA aAB dAD)                               ; D point on plan = C point on plan projected over AB line
+                zA (nth 2 pA)                                       ; Level on A
+                zB (nth 2 pB)                                       ; Level on B
+                zD (+ zA (* dAD (/ (- zB zA) dAB)))                 ; level on D = level on C projected over AB line
+                pC (list (nth 0 pC) (nth 1 pC) zD)                  ; C 3D point
+              )
+
+              ; Return data
+              (list pA pB pC)
+            );END progn
+            (cond
+              ((/= 3 (length pA)) (princ "\nERROR @ DT:int : pA is not a point")(princ) )
+              ((/= 3 (length pB)) (princ "\nERROR @ DT:int : pB is not a point")(princ) )
+              ((/= 3 (length pC)) (princ "\nERROR @ DT:int : pC is not a point")(princ) )
+            );END cond
+          );END if
+        );END progn
+        (cond
+          ((/= 'LIST (type pA)) (princ "\nERROR @ DT:int : pA is not a list")(princ) )
+          ((/= 'LIST (type pB)) (princ "\nERROR @ DT:int : pB is not a list")(princ) )
+          ((/= 'LIST (type pC)) (princ "\nERROR @ DT:int : pC is not a list")(princ) )
+        );END cond
+      );END if
+    );END progn
+    (cond
+      ((not pA) (princ "\nERROR @ DT:int : pA=nil")(princ) )
+      ((not pB) (princ "\nERROR @ DT:int : pB=nil")(princ) )
+      ((not pC) (princ "\nERROR @ DT:int : pC=nil")(princ) )
+    );END cond
+  );END if
+
+  ; v0.0 - 2017-01-28 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017-01-28
+)
