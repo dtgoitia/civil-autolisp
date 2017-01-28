@@ -12,6 +12,6 @@
 
   ; v0.0 - 2017.01.27 - DT:StringToList implemented
   ; v0.0 - 2017.01.23 - First issue
-  ; Author: David Torralban
+  ; Author: David Torralba
   ; Last revision: 2017.01.27
 )
