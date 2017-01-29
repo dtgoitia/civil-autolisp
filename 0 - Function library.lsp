@@ -1279,3 +1279,25 @@
   ; Author: David Torralba
   ; Last revision: 2017.01.29
 )
+(defun DT:GetSmallest ( l / smallestValue )
+  ; Return the smallest element on l, being l a number list
+  (if l
+    (if (= 'list (type l))
+      (progn
+        (setq smallestValue (nth 0 l) )
+        (if (> (length l) 1)
+          (foreach a l
+            (if (< a smallestValue) (setq smallestValue a) )
+          );END foreach
+        );END if
+        smallestValue
+      );END progn
+      (progn (princ "\nERROR @ DT:SortByNumber > l is not a list")(princ) nil )
+    );END if
+    (progn (princ "\nERROR @ DT:SortByNumber > l = nil")(princ) nil )
+  );END if
+
+  ; v0.0 - 2017.01.29 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.01.29
+)
