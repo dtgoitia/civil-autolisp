@@ -1353,3 +1353,46 @@
   ; Author: David Torralba
   ; Last revision: 2017.01.29
 )
+(defun DT:SortByNumber ( lst / notNumber smallestValueIndex sortedList )
+  ; Return lst elements in numerical ascendant order
+  ; lst [lst] - List of positive and/or negative integer and/or reals
+  (if lst
+    (if (= 'list (type lst))
+      (progn
+        ; Check if there is any no-number on the list lst
+        (foreach a lst
+          (if (not (numberp a)) (setq notNumber T))
+        );END foreach
+
+        (if (not notNumber)
+          (progn
+            (while lst
+              (setq
+                ; Get the index of the smallest value out of the list
+                smallestValueIndex (DT:GetSmallestIndex lst)
+                ; Add smallest value to sortedList
+                sortedList (append sortedList (list (nth smallestValueIndex lst)) )
+                ; Split the list
+                lst
+                  (append
+                    (DT:SubLst lst 0                          (+ smallestValueIndex -1) )
+                    (DT:SubLst lst (+ smallestValueIndex +1)  (+ (length lst) -1)       )
+                  );END append
+              );END setq
+            );END while
+
+            ; Return sorted list
+            sortedList
+          );END progn
+          (progn (princ "\nERROR @ DT:SortByNumber > lst contains no numbers\n")(princ) nil )
+        );END if
+      );END progn
+      (progn (princ "\nERROR @ DT:SortByNumber > lst is not a list\n")(princ) nil )
+    );END if
+    (progn (princ "\nERROR @ DT:SortByNumber > lst = nil\n")(princ) nil )
+  );END if
+
+  ; v0.0 - 2017.01.29 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.01.29
+)
