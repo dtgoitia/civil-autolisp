@@ -4,7 +4,7 @@
 
 Once `_PersonalLibrary.lsp` loaded, use `c:EngSet` to load all the shortcuts described below.
 
-## Commands
+## Setup
 
 * `c:11` and `c:22`: calc max level from FFL for storm and foul.
 
@@ -35,7 +35,7 @@ Once `_PersonalLibrary.lsp` loaded, use `c:EngSet` to load all the shortcuts des
 **motivo de destimación**: si tienes que calcular varias tuberías que entran a una misma arqueta es un peñazo andar dándole al Esc cada vez que quieres hacer una comprobación, no creo que sea práctico. Es mejor ponerlas _ByLayer_ manualmente.
 
 
-# Engineering process
+## Engineering process
 
 Se supone que la drainage strategy está ya hecha (pipes sketched on plan). Así es como lo hace Wayne:
 
@@ -51,3 +51,5 @@ Se supone que la drainage strategy está ya hecha (pipes sketched on plan). Así
 
 Y listo.
 Con esto ya se le puede pasar el diseño al departamento de drenajes para que lo metan a MicroDrainage y te digan los tamaños de tubería.
+Y tú podrías seguir haciendo los cálculos de drenajes privados.
+Además, de esta forma podrías empezar a paralelizar procesos (delegando) como poner los RWP en las casas, poner los manholes en los perfiles, etc.
