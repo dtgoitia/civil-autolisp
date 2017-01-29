@@ -1324,3 +1324,32 @@
   ; Author: David Torralba
   ; Last revision: 2017.01.29
 )
+(defun DT:SubLst ( l a b / nl i )
+  (if
+    (and l a b (>= a 0) (< b (length l)) )
+    (progn
+      ; Return list elements from index a to b
+      (setq i 0)
+      (while (<= i b)
+        (if (>= i a)
+          (setq nl (append nl (list (nth i l))))
+        );END if
+        (setq i (+ i 1))
+      );END while
+
+      ; Return new list
+      nl
+    );END progn
+    (cond
+      ((not l) (princ "\nERROR @ DT:SubLst > l = nil\n")(princ) nil )
+      ((not a) (princ "\nERROR @ DT:SubLst > a = nil\n")(princ) nil )
+      ((not b) (princ "\nERROR @ DT:SubLst > b = nil\n")(princ) nil )
+      ((< a 0) (princ "\nERROR @ DT:SubLst > a out of range\n")(princ) nil )
+      ((>= b (length l)) (princ "\nERROR @ DT:SubLst > b out of range\n")(princ) nil )
+    );END cond
+  );END if
+
+  ; v0.0 - 2017.01.29 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.01.29
+)
