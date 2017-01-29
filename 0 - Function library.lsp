@@ -1250,3 +1250,21 @@
   ; Author: David Torralba
   ; Last revision: 2017.01.27
 )
+(defun DT:CheckIfAscendantOrder ( l / r i )
+  ; Return true if the list is in ascendant order, nil if not
+
+  (setq i 0 r T )
+
+  ; If element i > next element return nil
+  (while (and (< i (- (length l) 1)) r)
+    (if (> (nth i l) (nth (+ i 1) l) ) (setq r nil) )
+    (setq i (+ i 1))
+  );END while
+
+  ; return result
+  r
+
+  ; v0.0 - 2017.01.27 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.01.27
+)
