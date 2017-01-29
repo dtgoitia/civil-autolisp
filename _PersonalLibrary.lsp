@@ -1894,3 +1894,32 @@
   ; Author: David Torralba
   ; Last revision: 2017.01.29
 )
+(defun DT:SmallerEqualBigger (a b)
+  ; Compare a and b and return result
+  ; Returns nil if something wrong
+  ; Possible results:
+  ;  0 : a < b
+  ;  1 : a = b
+  ;  2 : a > b
+  (if (and a b)
+    (if (and (or (= 'int (type a)) (= 'real (type a)) ) (or (= 'int (type b)) (= 'real (type b)) ))
+      (cond
+        ((< a b) 0) ; a is smaller than b
+        ((= a b) 1) ; a is equal to b
+        ((> a b) 2) ; a is bigger than b
+      );END cond
+      (cond
+        ((and (/= 'int (type a)) (/= 'real (type a)) ) (princ "\nERROR @ DT:SmallerEqualBigger > a is not a number\n")(princ) nil )
+        ((and (/= 'int (type b)) (/= 'real (type b)) ) (princ "\nERROR @ DT:SmallerEqualBigger > b is not a number\n")(princ) nil )
+      );END cond
+    );END if
+    (cond
+      ((not a) (princ "\nERROR @ DT:SmallerEqualBigger > a = nil\n")(princ) nil )
+      ((not b) (princ "\nERROR @ DT:SmallerEqualBigger > b = nil\n")(princ) nil )
+    );END cond
+  );END if
+
+  ; v0.0 - 2017.01.29 - First issue
+  ; Author: David Torralban
+  ; Last revision: 2017.01.29
+)
