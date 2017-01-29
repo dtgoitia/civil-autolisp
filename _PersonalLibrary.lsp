@@ -1865,3 +1865,32 @@
   ; Author: David Torralba
   ; Last revision: 2017.01.28
 )
+(defun DT:SetGroup ( ent_nameList / i l s )
+  ; Create a group with the entities passed on ent_nameList
+  ; ent_nameList [list] - List with entity names to include in the group
+  ; Returns nil always
+  (if ent_nameList
+    (if (= 'list (type ent_nameList))
+      (progn
+        (foreach ent_name ent_nameList
+          (if (= 'ename (type ent_name))
+            (setq l (cons (vlax-ename->vla-object ent_name ) l))
+          );END if
+        );END foreach
+        (if l
+          (vlax-invoke
+            (vla-add (vla-get-groups (vla-get-activedocument (vlax-get-acad-object))) "*")
+            'appenditems l
+          );END vlax-invoke
+          (progn (princ "\nERROR @ DT:SetGroup > no ent_name passed on the list, so \"l\" is nil\n")(princ) nil )
+        );END if
+      )
+      (progn (princ "\nERROR @ DT:SetGroup > ent_nameList is not a list\n")(princ) nil )
+    );END if
+    (progn (princ "\nERROR @ DT:SetGroup > ent_nameList = nil\n")(princ) nil )
+  );END if
+
+  ; v0.0 - 2017.01.29 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.01.29
+)
