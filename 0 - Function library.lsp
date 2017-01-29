@@ -1306,7 +1306,7 @@
   (if l
     (if (= 'list (type l))
       (progn
-        (setq i -1 smallestValue (nth 0 l) )
+        (setq i -1 smallestValue (nth 0 l) index 0)
         (if (> (length l) 1)
           (foreach a l
             (setq i (+ i 1))
