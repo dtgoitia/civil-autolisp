@@ -1,5 +1,8 @@
-(defun c:1() (DT:ExtractManholeChainages))
-(defun c:2 ( / old_error old_sysvars ent_name startPoint datum verticalExageration)
+(defun c:1() (DT:ExtractManholeDataAlongCentrelines) )
+(defun c:2() (DT:DrawExtractedManholesOnLongSection) )
+(defun DT:DrawExtractedManholesOnLongSection ( / ent_name startPoint datum verticalExageration)
+  ; Draw manholes stored in globalVariableManholesData on a longitudinal section
+
   ; SAVE SETTINGS
   (save_environment (list "osmode" "attdia" "attreq"))
 
@@ -152,7 +155,7 @@
   ; Author: David Torralba
   ; Last revision: 2017.01.29
 )
-(defun DT:ExtractManholeChainages ( / centrelineEnt_name ans )
+(defun DT:ExtractManholeDataAlongCentrelines ( / centrelineEnt_name ans )
   ; ALMOST FINISHED - Purpose: store the chainages of selected manholes, to later draw them in the long section with another function
   ; PRECAUTION - If any manhole is not within the line, the routine will assign them the chainage at the beginning or end of the centreline.
   ;
