@@ -25,6 +25,12 @@
   (if (and ent_name1 ent_name2)
     (if (and (= 'ename (type ent_name1)) (= 'ename (type ent_name2)))
       (princ "\nUnder construction...")
+        ; If ent_name2 = line > (DT:AlignObjectToLine)
+        ; If ent_name2 = polyline > (DT:AlignObjectToPolyLine) ydentro tendrías (DT:AlignObjectToPolylineSegment) y  (DT:AlignObjectToPolylineCurve)
+        ; If ent_name2 = arc > (DT:AlignObjectToArc)
+        ; etc.
+        ; y las que aun no hayas desarrollado pon simplemente (princ "\nSorry this entity cannot be a reference.")(princ)
+        ; a medida las vas desarrollando vas quitando mensajes y metiendo funciones
       (cond
         ((/= 'ename (type ent_name1)) (princ "\nERROR @ DT:RR > ent_name1 type is incorreect")(princ))
         ((/= 'ename (type ent_name2)) (princ "\nERROR @ DT:RR > ent_name2 type is incorreect")(princ))
