@@ -1252,19 +1252,30 @@
 )
 (defun DT:CheckIfAscendantOrder ( l / r i )
   ; Return true if the list is in ascendant order, nil if not
+  (if l
+    (progn
+      (setq i 0 r T )
 
-  (setq i 0 r T )
+      ; If
+      (foreach a l
+        (if (not (or (= 'int (type a)) (= 'real (type a)))) (setq r nil) )
+      );END foreach
 
-  ; If element i > next element return nil
-  (while (and (< i (- (length l) 1)) r)
-    (if (> (nth i l) (nth (+ i 1) l) ) (setq r nil) )
-    (setq i (+ i 1))
-  );END while
+      ; If element i > next element return nil
+      (while (and (< i (- (length l) 1)) r)
+        (if (> (nth i l) (nth (+ i 1) l) ) (setq r nil) )
+        (setq i (+ i 1))
+      );END while
 
-  ; return result
-  r
 
-  ; v0.0 - 2017.01.27 - First issue
+
+      ; return result
+      r
+    );END progn
+    nil
+  );END if
+
+  ; v0.0 - 2017.01.29 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.01.27
+  ; Last revision: 2017.01.29
 )
