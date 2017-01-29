@@ -1,5 +1,5 @@
-(defun c:1() (DT:ExtractManholeDataAlongCentrelines) )
-(defun c:2() (DT:DrawExtractedManholesOnLongSection) )
+;(defun c:1() (DT:ExtractManholeDataAlongCentrelines) )
+;(defun c:2() (DT:DrawExtractedManholesOnLongSection) )
 (defun DT:DrawExtractedManholesOnLongSection ( / ent_name startPoint datum verticalExageration)
   ; Draw manholes stored in globalVariableManholesData on a longitudinal section
 
