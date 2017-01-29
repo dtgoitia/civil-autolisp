@@ -24,20 +24,19 @@
 )
 (loadRT)
 ; UNDEFINE
-(command
-  "_.undefine" "intersect"
-  "_.undefine" "interfere"
-  "_.undefine" "redraw"
-  "_.undefine" "redrawall"
-  "_.undefine" "recombine"
-  "_.undefine" "fill"
-  "_.undefine" "filletedge"
-  "_.undefine" "surffillet"
-  "_.undefine" "donut"
-  "_.undefine" "donutid"
-  "_.undefine" "donutod"
-  "_.undefine" "targetpoint"
-)
+;(command
+;  "_.undefine" "intersect"
+;  "_.undefine" "interfere"
+;  "_.undefine" "redraw"
+;  "_.undefine" "redrawall"
+;  "_.undefine" "fill"
+;  "_.undefine" "filletedge"
+;  "_.undefine" "surffillet"
+;  "_.undefine" "donut"
+;  "_.undefine" "donutid"
+;  "_.undefine" "donutod"
+;  "_.undefine" "targetpoint"
+;)
 (defun c:iso() (command "_.isolateobjects")(princ))
 (defun c:uiso() (command "_.unisolateobjects")(princ))
 (defun c:c() (command "_.copy" pause "" (cadr (grread 't)) pause) )
