@@ -1292,9 +1292,9 @@
         );END if
         smallestValue
       );END progn
-      (progn (princ "\nERROR @ DT:SortByNumber > l is not a list")(princ) nil )
+      (progn (princ "\nERROR @ DT:GetSmallest > l is not a list\n")(princ) nil )
     );END if
-    (progn (princ "\nERROR @ DT:SortByNumber > l = nil")(princ) nil )
+    (progn (princ "\nERROR @ DT:GetSmallest > l = nil\n")(princ) nil )
   );END if
 
   ; v0.0 - 2017.01.29 - First issue
@@ -1315,9 +1315,9 @@
         );END if
         index
       );END progn
-      (progn (princ "\nERROR @ DT:SortByNumber > l is not a list")(princ) nil )
+      (progn (princ "\nERROR @ DT:GetSmallestIndex > l is not a list\n")(princ) nil )
     );END if
-    (progn (princ "\nERROR @ DT:SortByNumber > l = nil")(princ) nil )
+    (progn (princ "\nERROR @ DT:GetSmallestIndex > l = nil\n")(princ) nil )
   );END if
 
   ; v0.0 - 2017.01.29 - First issue

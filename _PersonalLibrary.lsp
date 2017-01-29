@@ -1794,20 +1794,20 @@
             (/ (distance (DT:flatPoint pA) (DT:flatPoint pB)) (- (nth 2 pB) (nth 2 pA)))
             ; False: not 2 point-list-type arguments passed
             (cond
-              ((/= 3 (length pA)) (princ "\nERROR @ DT:int : pA is not a point")(princ) )
-              ((/= 3 (length pB)) (princ "\nERROR @ DT:int : pB is not a point")(princ) )
+              ((/= 3 (length pA)) (princ "\nERROR @ DT:int : pA is not a point\n")(princ) )
+              ((/= 3 (length pB)) (princ "\nERROR @ DT:int : pB is not a point\n")(princ) )
             );END cond
           );END if
         );END progn
         (cond
-          ((/= 'LIST (type pA)) (princ "\nERROR @ DT:int : pA is not a list")(princ) )
-          ((/= 'LIST (type pB)) (princ "\nERROR @ DT:int : pB is not a list")(princ) )
+          ((/= 'LIST (type pA)) (princ "\nERROR @ DT:int : pA is not a list\n")(princ) )
+          ((/= 'LIST (type pB)) (princ "\nERROR @ DT:int : pB is not a list\n")(princ) )
         );END cond
       );END if
     );END progn
     (cond
-      ((not pA) (princ "\nERROR @ DT:int : pA=nil")(princ) )
-      ((not pB) (princ "\nERROR @ DT:int : pB=nil")(princ) )
+      ((not pA) (princ "\nERROR @ DT:int : pA=nil\n")(princ) )
+      ((not pB) (princ "\nERROR @ DT:int : pB=nil\n")(princ) )
     );END cond
   );END if
 
