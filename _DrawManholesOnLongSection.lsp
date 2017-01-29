@@ -1,5 +1,5 @@
-;(defun c:1() (DT:ExtractManholeDataAlongCentrelines) )
-;(defun c:2() (DT:DrawExtractedManholesOnLongSection) )
+;(defun c:1() (princ "\nGET MANHOLE DATA ACCORDING TO CENTRELINE: \n") (DT:ExtractManholeDataAlongCentrelines) )
+;(defun c:2() (princ "\nDRAW MANHOLES ONTO LONGITUDINAL SECTION: \n") (DT:DrawExtractedManholesOnLongSection) )
 (defun DT:DrawExtractedManholesOnLongSection ( / ent_name startPoint datum verticalExageration)
   ; Draw manholes stored in globalVariableManholesData on a longitudinal section
 
@@ -70,26 +70,17 @@
           (progn
             (setq
               manholeDatabase (append manholeDatabase (list manholeData))
-              manholeChainage (LM:rtos (car manholeData) 2 5)
-            )
-            ; OPERATION - Add zeros till have minimum 5 digits before dot "." to be able to sort them as strings later
-            (cond
-              ((= 1 (vl-string-search "." manholeChainage)) (setq manholeChainage (strcat "0000" manholeChainage)) )
-              ((= 2 (vl-string-search "." manholeChainage)) (setq manholeChainage (strcat "000"  manholeChainage)) )
-              ((= 3 (vl-string-search "." manholeChainage)) (setq manholeChainage (strcat "00"   manholeChainage)) )
-              ((= 4 (vl-string-search "." manholeChainage)) (setq manholeChainage (strcat "0"    manholeChainage)) )
-            );END cond
-
-            ; OPERATION - Create list of chainages as strings
-            (setq manholeChainageList (append manholeChainageList (list manholeChainage )) )
+              manholeChainage (car manholeData)
+              manholeChainageList (append manholeChainageList (list manholeChainage ))
+            );END setq
           );END progn
         );END if
       );END progn
     );END if1
   );END foreach
 
-  ; OPERATION - Return list of manholes in correct order
-  (setq manholeChainageListSorted (acad_strlsort manholeChainageList))
+  ; OPERATION - Return list of manhole chainages in correct order
+  (setq manholeChainageListSorted (DT:SortByNumber manholeChainageList))
 
   ; OPERATION - Rebuild data lists shorted by chainages
   (foreach ch manholeChainageListSorted
@@ -101,7 +92,7 @@
           ; copy data associated to the current chainage to manholeDatabaseSorted
           manholeDatabaseSorted (append manholeDatabaseSorted (list (nth position manholeDatabase)))
         );END setq
-      )
+      );END subcond
     );END cond
   );END foreach
 
