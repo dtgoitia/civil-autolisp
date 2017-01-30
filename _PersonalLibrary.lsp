@@ -891,13 +891,13 @@
 									"\nSelect sewer label to\nupdate gradient to 1/"
 									"\nSelect sewer label to update gradient to 1/"
 								);END if
-								(LM:rtos gradient 2 0)
+								(LM:rtos (abs gradient) 2 0)
 								":\n"
 							);END strcat
 						))
 					);END setq
 					; Change sewer label gradient
-	        (DT:ChangePrivateSewerGradient ent_name gradient)
+	        (DT:ChangePrivateSewerGradient ent_name (abs gradient))
 					; If nothing selected:
 					(progn (princ "\nNo sewer label selected.\n"))
 				);END if
@@ -933,12 +933,13 @@
 		gradient	; Real gradient
 	);END list
 
+  ; v0.2 - 2017.01.30 - DT:ChangePrivateSewerGradient gradient to absolute value
   ; v0.1 - 2017.01.28 - DT:ChangePrivateSewerGradient implementation
   ;                   - Code anotation and tidy up
 	;										- CommandLine messages suppressed
   ; v0.0 - 2017.01.23 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.01.28
+  ; Last revision: 2017.01.30
 )
 (defun c:garden_gradient (
                           /
