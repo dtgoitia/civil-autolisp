@@ -104,7 +104,7 @@
   ; Engineering setup
   (defun c:1() (princ "\nBY: ") (c:BY))
   (defun c:2() (princ "\nINT: ") (c:INT))
-  (defun c:3() (princ "\nSDIPforPrivateSewers: ") (c:SDIPforPrivateSewers))
+  (defun c:3() (princ "\nSDIPforPrivateDrainage: ") (c:SDIPforPrivateDrainage))
   (defun c:33() (princ "\nSDIP: ") (c:SDIP))
   (defun c:pa()(fbi "Parking-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
   (defun c:ra()(fbi "Road-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
@@ -902,7 +902,7 @@
 					(progn (princ "\nNo sewer label selected.\n"))
 				);END if
 				; If no gradient:
-        (progn (princ "\nERROR @ c:SDIPforPrivateSewers > gradient = nil"))
+        (progn (princ "\nERROR @ c:SDIPforPrivateDrainage > gradient = nil"))
       );END if
     );END subcond
     ; If not private manhole label selected:
