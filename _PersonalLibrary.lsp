@@ -933,7 +933,7 @@
 		gradient	; Real gradient
 	);END list
 
-  ; v0.2 - 2017.01.30 - DT:ChangePrivateSewerGradient gradient to absolute value
+  ; v0.2 - 2017.01.30 - Gradient to absolute value
   ; v0.1 - 2017.01.28 - DT:ChangePrivateSewerGradient implementation
   ;                   - Code anotation and tidy up
 	;										- CommandLine messages suppressed
