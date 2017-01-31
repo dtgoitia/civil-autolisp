@@ -237,3 +237,64 @@
   ; Author: David Torralba
   ; Last revision: 2017.01.31
 )
+(defun c:InsertSettingOutLabelAlongPolyline ( / oldclayer lay ss pointList )
+  ; Insert setting out label blocks along selected polylines
+
+  ; Get scale
+  (if (= sf nil)
+    (progn
+      (setq sf (getreal "\nNominal Scale   1:<500>  1:"))
+      (if (= sf nil) (setq sf 500.0))
+      (setq sf (/ sf 571.428557))
+    );END progn
+  );END if
+
+  ; Get precision
+  (if (= cacc nil)
+    (progn
+      (setq cacc (getint "\nNumber of Decimal Places for display of Co-ordinates <3> : "))
+      (if (= cacc nil) (setq cacc 3))
+    );END progn
+  );END if
+
+  ; Get layer
+  (setq oldclayer (getvar "clayer"))
+  (setq lay (getstring (strcat "\nLayer for co-ordinate boxes to be drawn on (current layer) <" oldclayer "> : ")))
+  (if (= lay "") (setq lay oldclayer))
+
+  ; Get polylines
+  (if (setq ss (ssget '( (0 . "LWPOLYLINE") ) ))
+    (progn
+      (command "._UNDO" "_Begin")
+
+      ; Change layer
+      (command "_layer" "_m" lay "")
+
+      ; Run through each polyline and insert setting out labels in every vertex
+      (foreach a (ssnamex ss)
+        (if (= 'ename (type (cadr a)))
+          (if (setq pointList (DT:GetPolylineVertexCoordinates (cadr a)) )
+            (foreach pt pointList
+              (DT:InsertSettingOutLabel pt)
+            );END foreach
+          );END if
+        );END if
+      );END foreach
+      (command "._UNDO" "_End")
+    );END progn
+  );END if
+
+  ; Restore the layer
+  (setvar "clayer" oldclayer)
+
+  (princ)
+
+  ; v0.2 - 2017.01.31 - DT:GetPolylineVertexCoordinates implemented
+  ;                   - DT:InsertSettingOutLabel implemented
+  ;                   - Function renamed to avoid conflicts, and shortcut kept to avoid transition problems.
+  ; v0.1 - 2016.06.27 - Code tidy up.
+  ;                   - Merge code into a single file.
+  ; v0.0 - 2016.03.03 - First issue.
+  ; Author: David Torralba
+  ; Last revision: 2017.01.31
+)
