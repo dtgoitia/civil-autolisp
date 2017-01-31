@@ -16,49 +16,18 @@
     ) ; END if2
   );END if1
 )
-(defun c:COORD (
-                /
-                oldosmode oldcmdecho
-                olay cs
-                E N
-                )
-  ; SET - Error handling function
-  (defun *error* ( msg )
-    (cond
-      ((or
-        (= msg "Function cancelled")
-        (= msg "quit / exit abort")
-       );END or
-        (princ (strcat "\nFunction stopped by user."))
-      );END subcond
-      (t
-        (princ (strcar "\nERROR:" msg))
-      );END subcond
-    );END cond
+(defun c:COORD ( / pt )
 
-    ; Restore previous settings
-    (setvar "osmode" oldosmode)
-    (setvar "cmdecho" oldcmdecho)
-    (setq *error* olderror)
-    (princ)
-  )
-
-  (setq
-    olderror *error*
-    oldcmdecho (getvar "cmdecho")
-    oldosmode (getvar "osmode")
-  )
-
-  (setvar "cmdecho" 0)
-
+  ; Get scale
   (if (= sf nil)
     (progn
-      (setq sf (getreal "\nNominal Scale   1:<500>  1:"))
+      (setq sf (getreal "\nNominal Scale 1:<500>  1:"))
       (if (= sf nil) (setq sf 500.0))
       (setq sf (/ sf 571.428557))
     );END progn
   );END if
 
+  ; Get precision
   (if (= cacc nil)
     (progn
       (setq cacc (getint "\nNumber of Decimal Places for display of Co-ordinates <3> : "))
@@ -66,41 +35,28 @@
     );END progn
   );END if
 
-  (setq olay (getvar "clayer"))
-
-  (while (not cs)
+  ; Get points and insert setting out label blocks
+  (while (not pt)
     ; INPUT - Ask user to pick a point
-    (setq cs (getpoint "\nSelect point to Co-ordinate (press Esc to exit):"))
-
-    (cond
-      ((/= cs nil) ; OPERATION - If point introduced...
-        (setq
-          E (strcat "E " (LM:rtos (nth 0 cs) 2 cacc))
-          N (strcat "N " (LM:rtos (nth 1 cs) 2 cacc))
-        )
-        (setvar "osmode" 0)
-        (command "_insert" "XY_advanced" cs sf "" "" E N)
-        (setvar "osmode" oldosmode)
-        (setq cs nil)
-      );END subcond
-      ((= cs nil) ; OPERATION - If no point introduced...
-        (exit)
-      );END subcond
-    );END cond
+    (if (setq pt (getpoint "\nSelect point to Co-ordinate (press Esc to exit):"))
+      (progn
+        (DT:InsertSettingOutLabel pt)
+        (setq pt nil)
+      );END progn
+      (exit)
+    );END if
   );END while
 
-  (setvar "osmode" oldosmode)
-  (setvar "cmdecho" oldcmdecho)
-  (setq *error* olderror)
   (princ)
 
+  ; v0.2 - 2017.01.31 - Code split up and DT:InsertSettingOutLabel implementation.
   ; v0.1 - 2016.09.02 - Add loop to pick points.
   ;                   - *error* function update.
   ; v0.1 - 2016.06.27 - Code tidy up.
   ;                   - Merge code into a single file.
   ; v0.0 - 2016.03.03 - First issue.
   ; Author: David Torralba
-  ; Last revision: 2016.09.02
+  ; Last revision: 2017.01.31
 )
 (defun c:COORDP (
                 /
