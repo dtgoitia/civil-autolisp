@@ -29,6 +29,7 @@
   (setvar "OSOPTIONS" 7)            ; Controls if to OSNAP lines in hatch patterns, and many others.
   (setvar "LAYLOCKFADECTL" 0)       ; Controls locked layers fade (normal 0-100 fade)
   (setvar "ISAVEBAK" 0)             ; Controls the creation of a backup file (BAK): 0 no, 1 yes.
+  (setvar "HPQUICKPREVIEW" OFF)     ; Disables the preview of hatches when using internal pickpoint
 
 
 );END defun

@@ -16,7 +16,9 @@
     ) ; END if2
   );END if1
 )
-(defun c:COORD ( / pt )
+(defun c:COORD() (c:InsertSettingOutLabel))
+(defun c:InsertSettingOutLabel ( / pt )
+  ; Insert setting out label blocks one by one
 
   ; Get scale
   (if (= sf nil)
@@ -50,6 +52,7 @@
   (princ)
 
   ; v0.2 - 2017.01.31 - Code split up and DT:InsertSettingOutLabel implementation.
+  ;                   - Function renamed to avoid conflicts, and shortcut kept to avoid transition problems.
   ; v0.1 - 2016.09.02 - Add loop to pick points.
   ;                   - *error* function update.
   ; v0.1 - 2016.06.27 - Code tidy up.
