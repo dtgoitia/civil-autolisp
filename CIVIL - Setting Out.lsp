@@ -213,3 +213,27 @@
   ; Author: David Torralba
   ; Last revision: 2017.01.31
 )
+(defun DT:GetPolylineVertexCoordinates ( ent_name / l )
+  ; Return a list with polyline vertex 2D coordinates
+  ; ent_name [ename] - Polyline to extract vertexes
+  (if ent_name
+    (if (= "LWPOLYLINE" (cdr (assoc 0 (entget ent_name))))
+      (progn
+        (foreach dxf (entget ent_name)
+          (if (= 10 (car dxf))
+            (setq l (append l (list (cdr dxf))))
+          );END if
+        );END foreach
+
+        ; Return vertex coordinate list
+        l
+      );END progn
+      nil
+    );END if
+    nil
+  );END if
+
+  ; v0.0 - 2017.01.31 - First issue.
+  ; Author: David Torralba
+  ; Last revision: 2017.01.31
+)
