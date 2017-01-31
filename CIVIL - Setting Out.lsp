@@ -229,3 +229,28 @@
   ; Author: David Torralba
   ; Last revision: 2016.06.27
 )
+(defun DT:InsertSettingOutLabel ( pt / old_error old_sysvars )
+  ; Insert setting out label block in pt
+
+  ; SAVE SETTINGS
+  (save_environment (list "osmode" "cmdecho" "attreq" "attdia"))
+
+  ; CHANGE SETTINGS
+  (setvar "osmode" 0)
+  (setvar "cmdecho" 0)
+  (setvar "attreq" 1)
+  (setvar "attdia" 0)
+
+  (command
+    "_insert" "XY_advanced" pt sf "" ""
+    (strcat "E " (LM:rtos (nth 0 pt) 2 cacc))
+    (strcat "N " (LM:rtos (nth 1 pt) 2 cacc))
+  )
+
+  ; RESTORE SETTINGS
+  (restore_environment)
+
+  ; v0.0 - 2017.01.31 - First issue.
+  ; Author: David Torralba
+  ; Last revision: 2017.01.31
+)
