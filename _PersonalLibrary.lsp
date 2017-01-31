@@ -89,7 +89,7 @@
 (defun c:pp()(command "_.publish"))
 (defun c:las() (command "_.layerstate")(princ))
 (defun c:r() (princ "\nRegenerating...")(command "_.regen") (princ " done.")(princ))
-(defun c:os( / x ) (if (setq x (getint "\nObject Snap Mode: ")) (setvar "osmode" x) (princ "*Cancel*"))(princ))
+(defun c:os( / x ) (if (setq x (getint (strcat "\nObject Snap Mode <" (itoa (getvar "osmode")) ">: "))) (setvar "osmode" x) (princ "*Cancel*"))(princ))
 (defun c:RTM ()
 	; RT and move together
 	(c:RT)
