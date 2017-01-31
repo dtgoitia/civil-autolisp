@@ -5,7 +5,7 @@
 ;;    RKS: reset setting out blocks scale                                     ;;
 ;;    SOU: update setting out blocks                                          ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun update_settingout_label ( ent_name )
+(defun DT:UpdateSettingOutLabel ( ent_name )
   (if (= (LM:effectivename (vlax-ename->vla-object ent_name)) "XY_advanced")
     (if (vlax-method-applicable-p (vlax-ename->vla-object ent_name) 'getattributes) ; Condition
       (progn
@@ -164,7 +164,7 @@
     (if (>= (car e) 0)
       (progn
         (setq i (+ i 1) )
-        (update_settingout_label (cadr e))
+        (DT:UpdateSettingOutLabel (cadr e))
       );END progn
     );END if
   );END foreach
