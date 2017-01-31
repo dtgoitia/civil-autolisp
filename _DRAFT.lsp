@@ -1713,7 +1713,7 @@
 (defun c:1 ()
   ; Insert selected object area as a text
   (command "area" "Object" (car (entsel "\nSelect closed polyline: ")))
-  (command "-text" "S" "ROMANS" "J" "M" (setq pt (cadr (grread 't))) "1.5" "90" (strcat (LM:rtos (getvar "Area") 2 3) " m2"))
+  (command "-text" "S" "ARIAL" "J" "M" (setq pt (cadr (grread 't))) "1.5" "90" (strcat (LM:rtos (getvar "Area") 2 3) " m2"))
 )
 (defun c:COORDP (
                 /
