@@ -1008,8 +1008,8 @@
   (setvar "osmode" oldosmode)
   (princ)
 )
-(defun c:DB() (command "draworder" (ssget) "" "Back" ""))
-(defun c:DF() (command "draworder" (ssget) "" "Front" ""))
+(defun c:DB() (command "draworder" (ssget) "" "Back"))
+(defun c:DF() (command "draworder" (ssget) "" "Front"))
 (defun c:DT:move_KTF_SettingOutLabel( /
                             ent_name VL_ent_name
                             label_X label_Y p0 p_ins gr
