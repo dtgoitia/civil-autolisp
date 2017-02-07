@@ -102,7 +102,7 @@
 )
 (defun c:EngSet()
   ; Engineering setup
-  (defun c:1() (princ "\nBY: ") (c:BY))
+  (defun c:1() (princ "\nBYC: ") (c:BYC))
   (defun c:2() (princ "\nINT: ") (c:INT))
   (defun c:3() (princ "\nSDIPforPrivateDrainage: ") (c:SDIPforPrivateDrainage))
   (defun c:33() (princ "\nSDIP: ") (c:SDIP))
