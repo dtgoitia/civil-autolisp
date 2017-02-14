@@ -1397,6 +1397,28 @@
   ; Author: David Torralba
   ; Last revision: 2017.02.14
 )
+(defun c:dd()
+  ; Quick Property Mode ON/OFF shortcut
+  (cond
+    ((= -3 (getvar "dynmode"))
+      (setvar "dynmode" 3)
+      (princ "\nDynamic Mode ON.")
+    );END subcond
+    ((= 3 (getvar "dynmode"))
+      (setvar "dynmode" -3)
+      (princ "\nDynamic Mode OFF.")
+    );END subcond
+    (t
+      (setvar "dynmode" -3)
+      (princ "\nDynamic Mode OFF.")
+    );END subcond
+  );END cond
+  (princ)
+
+  ; v0.0 - 2017.02.14 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.02.14
+)
 (defun c:lb( / ans)
   ; Layout Background
   (initget "White Black")
