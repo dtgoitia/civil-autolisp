@@ -1375,6 +1375,28 @@
   ; Author: David Torralba
   ; Last revision: 2016.08.30
 );END defun
+(defun c:qq()
+  ; Quick Property Mode ON/OFF shortcut
+  (cond
+    ((= -1 (getvar "qpmode"))
+      (setvar "qpmode" 1)
+      (princ "\nQuick Property Mode ON.")
+    );END subcond
+    ((= 1 (getvar "qpmode"))
+      (setvar "qpmode" -1)
+      (princ "\nQuick Property Mode OFF.")
+    );END subcond
+    (t
+      (setvar "qpmode" -1)
+      (princ "\nQuick Property Mode OFF.")
+    );END subcond
+  );END cond
+  (princ)
+
+  ; v0.0 - 2017.02.14 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.02.14
+)
 (defun c:lb( / ans)
   ; Layout Background
   (initget "White Black")
