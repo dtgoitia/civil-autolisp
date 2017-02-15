@@ -2032,9 +2032,9 @@
 )
 (defun c:WorkSet()
   ; Working Drawing setup
-  (defun c:1() (princ "\nWORKING DRAWING BLOCK CREATION:\n")(DT:CreateWorkingDrawingBlock))
-  (defun c:2() (princ "\nMOVE OBJECTS TO LAYER \"e-work-hse\":\n") (DT:MoveSelectionSetToLayer (ssget) "e-work-hse") )
-  (defun c:3() (princ "\nMOVE OBJECTS TO LAYER \"e-work-services\":\n") (DT:MoveSelectionSetToLayer (ssget) "e-work-services") )
+  (defun c:1() (princ "\nMOVE OBJECTS TO LAYER \"e-work-hse\":\n") (DT:MoveSelectionSetToLayer (ssget) "e-work-hse") )
+  (defun c:2() (princ "\nMOVE OBJECTS TO LAYER \"e-work-services\":\n") (DT:MoveSelectionSetToLayer (ssget) "e-work-services") )
+  (defun c:3() (princ "\nWORKING DRAWING BLOCK CREATION:\n")(DT:CreateWorkingDrawingBlock))
   (defun c:4() (princ "\nWORKING DRAWING LAYERS CREATION:\n") (DT:CreateWorkingDrawingLayers))
   (princ "\nWORKING DRAWING SETUP COMPLETED")(princ)
 
