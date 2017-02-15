@@ -2030,3 +2030,110 @@
   ; Author: David Torralban
   ; Last revision: 2017.02.15
 )
+(defun c:WorkSet()
+  ; Working Drawing setup
+  (defun c:1() (princ "\nWORKING DRAWING BLOCK CREATION:\n")(DT:CreateWorkingDrawingBlock))
+  (defun c:2() (princ "\nMOVE OBJECTS TO LAYER \"e-work-hse\":\n") (DT:MoveSelectionSetToLayer (ssget) "e-work-hse") )
+  (defun c:3() (princ "\nMOVE OBJECTS TO LAYER \"e-work-services\":\n") (DT:MoveSelectionSetToLayer (ssget) "e-work-services") )
+  (defun c:4() (princ "\nWORKING DRAWING LAYERS CREATION:\n") (DT:CreateWorkingDrawingLayers))
+  (princ "\nWORKING DRAWING SETUP COMPLETED")(princ)
+
+  ; v0.0 - 2017.02.15 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.02.15
+)
+(defun DT:CreateWorkingDrawingLayers ()
+  ; Create layers for Working Drawings blocks
+  (command "-layer" "m" "e-work-services" "c" "9" "" "")
+  (command "-layer" "m" "e-work-hse" "c" "9" "" "")
+  (princ "\nWorking drawings layers created.")
+  (princ)
+
+  ; v0.0 - 2017.02.15 - First issue
+  ; Author: David Torralban
+  ; Last revision: 2017.02.15
+)
+(defun DT:CreateWorkingDrawingBlock ( / p1 p2 ent_name ss blockName)
+  ; Create Working Drawings blocks
+
+  ; SAVE SETTINGS
+	(save_environment (list "clayer" "osmode" "cmdecho"))
+
+  ; Create Working Drawing Layers if necessary
+  (if
+    (and
+      (DT:CheckIfLayerExists "e-work-hse")
+      (DT:CheckIfLayerExists "e-work-services")
+    );END and
+    nil
+    (DT:CreateWorkingDrawingLayers)
+  );END if
+
+  (setvar "cmdecho" 1)
+  (setvar "clayer" "e-work-hse")
+
+  ; Ask the user block basepoint
+  (setvar "osmode" 1)
+  (setq p1 (getpoint "\nSpecify the base point of the block: ") )
+
+  (setvar "osmode" 0)
+  (setq
+    ; Ask the user point to copy the scaled block
+    p2 (getpoint "\nSpecify the point to copy and scale the block: ")
+    ; Draw a circle of 2m around the selected point to label the block
+    ent_name (entmakex
+      (list
+        (cons 0 "CIRCLE") ; Entity type [ename]
+        (cons 10 p2)      ; Circle centre point point [pt]
+        (cons 40 2000)    ; Circle radius
+      )
+    )
+    ; Ask user to select the objects to copy, scale and block
+    ss (ssget)
+    ; Ask user to introduce block name
+    blockName (getstring 't "\nSpecify block name (press Enter to finish): ")
+  )
+
+  (command "_.scale" ss "" p1 "0.001")
+  (command "_.-Block" blockName p1 ss "")
+  (command "_.-insert" blockName p2 "" "" "")
+  (command "_.-insert" blockName p1 1000 1000 "")
+  (command "_.explode" "L")
+
+  ; RESTORE SETTINGS
+	(restore_environment)
+
+  (princ)
+
+  ; v0.0 - 2017.02.15 - First issue
+  ; Author: David Torralban
+  ; Last revision: 2017.02.15
+)
+(defun DT:MoveSelectionSetToLayer ( ss lay )
+  ; Move items in ss to lay layer and put them by Layer
+  (if (and ss lay)
+    (if (and (= 'pickset (type ss)) (= 'str (type lay)))
+      (foreach a (ssnamex ss)
+        (if (= 'ename (type (cadr a)))
+          (progn
+            (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Layer lay)
+            (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 256)
+            (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Linetype "ByLayer")
+          );END progn
+        );END if
+      );END foreach
+      (cond
+        ((/= 'pickset (type ss)) (princ "\nERROR @ DT:MoveSelectionSetToLayer > ss is not a pickset\n")(princ) nil )
+        ((/= 'str    (type lay)) (princ "\nERROR @ DT:MoveSelectionSetToLayer > lay is not a string\n")(princ) nil )
+      );END cond
+    );END if
+    (cond
+      ((not ss) (princ "\nERROR @ DT:MoveSelectionSetToLayer > ss = nil\n")(princ) nil )
+      ((not lay) (princ "\nERROR @ DT:MoveSelectionSetToLayer > lay = nil\n")(princ) nil )
+    );END cond
+  );END if
+
+  ; v0.0 - 2017.02.15 - First issue
+  ; Author: David Torralban
+  ; Last revision: 2017.02.15
+)
