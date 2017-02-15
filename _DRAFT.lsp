@@ -3180,3 +3180,26 @@
   );END while
   (princ)
 )
+(defun c:11( / ang )
+  ; Correct TEXT and MTEXT angle to be readable
+  (princ "\nUpdate readability text angle")
+  (if (setq ss (ssget))
+    (foreach a (ssnamex ss)
+      (if (= 'ename (type (cadr a)))
+        (if (or (= "TEXT" (cdr (assoc 0 (entget (cadr a))))) (= "MTEXT" (cdr (assoc 0 (entget (cadr a))))) )
+          (if
+            (/=
+              (cdr (assoc 50 (entget (cadr a)) ))
+              (setq ang (DT:ReadableTextAngle (cdr (assoc 50 (entget (cadr a)) )) ) )
+            )
+            (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Rotation ang )
+          );END if
+        );END if
+      );END if
+    );END foreach
+  );END if
+
+  ; v0.0 - 2017.02.15 - First issue
+  ; Author: David Torralban
+  ; Last revision: 2017.02.15
+)
