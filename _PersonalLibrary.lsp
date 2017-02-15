@@ -2013,3 +2013,20 @@
   ; Author: David Torralban
   ; Last revision: 2017.01.29
 )
+(defun DT:CheckIfLayerExists ( lay )
+  ; Return T if lay layer exists, or nil if not
+  (if lay
+    (if (tblsearch "layer" lay)
+      T
+    );END if
+    (progn
+      (princ "\nERROR @ DT:CheckIfLayerExists > lay = nil\n")
+      (princ)
+      nil
+    );END progn
+  );END if
+
+  ; v0.0 - 2017.02.15 - First issue
+  ; Author: David Torralban
+  ; Last revision: 2017.02.15
+)
