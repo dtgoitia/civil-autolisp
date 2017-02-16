@@ -10,7 +10,7 @@
 (defun c:zzz()(setq oldosmode nil))
 (defun c:11( / ang )
   ; Correct TEXT and MTEXT angle to be readable
-  (princ "\nUpdate readability text angle")
+  (princ "\nUPDATE TEXT READABILITY ANGLE\n")
   (if (setq ss (ssget))
     (foreach a (ssnamex ss)
       (if (= 'ename (type (cadr a)))
