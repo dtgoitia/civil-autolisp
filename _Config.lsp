@@ -30,6 +30,5 @@
   (setvar "LAYLOCKFADECTL" 0)       ; Controls locked layers fade (normal 0-100 fade)
   (setvar "ISAVEBAK" 0)             ; Controls the creation of a backup file (BAK): 0 no, 1 yes.
   (setvar "HPQUICKPREVIEW" OFF)     ; Disables the preview of hatches when using internal pickpoint
-
-
+  (setvar "EDGEMODE" 1)             ; Extends or trims the selected object to an imaginary extension of the cutting or boundary edge
 );END defun
