@@ -90,6 +90,7 @@
 (defun c:las() (command "_.layerstate")(princ))
 (defun c:r() (princ "\nRegenerating...") (command "_.regenall") (princ " done.")(princ))
 (defun c:os( / x ) (if (setq x (getint (strcat "\nObject Snap Mode <" (itoa (getvar "osmode")) ">: "))) (setvar "osmode" x) (princ "*Cancel*"))(princ))
+(defun c:rr () (c:RTM))
 (defun c:RTM ()
 	; RT and move together
 	(c:RT)
@@ -108,7 +109,6 @@
   (defun c:33() (princ "\nSDIP: ") (c:SDIP))
   (defun c:pa()(fbi "Parking-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
   (defun c:ra()(fbi "Road-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
-  (defun c:rr()(c:RTM))
   (defun c:oo()(setvar "osmode" 4))
   (defun c:ne()(setvar "osmode" 512))
   (defun c:11 ( / targetLevel ent_name )
@@ -139,11 +139,29 @@
     );END if
     (princ)
   )
+  (defun c:cheatsheet() (alert
+    "ENGINEERING CHEATSHEET\n
+    Marking:
+        1\tBYC\n
+    Calculations:
+        11\tStorm-FFL
+        2\tINT
+        22\tFoul-FFL
+        3\tSDIP private drainage
+        33\tSDIP\n
+    Create:
+        pa\tparking arrow
+        ra\troad arrow\n
+    Environment:
+        oo\tOSMODE = 4
+        ne\tOSMODE = 512\n
+  "))
   (princ "\nENGINEERING SETUP COMPLETED")(princ)
 
+  ; v0.1 - 2017.02.21 - Cheatsheet added
   ; v0.0 - 2017.01.29 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.01.29
+  ; Last revision: 2017.02.21
 )
 (defun c:ha45 ()
 	(garden_block_paving "0.45")
