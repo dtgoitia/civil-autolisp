@@ -2030,17 +2030,27 @@
   ; Author: David Torralban
   ; Last revision: 2017.02.15
 )
-(defun c:WorkSet()
+(defun c:WorkSet ()
   ; Working Drawing setup
   (defun c:1() (princ "\nMOVE OBJECTS TO LAYER \"e-work-hse\":\n") (DT:MoveSelectionSetToLayer (ssget) "e-work-hse") )
   (defun c:2() (princ "\nMOVE OBJECTS TO LAYER \"e-work-services\":\n") (DT:MoveSelectionSetToLayer (ssget) "e-work-services") )
   (defun c:3() (princ "\nWORKING DRAWING BLOCK CREATION:\n")(DT:CreateWorkingDrawingBlock))
   (defun c:4() (princ "\nWORKING DRAWING LAYERS CREATION:\n") (DT:CreateWorkingDrawingLayers))
+  (defun c:cheatsheet() (alert
+    "WORKING DRAWING CHEATSHEET\n
+    Move to layer:
+        1\te-work-hse
+        2\te-work-services\n
+    Create:
+        3\tblock
+        4\tlayers\n
+  "))
   (princ "\nWORKING DRAWING SETUP COMPLETED")(princ)
 
+  ; v0.1 - 2017.02.21 - Cheatsheet added
   ; v0.0 - 2017.02.15 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.02.15
+  ; Last revision: 2017.02.21
 )
 (defun DT:CreateWorkingDrawingLayers ()
   ; Create layers for Working Drawings blocks
