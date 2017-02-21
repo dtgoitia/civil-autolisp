@@ -2070,6 +2070,36 @@
   ; Author: David Torralba
   ; Last revision: 2017.02.21
 )
+(defun c:SetSet ()
+  ; Setting Out setup
+  (defun c:1() (princ "\nINDIVIDUAL SETTING OUT\n") (c:coord) )
+  (defun c:11() (princ "\nPOLYLINE SETTING OUT\n") (c:coordp) )
+  (defun c:2() (princ "\nMOVE SETTING OUT LABEL\n") (c:DT:move_KTF_SettingOutLabel) )
+  (defun c:22( / ss ) (princ "\nRESET DIMENSTION POSITION\n") (setq ss (ssget '((0 . "DIMENSION")))) (command "_DIM1" "HOME" ss "") )
+  (defun c:3() (princ "\nALIGNED DIMENSION\n") (command "_dimaligned") )
+  (defun c:33() (princ "\nCONTINUE DIMENSION\n") (command "_dimcontinue") )
+  (defun c:4() (princ "\nRADIUS DIMENSION\n") (command "_dimradius" pause "") )
+  (defun c:0() (princ "\nRESET KTF SETTING OUT SCALE\n") (c:RKS) )
+  (defun c:cheatsheet() (alert
+    "SETTING OUT CHEATSHEET\n
+    Coordinates:
+        1\tsingle
+        11\talong pline
+        2\tmove only label
+        22\treset dimension position\n
+    Dimensions:
+        3\taligned
+        33\tcontinue
+        4\tradius\n
+    Environment:
+        0\treset scale
+  "))
+  (princ "\nSETTING OUT SETUP COMPLETED")(princ)
+
+  ; v0.0 - 2017.02.21 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.02.21
+)
 (defun DT:CreateWorkingDrawingLayers ()
   ; Create layers for Working Drawings blocks
   (command "-layer" "m" "e-work-services" "c" "9" "" "")
