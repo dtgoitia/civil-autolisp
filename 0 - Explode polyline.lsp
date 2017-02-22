@@ -100,12 +100,12 @@
         (cons 90 2)     ; Number of vertex
         (cons 70 128)  ; Not closed polyline
         (cons 43 width)
-        (cons 48 lineTypeScale)
         (cons 62 color)
         (cons 10 (list (nth 0 p1) (nth 1 p1) ))
         (cons 10 (list (nth 0 p2) (nth 1 p2) ))
       );END list
       (if lineType (list (cons 6 lineType)) )
+      (if lineTypeScale (list (cons 48 lineTypeScale)) )
     );END append
   );END entmakex
 )
