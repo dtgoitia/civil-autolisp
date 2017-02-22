@@ -12,6 +12,7 @@
   ; End without double messages
   (princ)
 
+  ; v0.4 - 2016.11.14 - Linetype Scale management added
   ; v0.3 - 2016.11.14 - All code rewritten
   ; v0.2 - 2016.03.21 - Code optimized and comments translated into English.
   ; v0.1 - 2016.03.02 - Command-line name changed from BRP to EP.
@@ -23,7 +24,7 @@
   ; Author: David Torralba
   ; Last revision: 2016.11.14
 )
-(defun ExplodeSinglePolyline (ent_name / i layerName ptList width color lineType)
+(defun ExplodeSinglePolyline (ent_name / i layerName ptList width color lineType lineTypeScale)
   (setq
     i 0
     layerName (GetPolylineLayer ent_name)
@@ -31,13 +32,14 @@
     width (GetPolylineWidth ent_name)
     color (GetPolylineColor ent_name)
     lineType (GetPolylineStyle ent_name)
+    lineTypeScale (GetPolylineStyleScale ent_name)
   )
   (while (< i (- (length ptList) 1) )
     (setq
       p1 (nth i ptList)
       p2 (nth (+ i 1) ptList)
     )
-    (if (DrawPolylineSegment p1 p2 width color layerName lineType)
+    (if (DrawPolylineSegment p1 p2 width color layerName lineType lineTypeScale)
       (setq i (+ i 1) )
       (progn
         (princ "\nError drawing polyline segment from ")
@@ -81,7 +83,13 @@
     (cdr (assoc 6 (entget ent_name)))
   );END if
 )
-(defun DrawPolylineSegment (p1 p2 width color layerName lineType)
+(defun GetPolylineStyleScale (ent_name)
+  (if (not (assoc 48 (entget ent_name)))
+    nil
+    (cdr (assoc 48 (entget ent_name)))
+  );END if
+)
+(defun DrawPolylineSegment (p1 p2 width color layerName lineType lineTypeScale)
   (entmakex
     (append
       (list
@@ -92,6 +100,7 @@
         (cons 90 2)     ; Number of vertex
         (cons 70 128)  ; Not closed polyline
         (cons 43 width)
+        (cons 48 lineTypeScale)
         (cons 62 color)
         (cons 10 (list (nth 0 p1) (nth 1 p1) ))
         (cons 10 (list (nth 0 p2) (nth 1 p2) ))
