@@ -2100,6 +2100,27 @@
   ; Author: David Torralba
   ; Last revision: 2017.02.21
 )
+(defun c:ModSet ()
+  ; 3D Modelling setup
+  (defun c:1() (princ "\n3D POLYLINE\n") (command "_.3dpoly" pause) (princ))
+  (defun c:11() (princ "\nJOIN\n") (command "_.join" pause) (princ))
+  (defun c:2() (princ "\nADD VERTICES\n") (c:KTF_3DPLADVX) )
+  (defun c:3() (princ "\n3D OFFSET\n") (c:KTF_3DOFFSET) )
+  (defun c:cheatsheet() (alert
+    "3D MODELLING CHEATSHEET\n
+    Draw:
+        1\t3dpoly\n
+    Modify:
+        11\tjoin
+        2\tadd vertices
+        3\t3D offset\n
+  "))
+  (princ "\n3D MODELLING SETUP COMPLETED")(princ)
+
+  ; v0.0 - 2017.02.24 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.02.24
+)
 (defun DT:CreateWorkingDrawingLayers ()
   ; Create layers for Working Drawings blocks
   (command "-layer" "m" "e-work-services" "c" "9" "" "")
