@@ -101,7 +101,7 @@
   ; Author: David Torralba
   ; Last revision: 2016.04.07
 )
-(defun c:EngSet()
+(defun c:EngSet ()
   ; Engineering setup
   (defun c:1() (princ "\nBYC: ") (c:BYC))
   (defun c:2() (princ "\nINT: ") (c:INT))
@@ -2215,4 +2215,21 @@
   ; v0.0 - 2017.02.15 - First issue
   ; Author: David Torralban
   ; Last revision: 2017.02.15
+)
+(defun c:ShowSet ()
+  ; Show available setups
+  (alert
+    (strcat
+      "\NAVAILABLE SETUPS\n\n"
+      "EngSet"  "\tEgineering setup\n"
+      "WorkSet" "\tWorking Drawings setup\n"
+      "SetSet"  "\tSetting Out setup\n"
+      "ModSet"  "\t3D Modelling setup\n"
+      "\n"
+    );END strcat
+  );END alert
+
+  ; v0.0 - 2017.02.27 - First issue
+  ; Author: David Torralban
+  ; Last revision: 2017.02.27
 )
