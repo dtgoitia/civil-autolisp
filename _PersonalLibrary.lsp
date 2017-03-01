@@ -468,7 +468,10 @@
 	; Returns chainage of a polyline given polyline VLA entity name and any point
 	; pt doesn't need to be a point within the centerline
   (cond
-    ((= "LWPOLYLINE" (cdr (assoc 0 (entget (vlax-vla-object->ename VL_ent_name) ))) )
+    ( (or
+        (= "LINE"       (cdr (assoc 0 (entget (vlax-vla-object->ename VL_ent_name) ))) )
+        (= "LWPOLYLINE" (cdr (assoc 0 (entget (vlax-vla-object->ename VL_ent_name) ))) )
+      )
       (vlax-curve-getDistAtPoint VL_ent_name (vlax-curve-getClosestPointTo VL_ent_name pt))
     );END subcond
     ((= "POLYLINE" (cdr (assoc 0 (entget (vlax-vla-object->ename VL_ent_name) ))) )
@@ -499,10 +502,11 @@
     );END subcond
   );END cond
 
+  ; v0.2 - 2017.03.01 - Added line management
   ; v0.1 - 2016.09.28 - Added 3D polyline management
   ; v0.0 - 2019.??.?? - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.09.28
+  ; Last revision: 2017.03.01
 )
 (defun c:PK( / ent centreline_VL_ent_name ans i pt ch)
   ; INPUT - Select centreline
