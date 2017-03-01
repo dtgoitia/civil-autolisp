@@ -39,9 +39,9 @@
 ;)
 (defun c:iso() (command "_.isolateobjects")(princ))
 (defun c:uiso() (command "_.unisolateobjects")(princ))
-(defun c:c() (command "_.copy" pause "" (cadr (grread 't)) pause) )
+(defun c:c() (command "_.copy" pause "" "_non" (cadr (grread 't)) "_non" pause) )
 (defun c:cc() (command "_.copy") )
-(defun c:m() (command "_.move" pause "" (cadr (grread 't)) pause) )
+(defun c:m() (command "_.move" pause "" "_non" (cadr (grread 't)) "_non" pause) )
 (defun c:mo() (command "_.move"))
 (defun c:mm() (command "_.move"))
 (defun c:p00()
@@ -94,7 +94,7 @@
 (defun c:RTM ()
 	; RT and move together
 	(c:RT)
-	(command "_.move" "P" "" "_non" (cadr (grread 't)) "non" pause)
+	(command "_.move" "P" "" "_non" (cadr (grread 't)) "_non" pause)
 	(princ)
   ; v0.2 - 2017.03.01 - NON OSnap transparent reference added for MOVE command first reference point.
   ;                   - NON OSnap transparent reference added for MOVE command second reference point too.
