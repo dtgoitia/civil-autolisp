@@ -94,12 +94,13 @@
 (defun c:RTM ()
 	; RT and move together
 	(c:RT)
-	(command "_.move" "P" "" (cadr (grread 't)) pause)
+	(command "_.move" "P" "" "_non" (cadr (grread 't)) pause)
 	(princ)
+  ; v0.2 - 2017.03.01 - NON OSnap transparent reference added for MOVE command first reference point.
   ; v0.1 - 2016.04.07 - Move reference clic sustituted for current mouse position.
 	; v0.0 - 2016.03.29 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.04.07
+  ; Last revision: 2017.03.01
 )
 (defun c:EngSet ()
   ; Engineering setup
