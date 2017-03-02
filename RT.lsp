@@ -1,5 +1,5 @@
 ; DO NOT REMOVE THIS LINE. It's a checking.
-(defun C:RT ()
+(defun c:RT ()
   (defun *error* ( msg )
     (if (not (member msg '("Function cancelled" "quit / exit abort")))
       (princ (strcat "\nError: " msg))
@@ -20,28 +20,30 @@
 
   (setq
     ss (ssget)
-    p1 (getpoint "\nSelect point 1: ")
-    p2 (getpoint "\nSelect point 2: ")
-    ang (angle p1 p2)
-    i 0
+    ang (angle (getpoint "\nSelect point 1: ") (getpoint "\nSelect point 2: "))
   )
 
-  (while (< i (sslength ss))
-    (setq
-      ent (ssname ss i)
-      entList (entget ent)
-      entList (subst (cons 50 ang)(assoc 50 entList) entList)
-    )
-    (entmod entList)
-    (setq i (+ i 1))
-  ); END while
-
+  (foreach a (ssnamex ss)
+    (if
+      (and
+        (if DT:ReadableTextAngle T nil)
+        (or
+          (= "TEXT" (cdr (assoc 0 (entget (cadr a))) ) )
+          (= "MTEXT" (cdr (assoc 0 (entget (cadr a))) ) )
+        );END or
+      );END and
+      (setq ang (DT:ReadableTextAngle ang ) )
+    );END if
+    (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Rotation ang )
+  );END foreach
   ; RESET to original "osmode" and "cmdecho".
   (setvar "osmode" oldosmode)
   (setvar "cmdecho" oldcmdecho)
   (princ)
 
+  ; v0.1 - 2017.03.02 - Loop simplified.
+  ;                   - Readability angle included for TEXT and MTEXTs
   ; v0.0 - 2016.03.15 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.03.15
+  ; Last revision: 2017.03.02
 )
