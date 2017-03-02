@@ -2239,3 +2239,150 @@
   ; Author: David Torralban
   ; Last revision: 2017.02.27
 )
+(defun DT:SplitLevelDifference (textLevel)
+  ; Return a pair list with the level and the difference, both as strings
+  (if textLevel
+    (cond
+      ((vl-string-search "+" textLevel)
+        (DT:StringToList textLevel "+")
+      );END subcond
+      ((vl-string-search "-" textLevel)
+        (DT:StringToList textLevel "-")
+      );END subcond
+    );END cond
+  );END if
+
+  ; v0.0 - 2017.03.01 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.01
+)
+(defun DT:clic_or_type_level (/ in nent txt VL_ent_name)
+  ; Clic on any atribute or text with a level and return its text, or type it in
+  (setq in (DT:input_string_or_point))
+  (cond
+    ((= 'LIST (type in)) ; it's a point
+      (setq nent (nentselp in))
+      (if (not nent)
+        (princ "nothing selected.\n")
+        (progn
+          (setq VL_ent_name (vlax-ename->vla-object (car nent)))
+          (if (vlax-property-available-p VL_ent_name 'TextString)
+            (setq txt (vlax-get-property VL_ent_name 'TextString))
+            (progn
+              (setq nent nil)
+              (princ "no text found.")
+            ); END progn2
+          ); END if2
+        ); END progn1
+      ); END if1
+    )
+    ((= 'STR (type in)) ; it's a string
+    (setq txt in)
+    )
+  )
+  ; Analize the input text
+  (DT:ParseLevel txt)
+
+  ; v0.0 - 2017.03.01 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.01
+)
+(defun DT:ParseLevel ( textLevel / operation difference i )
+  (if textLevel
+    ; Parse the text
+    ; - [ ] look for any "+" of "-" sign in the text,
+    ;       if any: parse it and process it as it should
+    ;       if none: apply the condition used till now
+    ; (vl-string-search "who" "pfooyey on you")
+    (progn
+      ; If any difference requested use it
+      (if
+        (or
+          (vl-string-search "+" textLevel)
+          (vl-string-search "-" textLevel)
+        );END or
+        (setq
+          operation
+            (cond
+              ((vl-string-search "+" textLevel) "+")
+              ((vl-string-search "-" textLevel) "-")
+            );END cond
+          i 0
+          difference 0
+          textLevel (DT:SplitLevelDifference textLevel)
+          difference
+            (cond
+              ((= operation "+") (*  0.001 (atof (cadr textLevel))) )
+              ((= operation "-") (* -0.001 (atof (cadr textLevel))) )
+            );END cond
+          textLevel (car textLevel)
+        );END setq
+      );END if
+      (cond
+        ; Normal number: adoptable manholes, PI_DAVID block
+        ( (and (< (strlen textLevel) 8) (> (strlen textLevel) 4) (/= "S" (substr textLevel 1 1)) (/= "F" (substr textLevel 1 1)))
+          ;(alert "case 1")
+          (setq level (atof textLevel))
+        )
+        ; FFL
+        ( (and (= "FFL " (substr textLevel 1 4)) (= 4 (- (strlen textLevel) (vl-string-search "." textLevel))) )
+          (setq level (atof (substr textLevel 5)))
+        )
+        ; Road level
+        ( (and (or (= "%%U" (substr textLevel 1 3)) (= "%%u" (substr textLevel 1 3))) (= 3 (- (strlen textLevel) (vl-string-search "." textLevel))))
+          (setq level (atof (substr textLevel 4 10)))
+        )
+        ; Plot level
+        ( (and (or (= "%%U" (substr textLevel 1 3)) (= "%%u" (substr textLevel 1 3))) (= 4 (- (strlen textLevel) (vl-string-search "." textLevel))))
+          (setq level (atof (substr textLevel 4 9)))
+        )
+        ; Private mahole
+        ( (and
+            (or (= "S" (substr textLevel 1 1)) (= "F" (substr textLevel 1 1)))
+            (and (>= (ascii (substr textLevel 2 1)) 48) (<= (ascii (substr textLevel 2 1)) 57))
+            (> (strlen textLevel) 5)
+          )
+          (setq level (atof (substr textLevel 2)))
+        )
+        ; Sub-base level
+        ( (and
+            (or (= "SB" (substr textLevel 1 2)) (= "sb" (substr textLevel 1 2)) )
+            (= 3 (- (strlen textLevel) (vl-string-search "." textLevel)) )
+          )
+          (setq level (atof (substr textLevel 3 8)))
+        )
+        ; Non number
+        ( (and
+            (= (atof textLevel) 0)
+            (or (< (ascii (substr textLevel 2 1)) 97) (> (ascii (substr textLevel 2 1)) 122))
+            (/= (ascii (substr textLevel 1 1)) 48)
+          )
+          (setq level (getreal "\nNumber format not understood. Please, introduce level: "))
+        )
+        ; Other
+        (t
+          ;(alert "case 7")
+          (if (= 0.0 (atof textLevel))
+            (progn
+              (initget "Yes No")
+              (setq ans (getkword (strcat "\nNo standard format. Verify " textLevel "m level. [Yes/No] <Yes>:")))
+              (if (or (not ans) (= ans "Yes"))
+                (setq level (atof textLevel))
+                (exit)
+              )
+            );END progn
+            (setq level (atof textLevel))
+          );END if
+        );END cond4
+      );END cond
+      (if difference
+        (+ level difference )
+        level
+      );END if
+    );END progn
+  );END if
+
+  ; v0.0 - 2017.03.01 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.01
+)
