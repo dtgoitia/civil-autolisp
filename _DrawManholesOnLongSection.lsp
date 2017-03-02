@@ -1,5 +1,5 @@
-;(defun c:1() (princ "\nGET MANHOLE DATA ACCORDING TO CENTRELINE: \n") (DT:ExtractManholeDataAlongCentrelines) )
-;(defun c:2() (princ "\nDRAW MANHOLES ONTO LONGITUDINAL SECTION: \n") (DT:DrawExtractedManholesOnLongSection) )
+(defun c:1() (princ "\nGET MANHOLE DATA ACCORDING TO CENTRELINE: \n") (DT:ExtractManholeDataAlongCentrelines) )
+(defun c:2() (princ "\nDRAW MANHOLES ONTO LONGITUDINAL SECTION: \n") (DT:DrawExtractedManholesOnLongSection) )
 (defun DT:DrawExtractedManholesOnLongSection ( / ent_name startPoint datum verticalExageration)
   ; Draw manholes stored in globalVariableManholesData on a longitudinal section
 
@@ -223,29 +223,37 @@
   (entmakex
     (list
       (cons 0 "LINE")
+      (if (tblsearch "LTYPE" "CONTINUOUS") (cons 6 "CONTINUOUS"))  ; Linetype CONTINUOUS, if possible
       (cons 8 lay)
       (cons 10 (polar pBase (* 1.5 pi) 42) )
       (cons 11 (polar pBase (* 1.5 pi) 48) )
+      (cons 62 256)
     );END list
   );END entmakex
 
+  ; v0.1 - 2017.03.02 - Set CONTINUOUS linetype, if possible
+  ;                   - Set color ByLayer to avoid problems with current color settings
   ; v0.0 - 2017.01.25 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.01.25
+  ; Last revision: 2017.03.02
 )
 (defun DT:DrawFoulInvertLevelBoxLine ( pBase lay )
   (entmakex
     (list
       (cons 0 "LINE")
+      (if (tblsearch "LTYPE" "CONTINUOUS") (cons 6 "CONTINUOUS"))  ; Linetype CONTINUOUS, if possible
       (cons 8 lay)
       (cons 10 (polar pBase (* 1.5 pi) 48) )
       (cons 11 (polar pBase (* 1.5 pi) 54) )
+      (cons 62 256)
     );END list
   );END entmakex
 
+  ; v0.1 - 2017.03.02 - Set CONTINUOUS linetype, if possible
+  ;                   - Set color ByLayer to avoid problems with current color settings
   ; v0.0 - 2017.01.25 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.01.25
+  ; Last revision: 2017.03.02
 )
 (defun DT:DrawInverLevelText (pt lay str)
   (entmakex
@@ -260,13 +268,14 @@
       (cons 62 7) ; white color
       (cons 50 (* 0.5 pi))
       (cons 71 0) ; needed for text justification
-      (cons 72 0) ; needed for text justification
+      (cons 72 1) ; needed for text justification
     );END list
   );END entmakex
 
+  ; v0.1 - 2017.03.02 - Align text to center
   ; v0.0 - 2017.01.25 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.01.25
+  ; Last revision: 2017.03.02
 )
 (defun DT:DrawManholeInvertLevelTexts ( p0 lay IL1 IL2 IL3 IL4 / p0 ent_nameList )
   ; Return list with entity name of all created entities
@@ -296,15 +305,16 @@
       (cons 8 lay)
       (cons 10 p1)
       (cons 11 p2)
-      (if (tblsearch "LTYPE" "CENTER") (cons 6 "CENTER"))  ; Line type CENTER, if possible
-      (cons 48 0.06) ; Line type scale
+      (if (tblsearch "LTYPE" "CENTER") (cons 6 "CENTER"))  ; Linetype CENTER, if possible
+      (cons 48 0.5) ; Linetype scale
       (cons 62 7) ; white color
     );END list
   );END entmakex
 
+  ; v0.1 - 2017.03.02 - Correct linetype scale
   ; v0.0 - 2017.01.25 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.01.25
+  ; Last revision: 2017.03.02
 )
 (defun DT:WriteVerticalAxisLabel (pt lay manholeName)
   (entmakex
