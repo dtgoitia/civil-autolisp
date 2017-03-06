@@ -8,8 +8,8 @@
   (setvar "PEDITACCEPT" 1)          ; automatically convert lines and arcs to polylines
   (setvar "EXPERT" 2)               ; don’t ask when switching off current layer, etc.
   (setvar "SECURELOAD" 0)           ; don’t ask and just load LISP files
-  (setvar "CURSORSIZE" 100)         ; crosshairs extend to viewport limits
-  (setvar "GRIDMODE" 0)             ; crosshairs extend to viewport limits
+  (setvar "CURSORSIZE" 5)           ; crosshairs extend to viewport limits
+  (setvar "GRIDMODE" 0)             ; hides (0) or shows (1) the grid. Same as F7
   (setvar "GRIPS" 2)                ; object's grip mode
   (setvar "GRIPSIZE" 5)             ; object's grip size
   (setvar "LUNITS" 2)               ; decimal length units
