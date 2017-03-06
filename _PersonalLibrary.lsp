@@ -2386,3 +2386,49 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.01
 )
+(defun DT:AddSubstractPlotLevel ( ent_name / initialContent value )
+  ; Add or substract 50mm to plot level
+  (if ent_name
+    (if
+      (or
+        (= "TEXT"  (cdr (assoc 0 (entget ent_name)) ))
+        (= "MTEXT" (cdr (assoc 0 (entget ent_name)) ))
+      ); END or
+      (progn
+        (setq value (substr (vlax-get-property (vlax-ename->vla-object ent_name) 'TextString) 4) )
+        (princ (strcat "\nPress +/- to add/substract 50mm: <" value "m> "))
+        (while (setq gr (grread))
+          (cond
+            ( (and
+                (= 2 (car  gr))
+                (or
+                  (= 43 (cadr gr))
+                  (= 45 (cadr gr))
+                );END or
+              );END and
+              ; Calculate level value
+              (setq
+                value
+                  (if (= 43 (cadr gr))
+                    (LM:rtos (+ (atof value) 0.05) 2 2)
+                    (LM:rtos (- (atof value) 0.05) 2 2)
+                  );END if
+              )
+              ; Update text value
+              (vla-put-textstring (vlax-ename->vla-object ent_name) (strcat "%%U" value))
+              (princ (strcat "\nPress +/- to add/substract 50mm: <" value "m> "))
+            );END subcond
+            (t
+              (exit)
+            );END subcond
+          );END cond
+        );END while
+      );END progn
+    );END if
+  );END if
+  (princ)
+
+  ; v0.0 - 2017.03.06 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.06
+)
