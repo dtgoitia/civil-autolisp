@@ -117,9 +117,9 @@
   (defun c:11 ( / targetLevel ent_name )
     ; Get a FFL, substract -0.65m and overwrite the target text object content
     ; with the calculated value properly formated: S16.70
-    (princ "\nGET STORM LEVEL FROM FFL (-0.65m)\n")
+    (princ "\nGET STORM LEVEL FROM FFL (-0.60m)\n")
     (setq
-      targetLevel (+ (DT:clic_or_type_level) -0.65)
+      targetLevel (+ (DT:clic_or_type_level) -0.60)
       ent_name (car (entsel (strcat "\nSelect text to overwrite with \"S" (LM:rtos targetLevel 2 2) "\": ") ))
     )
     (if ent_name
