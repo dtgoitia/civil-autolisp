@@ -2283,13 +2283,13 @@
     )
   )
   ; Analize the input text
-  (DT:ParseLevel txt)
+  (DT:ParseLevelOperation txt)
 
   ; v0.0 - 2017.03.01 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.03.01
 )
-(defun DT:ParseLevel ( textLevel / operation difference i )
+(defun DT:ParseLevelOperation ( textLevel / operation difference i )
   (if textLevel
     ; Parse the text
     ; - [ ] look for any "+" of "-" sign in the text,
@@ -2384,6 +2384,7 @@
     );END progn
   );END if
 
+  ; v0.1 - 2017.03.06 - Function renamed
   ; v0.0 - 2017.03.01 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.03.01
