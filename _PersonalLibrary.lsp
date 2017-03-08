@@ -1981,6 +1981,29 @@
   ; Author: David Torralba
   ; Last revision: 2017.01.28
 )
+(defun DT:GetSewerGradient ( ent_name )
+  ; Returns a integer with the ent_name sewer-label gradient
+  ; If not, returns nil
+  (if ent_name
+    (if (= "TEXT" (cdr (assoc 0 (entget ent_name))))
+      (if (DT:GetCharPositions (cdr (assoc 1 (entget ent_name))) "/")
+        ; If the text contains "/" (ergo, is a sewer label):
+        (atoi
+          (substr ; Get text after "/" character
+            (cdr (assoc 1 (entget ent_name)))
+            (+ 2 (vl-string-position (ascii "/") (cdr (assoc 1 (entget ent_name))))) ; "/" position in ent_name text
+          );END substr
+        );END atoi
+      );END if
+      nil
+    );END if
+    nil
+  );END if
+
+  ; v0.0 - 2017.03.08 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.08
+)
 (defun DT:SetGroup ( ent_nameList / i l s )
   ; Create a group with the entities passed on ent_nameList
   ; ent_nameList [list] - List with entity names to include in the group
