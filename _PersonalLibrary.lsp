@@ -2152,6 +2152,31 @@
   ; Author: David Torralba
   ; Last revision: 2017.02.24
 )
+(defun c:TitSet ()
+  ; Title Block setup
+  (defun c:1()
+    ; Remove revision box date
+    (LM:vl-setattributevalue (vlax-ename->vla-object (car (entsel "\nSelect revision\nbox to remove date: "))) "DATE" "00")
+  )
+  (defun c:2()
+    ; Set current date to revision box
+    (LM:vl-setattributevalue (vlax-ename->vla-object (car (entsel "\nSelect revision\nbox to set current date: "))) "DATE" (PrintSupersedDate))
+  )
+  (defun c:cheatsheet() (alert
+    "TITLE BLOCK CHEATSHEET\n
+    Revision box date:
+        1\tRemove date
+        2\tSet current date\n
+    Revision letter:
+        3\tup TODO
+        4\tdown TODO\n
+  "))
+  (princ "\nTITLE BLOCK SETUP COMPLETED")(princ)
+
+  ; v0.0 - 2017.03.08 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.08
+)
 (defun DT:CreateWorkingDrawingLayers ()
   ; Create layers for Working Drawings blocks
   (command "-layer" "m" "e-work-services" "c" "9" "" "")
