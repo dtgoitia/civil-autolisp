@@ -103,70 +103,6 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.01
 )
-(defun c:EngSet ()
-  ; Engineering setup
-  (defun c:1() (princ "\nBYC: ") (c:BYC))
-  (defun c:2() (princ "\nINT: ") (c:INT))
-  (defun c:3() (princ "\nSDIPforPrivateDrainage: ") (c:SDIPforPrivateDrainage))
-  (defun c:33() (princ "\nSDIP: ") (c:SDIP))
-  (defun c:4() (DT:AddSubstractPlotLevel (car (entsel "\nSelect level: ")) ))
-  (defun c:pa()(fbi "Parking-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
-  (defun c:ra()(fbi "Road-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
-  (defun c:oo()(setvar "osmode" 4))
-  (defun c:ne()(setvar "osmode" 512))
-  (defun c:11 ( / targetLevel ent_name )
-    ; Get a FFL, substract -0.65m and overwrite the target text object content
-    ; with the calculated value properly formated: S16.70
-    (princ "\nGET STORM LEVEL FROM FFL (-0.60m)\n")
-    (setq
-      targetLevel (+ (DT:clic_or_type_level) -0.60)
-      ent_name (car (entsel (strcat "\nSelect text to overwrite with \"S" (LM:rtos targetLevel 2 2) "\": ") ))
-    )
-    (if ent_name
-      (vlax-put-property (vlax-ename->vla-object ent_name) 'TextString (strcat "S" (LM:rtos targetLevel 2 2)) )
-      (princ "\nNo target entity selected.")
-    );END if
-    (princ)
-  )
-  (defun c:22 ( / targetLevel ent_name )
-    ; Get a FFL, substract -0.75m and overwrite the target text object content
-    ; with the calculated value properly formated: F16.70
-    (princ "\nGET FOUL LEVEL FROM FFL (-0.75m)\n")
-    (setq
-      targetLevel (+ (DT:clic_or_type_level) -0.75)
-      ent_name (car (entsel (strcat "\nSelect text to overwrite with \"F" (LM:rtos targetLevel 2 2) "\": ") ))
-    )
-    (if ent_name
-      (vlax-put-property (vlax-ename->vla-object ent_name) 'TextString (strcat "F" (LM:rtos targetLevel 2 2)) )
-      (princ "\nNo target entity selected.")
-    );END if
-    (princ)
-  )
-  (defun c:cheatsheet() (alert
-    "ENGINEERING CHEATSHEET\n
-    Marking:
-        1\tBYC\n
-    Calculations:
-        11\tStorm-FFL
-        2\tINT
-        22\tFoul-FFL
-        3\tSDIP private drainage
-        33\tSDIP
-        4\tPlotLevel +/-50mm\n
-    Create:
-        pa\tparking arrow
-        ra\troad arrow\n
-    Environment:
-        oo\tOSMODE = 4
-        ne\tOSMODE = 512\n
-  "))
-  (princ "\nENGINEERING SETUP COMPLETED")(princ)
-
-  ; v0.1 - 2017.02.21 - Cheatsheet added
-  ; v0.0 - 2017.01.29 - First issue
-  ; Author: David Torralba
-  ; Last revision: 2017.02.21
-)
 (defun c:ha45 ()
 	(garden_block_paving "0.45")
   ; v0.0 - 2016.03.29 - First issue
@@ -2079,6 +2015,89 @@
   ; Author: David Torralban
   ; Last revision: 2017.02.15
 )
+(defun c:ShowSet ()
+  ; Show available setups
+  (alert
+    (strcat
+      "\NAVAILABLE SETUPS\n\n"
+      "EngSet"  "\tEgineering setup\n"
+      "WorkSet" "\tWorking Drawings setup\n"
+      "SetSet"  "\tSetting Out setup\n"
+      "ModSet"  "\t3D Modelling setup\n"
+      "TitSet"  "\tTitle Block setup\n"
+      "\n"
+    );END strcat
+  );END alert
+
+  ; v0.1 - 2017.03.08 - Title Block setup added
+  ; v0.0 - 2017.02.27 - First issue
+  ; Author: David Torralban
+  ; Last revision: 2017.03.08
+)
+(defun c:EngSet ()
+  ; Engineering setup
+  (defun c:1() (princ "\nBYC: ") (c:BYC))
+  (defun c:2() (princ "\nINT: ") (c:INT))
+  (defun c:3() (princ "\nSDIPforPrivateDrainage: ") (c:SDIPforPrivateDrainage))
+  (defun c:33() (princ "\nSDIP: ") (c:SDIP))
+  (defun c:4() (DT:AddSubstractPlotLevel (car (entsel "\nSelect level: ")) ))
+  (defun c:pa()(fbi "Parking-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
+  (defun c:ra()(fbi "Road-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
+  (defun c:oo()(setvar "osmode" 4))
+  (defun c:ne()(setvar "osmode" 512))
+  (defun c:11 ( / targetLevel ent_name )
+    ; Get a FFL, substract -0.65m and overwrite the target text object content
+    ; with the calculated value properly formated: S16.70
+    (princ "\nGET STORM LEVEL FROM FFL (-0.60m)\n")
+    (setq
+      targetLevel (+ (DT:clic_or_type_level) -0.60)
+      ent_name (car (entsel (strcat "\nSelect text to overwrite with \"S" (LM:rtos targetLevel 2 2) "\": ") ))
+    )
+    (if ent_name
+      (vlax-put-property (vlax-ename->vla-object ent_name) 'TextString (strcat "S" (LM:rtos targetLevel 2 2)) )
+      (princ "\nNo target entity selected.")
+    );END if
+    (princ)
+  )
+  (defun c:22 ( / targetLevel ent_name )
+    ; Get a FFL, substract -0.75m and overwrite the target text object content
+    ; with the calculated value properly formated: F16.70
+    (princ "\nGET FOUL LEVEL FROM FFL (-0.75m)\n")
+    (setq
+      targetLevel (+ (DT:clic_or_type_level) -0.75)
+      ent_name (car (entsel (strcat "\nSelect text to overwrite with \"F" (LM:rtos targetLevel 2 2) "\": ") ))
+    )
+    (if ent_name
+      (vlax-put-property (vlax-ename->vla-object ent_name) 'TextString (strcat "F" (LM:rtos targetLevel 2 2)) )
+      (princ "\nNo target entity selected.")
+    );END if
+    (princ)
+  )
+  (defun c:cheatsheet() (alert
+    "ENGINEERING CHEATSHEET\n
+    Marking:
+        1\tBYC\n
+    Calculations:
+        11\tStorm-FFL
+        2\tINT
+        22\tFoul-FFL
+        3\tSDIP private drainage
+        33\tSDIP
+        4\tPlotLevel +/-50mm\n
+    Create:
+        pa\tparking arrow
+        ra\troad arrow\n
+    Environment:
+        oo\tOSMODE = 4
+        ne\tOSMODE = 512\n
+  "))
+  (princ "\nENGINEERING SETUP COMPLETED")(princ)
+
+  ; v0.1 - 2017.02.21 - Cheatsheet added
+  ; v0.0 - 2017.01.29 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.02.21
+)
 (defun c:WorkSet ()
   ; Working Drawing setup
   (defun c:1() (princ "\nMOVE OBJECTS TO LAYER \"e-work-hse\":\n") (DT:MoveSelectionSetToLayer (ssget) "e-work-hse") )
@@ -2177,19 +2196,6 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.08
 )
-(defun c:AvailableSets()
-(alert
-  "Available sets:\n
-      1\tEngSet
-      2\tWorkSet
-      3\tSetSet
-      4\tModSet
-      5\tTitSet\n
-")
-  ; v0.0 - 2017.03.08 - First issue
-  ; Author: David Torralba
-  ; Last revision: 2017.03.08
-)
 (defun DT:CreateWorkingDrawingLayers ()
   ; Create layers for Working Drawings blocks
   (command "-layer" "m" "e-work-services" "c" "9" "" "")
@@ -2284,23 +2290,6 @@
   ; v0.0 - 2017.02.15 - First issue
   ; Author: David Torralban
   ; Last revision: 2017.02.15
-)
-(defun c:ShowSet ()
-  ; Show available setups
-  (alert
-    (strcat
-      "\NAVAILABLE SETUPS\n\n"
-      "EngSet"  "\tEgineering setup\n"
-      "WorkSet" "\tWorking Drawings setup\n"
-      "SetSet"  "\tSetting Out setup\n"
-      "ModSet"  "\t3D Modelling setup\n"
-      "\n"
-    );END strcat
-  );END alert
-
-  ; v0.0 - 2017.02.27 - First issue
-  ; Author: David Torralban
-  ; Last revision: 2017.02.27
 )
 (defun DT:SplitLevelDifference (textLevel)
   ; Return a pair list with the level and the difference, both as strings
