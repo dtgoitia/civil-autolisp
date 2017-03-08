@@ -1867,6 +1867,17 @@
   ; Author: David Torralba
   ; Last revision: 2017-01-28
 )
+(defun c:ChangePrivateSewerGradient ()
+  ; Type and update selected private sewer label gradient
+  (DT:ChangePrivateSewerGradient
+    (car (entsel "\nSelect sewer label: "))
+    (getint "\nChange label \nupdate gradient to 1/")
+  )
+
+  ; v0.0 - 2017.03.07 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.07
+)
 (defun DT:ChangePrivateSewerGradient ( ent_name gradient / targetGradientText targetGradientTextPosition)
 	; Change sewer label gradient to "gradient"
 	; ent_name [ename] - Text entity (sewer label)
