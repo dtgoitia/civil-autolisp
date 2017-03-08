@@ -2177,6 +2177,19 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.08
 )
+(defun c:AvailableSets()
+(alert
+  "Available sets:\n
+      1\tEngSet
+      2\tWorkSet
+      3\tSetSet
+      4\tModSet
+      5\tTitSet\n
+")
+  ; v0.0 - 2017.03.08 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.08
+)
 (defun DT:CreateWorkingDrawingLayers ()
   ; Create layers for Working Drawings blocks
   (command "-layer" "m" "e-work-services" "c" "9" "" "")
