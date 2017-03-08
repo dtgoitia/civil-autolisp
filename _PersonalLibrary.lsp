@@ -2428,17 +2428,21 @@
             ( (and
                 (= 2 (car  gr))
                 (or
-                  (= 43 (cadr gr))
-                  (= 45 (cadr gr))
+                  (= 43 (cadr gr))  ;+
+                  (= 45 (cadr gr))  ;-
+                  (= 49 (cadr gr))  ;1
+                  (= 50 (cadr gr))  ;2
                 );END or
               );END and
               ; Calculate level value
               (setq
                 value
-                  (if (= 43 (cadr gr))
-                    (LM:rtos (+ (atof value) 0.05) 2 2)
-                    (LM:rtos (- (atof value) 0.05) 2 2)
-                  );END if
+                  (cond
+                    ((= 43 (cadr gr)) (LM:rtos (+ (atof value) 0.05) 2 2))
+                    ((= 45 (cadr gr)) (LM:rtos (- (atof value) 0.05) 2 2))
+                    ((= 49 (cadr gr)) (LM:rtos (+ (atof value) 0.05) 2 2))
+                    ((= 50 (cadr gr)) (LM:rtos (- (atof value) 0.05) 2 2))
+                  );END cond
               )
               ; Update text value
               (vla-put-textstring (vlax-ename->vla-object ent_name) (strcat "%%U" value))
@@ -2454,7 +2458,8 @@
   );END if
   (princ)
 
+  ; v0.1 - 2017.03.08 - 1 and 2 keys added as + and - respectively
   ; v0.0 - 2017.03.06 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.06
+  ; Last revision: 2017.03.08
 )
