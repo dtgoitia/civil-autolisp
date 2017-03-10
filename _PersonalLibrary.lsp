@@ -2053,7 +2053,12 @@
   (defun c:33() (princ "\nSDIP: ") (c:SDIP))
   (defun c:4() (DT:AddSubstractPlotLevel (car (entsel "\nSelect level: ")) ))
   (defun c:pa()(fbi "Parking-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
-  (defun c:ra()(fbi "Road-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
+  (defun c:ra()(fbi "Road-Fall-Arrow")
+    (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow")
+    (vlax-put-property (vlax-ename->vla-object (entlast)) 'XScaleFactor 0.7)
+    (vlax-put-property (vlax-ename->vla-object (entlast)) 'YScaleFactor 0.7)
+    (vlax-put-property (vlax-ename->vla-object (entlast)) 'ZScaleFactor 0.7)
+  )
   (defun c:oo()(setvar "osmode" 4))
   (defun c:ne()(setvar "osmode" 512))
   (defun c:11 ( / targetLevel ent_name )
@@ -2104,10 +2109,11 @@
   "))
   (princ "\nENGINEERING SETUP COMPLETED")(princ)
 
+  ; v0.2 - 2017.03.09 - scale management added to c:ra
   ; v0.1 - 2017.02.21 - Cheatsheet added
   ; v0.0 - 2017.01.29 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.02.21
+  ; Last revision: 2017.03.09
 )
 (defun c:WorkSet ()
   ; Working Drawing setup
