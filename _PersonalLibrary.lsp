@@ -2507,3 +2507,47 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.08
 )
+(defun DT:AddLayer ( layerName layerColor layerLineType / layerObject )
+  ; Create a new layer and set name, color and linetype.
+  (if (and layerName layerColor)
+    (if
+      (and
+        (= 'str (type layerName))
+        (= 'int (type layerColor))
+        (= 'str (type layerLineType))
+      )
+      (if (not (tblsearch "layer" layerName))
+        (progn
+          (setq layerObject (vla-add (vla-Get-Layers (vla-get-ActiveDocument (vlax-get-Acad-Object))) layerName) )
+          (vla-put-color layerObject layerColor)
+          (if (tblsearch "ltype" layerLineType)
+            (vla-put-linetype layerObject layerLineType)
+            (progn
+              (princ
+                (strcat
+                  "\nLinetype \"" layerLineType "\" not found. Layer \"" layerName "\" linetype left as default."
+                );END strcat
+              );END princ
+              (princ)
+            );END progn
+          );END if
+        );END progn
+        (progn (princ (strcat "\nLayer \"" layerName "\" already exists. Command aborted.")) (princ) )
+      );END if
+      (cond
+        ((/= 'str (type layerName))     (princ "\nERROR @ DT:AddLayer : layerName is not a string\n")      (princ) )
+        ((/= 'int (type layerColor))    (princ "\nERROR @ DT:AddLayer : layerColor is not an integer\n")   (princ) )
+        ((/= 'str (type layerLineType)) (princ "\nERROR @ DT:AddLayer : layerLineType is not an integer\n")(princ) )
+      );END cond
+    );END if
+    (cond
+      ((not layerName)     (princ "\nERROR @ DT:AddLayer : layerName=nil\n")    (princ) )
+      ((not layerColor)    (princ "\nERROR @ DT:AddLayer : layerColor=nil\n")   (princ) )
+      ((not layerLineType) (princ "\nERROR @ DT:AddLayer : layerLineType=nil\n")(princ) )
+    );END cond
+  );END if
+
+  ; v0.0 - 2017.03.10 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.10
+)
