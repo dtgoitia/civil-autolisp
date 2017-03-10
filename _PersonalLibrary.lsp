@@ -2467,7 +2467,7 @@
       (progn
         (setq value (substr (vlax-get-property (vlax-ename->vla-object ent_name) 'TextString) 4) )
         (princ (strcat "\nPress +/- to add/substract 50mm: <" value "m> "))
-        (while (setq gr (grread))
+        (while (setq gr (grread nil 8))
           (cond
             ( (and
                 (= 2 (car  gr))
@@ -2502,10 +2502,11 @@
   );END if
   (princ)
 
+  ; v0.2 - 2017.03.10 - Console break message when pressing Esc removed
   ; v0.1 - 2017.03.08 - 1 and 2 keys added as + and - respectively
   ; v0.0 - 2017.03.06 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.08
+  ; Last revision: 2017.03.10
 )
 (defun DT:AddLayer ( layerName layerColor layerLineType / layerObject )
   ; Create a new layer and set name, color and linetype.
