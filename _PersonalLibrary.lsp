@@ -2030,20 +2030,23 @@
   ; Show available setups
   (alert
     (strcat
-      "\NAVAILABLE SETUPS\n\n"
+      "\nAVAILABLE SETUPS\n\n"
       "EngSet"  "\tEgineering setup\n"
       "WorkSet" "\tWorking Drawings setup\n"
       "SetSet"  "\tSetting Out setup\n"
       "ModSet"  "\t3D Modelling setup\n"
       "TitSet"  "\tTitle Block setup\n"
+      "ArchSet" "\tEngArch setup\n"
       "\n"
     );END strcat
   );END alert
 
+  ; v0.2 - 2017.03.10 - EngArch setup added
+  ;                   - Minor printing mistake fixed
   ; v0.1 - 2017.03.08 - Title Block setup added
   ; v0.0 - 2017.02.27 - First issue
   ; Author: David Torralban
-  ; Last revision: 2017.03.08
+  ; Last revision: 2017.03.10
 )
 (defun c:EngSet ()
   ; Engineering setup
@@ -2212,6 +2215,87 @@
   ; v0.0 - 2017.03.08 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.03.08
+)
+(defun c:ArchSet ()
+  ; EngArch setup
+  ; TODO
+  ; (defun INSERT EMPTY LEVEL (%%U00.00) in all primary accesses. Same in secondary accesses  but copying 3m away too. All with readability angles)
+  (defun c:1 ( / p )
+    ; Insert front door block 1, and rotate 90 degree.
+    (command "-insert" "Part-m-primary-0" (setq p (getpoint)) 1 1 pause)
+    (command "rotate" (entlast) "" p -90)
+
+    ; v0.1 - 2017.03.10 - Moved to personal library
+    ;                   - Local variable management fixed
+    ; v0.0 - 2017.01.?? - First issue
+    ; Author: David Torralba
+    ; Last revision: 2017.03.10
+  )
+  (defun c:2 ( / p )
+    ; Insert rear door block, and rotate 90 degree.
+    (command "-insert" "Part-m-secondary" (setq p (getpoint)) 1 1 pause)
+    (command "rotate" (entlast) "" p -90)
+
+    ; v0.1 - 2017.03.10 - Moved to personal library
+    ;                   - Local variable management fixed
+    ; v0.0 - 2017.01.?? - First issue
+    ; Author: David Torralba
+    ; Last revision: 2017.03.10
+  )
+  (defun c:22 ( / p1 p1a p1b )
+    ; Insert rear door block between two points, and rotate 90 degree.
+    (setvar "osmode" 513)
+    (setq
+     p1a (getpoint "\nPoint 1a:")
+     p1b (getpoint "\nPoint 1b:")
+     p1 (polar p1a (angle p1a p1b) (* 0.5 (distance p1a p1b)) )
+    )
+    (setvar "osmode" 0)
+    ;(command "-insert" "Part-m-secondary" p1 1 1 (* (/ 180 pi) (angle p1a p1b)) )
+    (command "-insert" "Part-m-secondary" p1 1 1 (* (/ 180 pi) (+ (angle p1a p1b) (* -0.5 pi) ) -1 ) )
+    (command "rotate" (entlast) "" p1 "-90")
+    (setvar "osmode" 513)
+
+    ; v0.1 - 2017.03.10 - Moved to personal library
+    ; v0.0 - 2017.01.?? - First issue
+    ; Author: David Torralba
+    ; Last revision: 2017.03.10
+  )
+  (defun c:11()
+    ; Move part-m in group
+    (princ "\nPART-M BLOCKS WILL BE FILTERED\nSelect part-m to move: ")
+    (command "._UNDO" "_Begin")
+    (foreach a (ssnamex (ssget))
+      (if (= 'ename (type (cadr a)))
+        (if (= "INSERT" (cdr (assoc 0 (entget (cadr a)))) )
+          (DT:OffsetPartM (cadr a))
+        );END if
+      );END if
+    );END foreach
+    (command "._UNDO" "_End")
+
+    ; v0.1 - 2017.03.10 - Moved to personal library
+    ; v0.0 - 2017.01.?? - First issue
+    ; Author: David Torralba
+    ; Last revision: 2017.03.10
+  )
+  (defun c:cheatsheet() (alert
+    "ENGARCH CHEATSHEET\n
+    Add accesses:
+        1\tPrimary
+        11\tPush in group
+        2\tSecondary
+        22\tSecondary mid\n
+    Add levels:
+        11\tFFL TODO
+        2\tplot TODO
+        22\taccesses TODO\n
+  "))
+  (princ "\ENGARCH SETUP COMPLETED")(princ)
+
+  ; v0.0 - 2017.03.10 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.10
 )
 (defun DT:CreateWorkingDrawingLayers ()
   ; Create layers for Working Drawings blocks
