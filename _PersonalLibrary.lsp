@@ -2297,6 +2297,42 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.10
 )
+(defun DT:OffsetPartM ( ent_name / VL_ent_name p p0 p1 ang )
+  ; Move Part M blocks 0.302 toward the inner part of the building (= BlockRotation - 90º)
+  (if ent_name
+    (if (= 'ename (type ent_name))
+      (if
+        (or
+          (= "Part-m-primary-0"   (LM:effectivename (vlax-ename->vla-object ent_name)))
+          (= "Part-m-primary-180" (LM:effectivename (vlax-ename->vla-object ent_name)))
+          (= "Part-m-secondary"   (LM:effectivename (vlax-ename->vla-object ent_name)))
+        );END or
+        (progn
+          (setq oldosmode (getvar "osmode"))
+          (setvar "osmode" 0)
+          (setq
+            VL_ent_name (vlax-ename->vla-object ent_name)
+            ang (vlax-get-property VL_ent_name 'Rotation)
+            p (vlax-safearray->list (vlax-variant-value (vlax-get-property VL_ent_name 'InsertionPoint)))
+            p0 (list (car p) (cadr p) 0.0)
+            p1 (polar p0 (- ang (* -0.5 pi )) 0.302)
+            ;p1 (polar p0 (- ang (* -0.5 pi )) 0.215)
+          )
+          (command "move" ent_name "" p0 p1)
+          (setvar "osmode" oldosmode)
+        );END progn
+      );END if
+      (progn (princ "\nERROR @ DT:OffsetPartM : ent_name is not an ename\n")(princ) )
+    );END if
+    (progn (princ "\nERROR @ DT:OffsetPartM : ent_name=nil\n")(princ) )
+  );END if
+
+  ; v0.1 - 2017.03.10 - Moved to personal library
+  ;                   - Input parameter management added
+  ; v0.0 - 2017.01.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.10
+)
 (defun DT:CreateWorkingDrawingLayers ()
   ; Create layers for Working Drawings blocks
   (command "-layer" "m" "e-work-services" "c" "9" "" "")
