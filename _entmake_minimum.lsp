@@ -29,6 +29,13 @@
     )
   );END append
 )
+(defun Draw-Polyline (lst)
+  ; IS NOT LWPOLYLINE!!!
+  (entmakex (list (cons 0 "POLYLINE") (cons 10 '(0 0 0)) ))
+  (mapcar '(lambda (pt) (entmake (list (cons 0 "VERTEX") (cons 10 pt))) ) lst )
+  (entmakex (list (cons 0 "SEQEND"))
+  );END mapcar
+)
 
 ; INSERT
 (entmakex
