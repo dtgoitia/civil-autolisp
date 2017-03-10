@@ -57,6 +57,8 @@
 (defun c:n() (command "_.NCOPY" pause "" "" ""))
 (defun c:xu() (command "_-xref" "u" "*")(alert "Xref Unload finished!")(princ)) ;Unload all Xrefs
 (defun c:xr() (command "_-xref" "r" "*")(alert "Xref Reload finished!")(princ)) ;Reload all Xrefs
+(defun c:t () (command "_.textedit" "M" "S" pause))
+(defun c:tt () (command "_.textedit" "M" "M" pause))
 (defun c:nt( / oldtextstyle olderror pt)
   (setq
     oldtextstyle (getvar "textstyle")
