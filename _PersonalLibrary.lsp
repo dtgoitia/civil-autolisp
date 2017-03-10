@@ -782,7 +782,7 @@
 	; 	gradient [real] - Slope, being the slope 1/gradient
 
 	; SAVE SETTINGS
-	(save_environment (list "nomutt"))
+	(save_environment (list "nomutt" "osmode"))
 
 	; CHANGE SETTINGS
 	(setvar "nomutt" 1)
@@ -821,6 +821,7 @@
 	(princ (strcat "\nRequested gradient: 1/" (LM:rtos SDIPgradient 2 0) "\n"))
 
 	; Ask user to select private manhole label to be updated:
+  (setvar "osmode" 0)
 	(setq
     targetPoint (getpoint (strcat "\nLevel = " (LM:rtos (nth 2 p2) 2 2) "m\nSelect target: "))
   )
@@ -897,13 +898,14 @@
 		gradient	; Real gradient
 	);END list
 
+  ; v0.2 - 2017.03.10 - Turn off OSnap when selecting target labels to be updated
   ; v0.2 - 2017.01.30 - Gradient to absolute value
   ; v0.1 - 2017.01.28 - DT:ChangePrivateSewerGradient implementation
   ;                   - Code anotation and tidy up
 	;										- CommandLine messages suppressed
   ; v0.0 - 2017.01.23 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.01.30
+  ; Last revision: 2017.03.10
 )
 (defun c:garden_gradient (
                           /
@@ -2057,6 +2059,7 @@
   (defun c:3() (princ "\nSDIPforPrivateDrainage: ") (c:SDIPforPrivateDrainage))
   (defun c:33() (princ "\nSDIP: ") (c:SDIP))
   (defun c:4() (DT:AddSubstractPlotLevel (car (entsel "\nSelect level: ")) ))
+  (defun c:44() (c:ChangePrivateSewerGradient))
   (defun c:pa()(fbi "Parking-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
   (defun c:ra()(fbi "Road-Fall-Arrow")
     (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow")
@@ -2104,7 +2107,8 @@
         22\tFoul-FFL
         3\tSDIP private drainage
         33\tSDIP
-        4\tPlotLevel +/-50mm\n
+        4\tPlotLevel +/-50mm
+        44\tChange Private Sewer Gradient\n
     Create:
         pa\tparking arrow
         ra\troad arrow\n
@@ -2114,11 +2118,12 @@
   "))
   (princ "\nENGINEERING SETUP COMPLETED")(princ)
 
+  ; v0.3 - 2017.03.10 - Change Private Sewer Gradient added
   ; v0.2 - 2017.03.09 - scale management added to c:ra
   ; v0.1 - 2017.02.21 - Cheatsheet added
   ; v0.0 - 2017.01.29 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.09
+  ; Last revision: 2017.03.10
 )
 (defun c:WorkSet ()
   ; Working Drawing setup
