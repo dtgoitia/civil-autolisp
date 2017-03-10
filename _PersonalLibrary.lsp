@@ -2551,3 +2551,34 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.10
 )
+(defun DT:GetPointList ( msg / p pointList scapeVariable )
+  ; Return a list with selected points, nil if none
+  (if (and msg (/= 'str (type msg)))
+    (progn
+      (princ "\nERROR @ DT:GetPointList : msg is not a string\n")
+      (princ)
+    );END progn
+    (while (not scapeVariable)
+      (if (and msg (= 'str (type msg)))
+        (setq p (getpoint msg))
+        (setq p (getpoint "Select point: "))
+      );END if
+      (if p
+        (if (setq pointList (append pointList (list p)))
+          (princ
+            (strcat
+              "\n" (itoa (length pointList)) " " (if (= 1 (length pointList)) "point" "points") " stored. "
+            );END strcat
+          );END princ
+        );END if
+        (setq scapeVariable 1)
+      );END if
+    );END while
+  );END if
+
+  (if pointList pointList nil)
+
+  ; v0.0 - 2017.03.10 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.10
+)
