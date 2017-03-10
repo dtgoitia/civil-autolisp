@@ -2227,13 +2227,19 @@
   ; EngArch setup
   ; TODO
   ; (defun INSERT EMPTY LEVEL (%%U00.00) in all primary accesses. Same in secondary accesses  but copying 3m away too. All with readability angles)
-  (defun c:1 ( / p )
+  (defun c:1 ( / p1 p2 )
     ; Insert front door block 1, and rotate 90 degree.
-    (command "-insert" "Part-m-primary-0" (setq p (getpoint)) 1 1 pause)
-    (command "rotate" (entlast) "" p -90)
+    (command "-insert" "Part-m-primary-0" (setq p1 (getpoint)) 1 1 (setq p2 (getpoint)) ^C ^C)
+    (command "rotate" (entlast) "" p1 -90)
+    (command "-insert" "e-part_FLAT_AREA" p1 1 1 p2 ^C ^C)
+    (if (not (tblsearch "layer" "e-part-m-flat-area"))
+      (DT:AddLayer "e-part-m-flat-area" 251 "")
+    );END if
+    (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-part-m-flat-area")
 
     ; v0.1 - 2017.03.10 - Moved to personal library
     ;                   - Local variable management fixed
+    ;                   - Layer management added
     ; v0.0 - 2017.01.?? - First issue
     ; Author: David Torralba
     ; Last revision: 2017.03.10
