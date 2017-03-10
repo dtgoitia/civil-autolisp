@@ -232,30 +232,6 @@
   (princ)
 )
 (defun c:1()
-  ; Insert front door block 1, and rotate 90 degree.
-  (command "-insert" "Part-m-primary-0" (setq p1 (getpoint "\nPunto 1: ")) 1 1 pause)
-  (command "rotate" (entlast) "" p1 "-90")
-)
-(defun c:2()
-  ; Insert rear door block, and rotate 90 degree.
-  (command "-insert" "Part-m-secondary" (setq p1 (getpoint "\nPunto 1: ")) 1 1 pause)
-  (command "rotate" (entlast) "" p1 "-90")
-)
-(defun c:3( / p1 p1a p1b)
-  ; Insert rear door block between two points, and rotate 90 degree.
-  (setvar "osmode" 513)
-  (setq
-   p1a (getpoint "\nPoint 1a:")
-   p1b (getpoint "\nPoint 1b:")
-   p1 (polar p1a (angle p1a p1b) (* 0.5 (distance p1a p1b)) )
-  )
-  (setvar "osmode" 0)
-  ;(command "-insert" "Part-m-secondary" p1 1 1 (* (/ 180 pi) (angle p1a p1b)) )
-  (command "-insert" "Part-m-secondary" p1 1 1 (* (/ 180 pi) (+ (angle p1a p1b) (* -0.5 pi) ) -1 ) )
-  (command "rotate" (entlast) "" p1 "-90")
-  (setvar "osmode" 513)
-)
-(defun c:1()
 ; Draw kerbing polyline with 0.2 width and 150 color
   (princ "\nPOLYLINE. Width 0.2 and color 150")
   (setvar "PLINEWID" 0.2)
@@ -427,30 +403,6 @@
     );END if
   );END foreach
   (command "._UNDO" "_End")
-)
-(defun DT:OffsetPartM( ent_name / VL_ent_name p p0 p1 ang)
-  ; Move Part M blocks 0.302 toward the inner part of the building (= BlockRotation - 90º)
-  (if
-    (or
-      (= "Part-m-primary-0"   (LM:effectivename (vlax-ename->vla-object ent_name)))
-      (= "Part-m-primary-180" (LM:effectivename (vlax-ename->vla-object ent_name)))
-      (= "Part-m-secondary"   (LM:effectivename (vlax-ename->vla-object ent_name)))
-    );END or
-    (progn
-      (setq oldosmode (getvar "osmode"))
-      (setvar "osmode" 0)
-      (setq
-        VL_ent_name (vlax-ename->vla-object ent_name)
-        ang (vlax-get-property VL_ent_name 'Rotation)
-        p (vlax-safearray->list (vlax-variant-value (vlax-get-property VL_ent_name 'InsertionPoint)))
-        p0 (list (car p) (cadr p) 0.0)
-        p1 (polar p0 (- ang (* -0.5 pi )) 0.302)
-        ;p1 (polar p0 (- ang (* -0.5 pi )) 0.215)
-      )
-      (command "move" ent_name "" p0 p1)
-      (setvar "osmode" oldosmode)
-    );END progn
-  );END if
 )
 (defun c:7( / VL_ent_name LastParam x1 xL arr larr newlarr)
   ; Eliminar vertices duplicados (solo mira primer y ultimo vertice)
@@ -3202,4 +3154,101 @@
   ; v0.0 - 2017.02.15 - First issue
   ; Author: David Torralban
   ; Last revision: 2017.02.15
+)
+(defun c:1( / ss )
+  ; Correct all text angle to be readable within layer "LABELS"
+  (princ "\nUPDATE CONTOUR ANNOTATION TEXT READABILITY ANGLE\n")
+  (if (setq ss (ssget '(( 0 . "TEXT"))))
+    (foreach a (ssnamex ss)
+      (if (= 'ename (type (cadr a)))
+        (if
+          (and
+            (= "TEXT" (cdr (assoc 0 (entget (cadr a)))))
+            ;(= "LABELS" (cdr (assoc 8 (entget (cadr a)))))
+          );END and
+        (if
+          (/=
+            (cdr (assoc 50 (entget (cadr a)) ))
+            (setq ang (DT:ReadableTextAngle (cdr (assoc 50 (entget (cadr a)) )) ) )
+          )
+          (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Rotation ang )
+        );END if
+        );END if
+      );END if
+    );END foreach
+  );END if
+)
+(defun c:2() (c:KTF_LABELCNT))
+(defun c:1( / ss )
+  ; Move selected objects to layer
+  (while T
+    (if (setq ss (ssget))
+      (foreach a (ssnamex ss)
+        (if (= 'ename (type (cadr a)))
+          (if (= "INSERT" (cdr (assoc 0 (entget (cadr a)))))
+            (princ "\nBlock found and skipped.")
+            (vla-put-layer (vlax-ename->vla-object (cadr a)) "__BA-pond")
+          );END if
+        );END if
+      );END foreach
+    );END if
+    (setq ss nil)
+  );END while
+)
+; Create a layer with vla commands
+(vla-add
+  (vla-Get-Layers
+    (vla-get-ActiveDocument
+      (vlax-get-Acad-Object)
+    )
+  )
+  "newLayerName"
+)
+(defun c:zzz()
+  ; Mark in yellow the sewer labels with a gradient bigger than 80
+  ; TODO:
+  ; Build DT:GetSewerSize and mark just DN100 steeper than 1/80 and D150 steeper 1/150.
+  (foreach a (ssnamex (ssget))
+    (if (= 'ename (type (cadr a)))
+      (if (= "TEXT" (cdr (assoc 0 (entget (cadr a)))))
+        (if
+          (and
+            (DT:GetSewerGradient (cadr a))
+            (> (DT:GetSewerGradient (cadr a)) 75)
+          );END and
+          ; Change color to yellow
+          (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 2)
+        )
+      );END if
+    );END if
+  )
+)
+(defun AT:InsertBlock (#Name #InsPt #XScale #YScale #Rot)
+  ;;; Insert block into drawing
+  ;;; #Name - name of block
+  ;;; #InsPt - insert point
+  ;;; #XScale - block X scale
+  ;;; #YScale - block Y scale
+  ;;; #Rot - block rotation
+  ;;; Alan J. Thompson, 04.21.09
+  (if (or (tblsearch "block" #Name)
+          (findfile #Name)
+      ) ;_ or
+    (vla-insertblock
+      ((if (eq (getvar "cvport") 1)
+         vla-get-paperspace
+         vla-get-modelspace
+       ) ;_ if
+        (vla-get-ActiveDocument
+          (vlax-get-acad-object)
+        ) ;_ vla-get-ActiveDocument
+      )
+      (vlax-3d-point #InsPt)
+      #Name
+      #XScale
+      #YScale
+      #XScale
+      #Rot
+    ) ;_ vla-insert-block
+  ) ;_ if
 )
