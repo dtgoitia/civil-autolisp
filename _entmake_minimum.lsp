@@ -29,6 +29,28 @@
     )
   );END append
 )
+(defun DrawLWPOLYLINE ( pointList )
+  ; pointList [list] - List of 3d or 2D points
+  (entmakex
+    (append
+      (list
+        (cons   0 "LWPOLYLINE")         ; Object type
+        (cons 100 "AcDbEntity")
+        (cons 100 "AcDbPolyline")
+        (cons  70 0)                  ; Open(0)/Closed(1)
+        (cons  90 (length pointList)) ; Number of vertices
+      )
+      (mapcar
+        '(lambda (pt) (cons 10 pt) )
+        pointList
+      );END mapcar
+    );END append
+  )
+
+  ; v0.0 - 2017.10.03 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.10.03
+)
 (defun Draw-Polyline (lst)
   ; IS NOT LWPOLYLINE!!!
   (entmakex (list (cons 0 "POLYLINE") (cons 10 '(0 0 0)) ))
