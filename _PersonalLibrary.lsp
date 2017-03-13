@@ -102,11 +102,13 @@
   (setvar "osmode" 512)
   (setvar "cmdecho" 0)
 
-  (setq
-    ent_name (car (entsel "\nSelect object to rotate: "))
-  );END setq
-  (DT:R2 ent_name (getpoint "\nSelect point 1: ") (getpoint "\nSelect point 2: ") )
-  (command "_.move" ent_name "" "_non" (cadr (grread 't)) "_non" pause)
+  (if (setq ent_name (car (entsel "\nSelect object to rotate: ")))
+    (progn
+      (DT:R2 ent_name (getpoint "\nSelect point 1: ") (getpoint "\nSelect point 2: ") )
+      (command "_.move" ent_name "" "_non" (cadr (grread 't)) "_non" pause)
+    );END progn
+    (princ "nothing selected.")
+  );END if
 
   ; RESTORE SETTINGS
   (restore_environment)
