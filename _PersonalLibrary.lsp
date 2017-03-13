@@ -90,9 +90,10 @@
 ); Add note
 (defun c:pp()(command "_.publish"))
 (defun c:las() (command "_.layerstate")(princ))
-(defun c:rrr() (princ "\nRegenerating...") (command "_.regenall") (princ " done.")(princ))
 (defun c:os( / x ) (if (setq x (getint (strcat "\nObject Snap Mode <" (itoa (getvar "osmode")) ">: "))) (setvar "osmode" x) (princ "*Cancel*"))(princ))
-(defun c:r () (c:RTM))
+(defun c:r () (princ "\nSingle rotate:") (c:RTM))
+(defun c:rr () (princ "\nMultiple rotate:") (c:RTM))
+(defun c:rrr() (princ "\nRegenerating...") (command "_.regenall") (princ " done.")(princ))
 (defun c:RTM ()
 	; RT and move together
 	(c:RT)
