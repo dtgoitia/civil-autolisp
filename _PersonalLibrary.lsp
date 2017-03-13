@@ -2818,4 +2818,7 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.10
 )
-(defun c:rwp() (DT:ib "e-psd-rwp" nil nil 4))
+(defun c:rwp()
+  (DT:ib "e-psd-rwp" nil nil 4)
+  (command "_.pline" "_non" (getvar "lastpoint") "_nea" pause "")
+)
