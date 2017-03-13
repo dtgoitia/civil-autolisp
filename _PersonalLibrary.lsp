@@ -90,6 +90,21 @@
 ); Add note
 (defun c:pp()(command "_.publish"))
 (defun c:las() (command "_.layerstate")(princ))
+(defun c:zz ( / ss )
+  ; Change selected entities' color to blue
+  (princ "\nMarking in blue:")
+  (if (setq ss (ssget))
+    (foreach a (ssnamex ss)
+      (if (= 'ename (type (cadr a)))
+        (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 5)
+      );END if
+    );END foreach
+  );END if
+
+  ; v0.0 - 2017.03.13 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.13
+)
 (defun c:os( / x ) (if (setq x (getint (strcat "\nObject Snap Mode <" (itoa (getvar "osmode")) ">: "))) (setvar "osmode" x) (princ "*Cancel*"))(princ))
 (defun c:r ( / ent_name )
   ; Rotate a single entity given 2 points
@@ -1941,16 +1956,32 @@
   ; Author: David Torralba
   ; Last revision: 2017-01-28
 )
-(defun c:ChangePrivateSewerGradient ()
+(defun c:ChangePrivateSewerGradient ( / ent_name ans )
   ; Type and update selected private sewer label gradient
+  (setq ent_name (car (entsel "\nSelect sewer label: ")))
+
+  ; Ask user gradient
+  (if PrivateSewerGradient
+    ; If there is a gradient previously set offer it as default:
+    (progn
+      (setq ans (getint (strcat "\nChange label \nupdate gradient to 1/<" (LM:rtos PrivateSewerGradient 2 0) ">: ") ) )
+      (if ans (setq PrivateSewerGradient ans));END if
+    );END progn
+    ; If there is not any gradient previously set force the user introduce it:
+    (while (not PrivateSewerGradient)
+      (setq PrivateSewerGradient (getint (strcat "\nChange label \nupdate gradient to 1/")))
+    );END while
+  );END if
+
   (DT:ChangePrivateSewerGradient
-    (car (entsel "\nSelect sewer label: "))
-    (getint "\nChange label \nupdate gradient to 1/")
+    ent_name
+    PrivateSewerGradient
   )
 
+  ; v0.0 - 2017.03.13 - Offer SDIPgradient as default gradient
   ; v0.0 - 2017.03.07 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.07
+  ; Last revision: 2017.03.13
 )
 (defun DT:ChangePrivateSewerGradient ( ent_name gradient / targetGradientText targetGradientTextPosition)
 	; Change sewer label gradient to "gradient"
