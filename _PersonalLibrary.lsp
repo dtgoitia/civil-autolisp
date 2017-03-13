@@ -91,7 +91,74 @@
 (defun c:pp()(command "_.publish"))
 (defun c:las() (command "_.layerstate")(princ))
 (defun c:os( / x ) (if (setq x (getint (strcat "\nObject Snap Mode <" (itoa (getvar "osmode")) ">: "))) (setvar "osmode" x) (princ "*Cancel*"))(princ))
-(defun c:r () (princ "\nSingle rotate:") (c:RTM))
+(defun c:r ( / ent_name )
+  ; Rotate a single entity given 2 points
+  (princ "\nSingle rotate:")
+
+  ; SAVE SETTINGS
+  (save_environment (list "osmode" "cmdecho"))
+
+  ; CHANGE "osmode" and "cmdecho"
+  (setvar "osmode" 512)
+  (setvar "cmdecho" 0)
+
+  (setq
+    ent_name (car (entsel "\nSelect object to rotate: "))
+  );END setq
+  (DT:R2 ent_name (getpoint "\nSelect point 1: ") (getpoint "\nSelect point 2: ") )
+  (command "_.move" ent_name "" "_non" (cadr (grread 't)) "_non" pause)
+
+  ; RESTORE SETTINGS
+  (restore_environment)
+
+  (princ)
+
+  ; v0.0 - 2017-03.13 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017-03.13
+)
+(defun DT:R2 ( ent_name p1 p2 )
+  ; Align ent_name to given two points
+  ; ent_name1 [ename] - Object to align
+  ; p1 [list] - Reference point 1
+  ; p2 [list] - Reference point 2
+  ; If ent_name is a text, rotation readability angle will be considered
+
+  (if (and ent_name p1 p2)
+    (if (and (= 'ename (type ent_name)) (= 'list (type p1)) (= 'list (type p2)))
+      (progn
+        (setq ang (angle p1 p2))
+
+        ; If text, correct angle to readability
+        (if
+          (and
+            (if DT:ReadableTextAngle T nil)
+            (or
+              (= "TEXT" (cdr (assoc 0 (entget ent_name)) ) )
+              (= "MTEXT" (cdr (assoc 0 (entget ent_name)) ) )
+            );END or
+          );END and
+          (setq ang (DT:ReadableTextAngle ang))
+        );END if
+        (vlax-put-property (vlax-ename->vla-object ent_name) 'Rotation ang )
+      );END progn
+      (cond
+        ((/= 'ename (type ent_name)) (princ "\nERROR @ DT:R2 > ent_name is not an ename")(princ))
+        ((/= 'list  (type p1       )) (princ "\nERROR @ DT:R2 > p1 is not a list")         (princ))
+        ((/= 'list  (type p2       )) (princ "\nERROR @ DT:R2 > p2 is not a list")         (princ))
+      );END cond
+    );END if
+    (cond
+      ((not ent_name) (princ "\nERROR @ DT:R2 > ent_name=nil")(princ))
+      ((not p1      ) (princ "\nERROR @ DT:R2 > p1=nil")      (princ))
+      ((not p2      ) (princ "\nERROR @ DT:R2 > p2=nil")      (princ))
+    );END cond
+  );END if
+
+  ; v0.0 - 2017-03.13 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017-03.13
+)
 (defun c:rr () (princ "\nMultiple rotate:") (c:RTM))
 (defun c:rrr() (princ "\nRegenerating...") (command "_.regenall") (princ " done.")(princ))
 (defun c:RTM ()
