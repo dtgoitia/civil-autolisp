@@ -105,7 +105,7 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.13
 )
-(defun c:os( / x ) (if (setq x (getint (strcat "\nObject Snap Mode <" (itoa (getvar "osmode")) ">: "))) (setvar "osmode" x) (princ "*Cancel*"))(princ))
+(defun c:o ( / x ) (if (setq x (getint (strcat "\nObject Snap Mode <" (itoa (getvar "osmode")) ">: "))) (setvar "osmode" x) (princ "*Cancel*"))(princ))
 (defun c:r ( / ent_name )
   ; Rotate a single entity given 2 points
   (princ "\nSingle rotate:")
