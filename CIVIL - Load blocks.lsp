@@ -79,7 +79,7 @@
         ; Fixed rotation, no user input
         ( (and (/= rot nil) (/= rot "P"))
           (princ "\nrot")
-          (command "-insert" blk pause 1 1 rot)
+          (command "-insert" blk pause 1 1 0)
         )
       );END cond
     );END progn
@@ -96,6 +96,7 @@
   (setvar "osmode" oldosmode)
   (princ)
 
+  ; v0.5 - 2017.03.13 - Minor bug fixed when rot = nil
   ; v0.4 - 2016.12.02 - Function argument interpretation updated
   ;                   - System variable managment updated
   ; v0.3 - 2016.11.30 - Check if the block exists before you insert it
@@ -103,7 +104,7 @@
   ; v0.1 - 2016.04.15 - ATTDIA and ATTREQ system variable control added
   ; v0.0 - 2016.04.14 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.12.02
+  ; Last revision: 2017.03.13
 )
 ;
 ;---------------------------------------------------------------------------
