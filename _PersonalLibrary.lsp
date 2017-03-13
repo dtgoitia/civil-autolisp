@@ -2818,3 +2818,4 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.10
 )
+(defun c:rwp() (DT:ib "e-psd-rwp" nil nil 4))
