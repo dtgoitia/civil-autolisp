@@ -2306,6 +2306,10 @@
     ; Set current date to revision box
     (LM:vl-setattributevalue (vlax-ename->vla-object (car (entsel "\nSelect revision\nbox to set current date: "))) "DATE" (PrintSupersedDate))
   )
+  (defun c:oo()
+    ; Set OSMODE to end + per
+    (setvar "osmode" 129)
+  )
   (defun c:cheatsheet() (alert
     "TITLE BLOCK CHEATSHEET\n
     Revision box date:
@@ -2317,9 +2321,10 @@
   "))
   (princ "\nTITLE BLOCK SETUP COMPLETED")(princ)
 
+  ; v0.0 - 2017.03.14 - Custom OSMODE added
   ; v0.0 - 2017.03.08 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.08
+  ; Last revision: 2017.03.14
 )
 (defun c:ArchSet ()
   ; EngArch setup
