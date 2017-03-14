@@ -321,20 +321,16 @@
   (princ "\nSelet objects to set ByLayer:")
   (foreach a (ssnamex (ssget))
     (if (= 'ename (type (cadr a)))
-      (if (= "INSERT" (cdr (assoc 0 (entget (cadr a)))))
-        (if (= 0 (cdr (assoc 70 (tblsearch "BLOCK" (cdr (assoc 2 (entget (cadr a)))) ))))
-          (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 256)
-        );END if
-        (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 256)
-      );END if
+      (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 256)
     );END if1
   );END foreach
   (princ)
 
-  ; v0.0 - 2016.11.14 - Xref's filtered and excluded to speed up command
+  ; v0.2 - 2017.03.14 - Xref' filter removed, pointless
+  ; v0.1 - 2016.11.14 - Xref's filtered and excluded to speed up command
   ; v0.0 - 2016.11.11 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.11.14
+  ; Last revision: 2017.03.14
 )
 (defun c:c0()
   ; Shortcut for copybase with origin (0 0 0) as reference coordinates
