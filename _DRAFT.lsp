@@ -3252,3 +3252,50 @@
     ) ;_ vla-insert-block
   ) ;_ if
 )
+(defun c:ttr ( / obj lay)
+  ; Make transparent nested object real layer in the current viewport
+  (if
+    (and
+      (/= "Model" (getvar "CTAB"  ) )
+      (<  1       (getvar "CVPORT") )
+    );END and
+    (progn
+      (if (setq obj (car (nentsel "\nSelect object to grey layer out: ")))
+        (mapcar
+          '(lambda (x)
+            (if (= (car x) 8)
+              (progn
+                (princ "\nDXF Layer = ")
+                (princ (cdr x))
+                (setq lay (cdr x))
+              ); END progn
+            )
+          )
+          (entget obj '("*"))
+        )
+      ); END if
+      (if (not lay)
+        (princ "\nLayer name has not been saved at lay variable. Take a look to the code.")
+        (if
+          (or
+            (= 1 (cdr (assoc 62 (tblsearch "layer" lay))))
+            (= 10 (cdr (assoc 62 (tblsearch "layer" lay))))
+            (= 240 (cdr (assoc 62 (tblsearch "layer" lay))))
+          );END or
+          (command "vplayer" "TR" 40 lay "C" "")
+          (command "vplayer" "TR" 70 lay "C" "")
+        );END if
+      );END if
+
+    );END progn true
+    (progn
+      (alert "You are not in a viewport.")
+      (quit)
+    );END progn false
+  );END if
+  (princ)
+
+  ; v0.0 - 2017.03.16
+  ; Author: David Torralba
+  ; Last revision: 2017.03.16
+)
