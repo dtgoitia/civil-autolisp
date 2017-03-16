@@ -2134,6 +2134,7 @@
     (strcat
       "\nAVAILABLE SETUPS\n\n"
       "EngSet"  "\tEgineering setup\n"
+      "LongSet" "\tLongSection setup\n"
       "WorkSet" "\tWorking Drawings setup\n"
       "SetSet"  "\tSetting Out setup\n"
       "ModSet"  "\t3D Modelling setup\n"
@@ -2143,12 +2144,13 @@
     );END strcat
   );END alert
 
+  ; v0.2 - 2017.03.16 - LongSet setup added
   ; v0.2 - 2017.03.10 - EngArch setup added
   ;                   - Minor printing mistake fixed
   ; v0.1 - 2017.03.08 - Title Block setup added
   ; v0.0 - 2017.02.27 - First issue
   ; Author: David Torralban
-  ; Last revision: 2017.03.10
+  ; Last revision: 2017.03.16
 )
 (defun c:EngSet ()
   ; Engineering setup
@@ -2222,6 +2224,22 @@
   ; v0.0 - 2017.01.29 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.03.10
+)
+(defun c:LongSet ()
+  ; Longitudinal Section setup
+  (defun c:1() (princ "\nGET MANHOLE DATA ACCORDING TO CENTRELINE: \n") (DT:ExtractManholeDataAlongCentrelines) )
+  (defun c:2() (princ "\nDRAW MANHOLES ONTO LONGITUDINAL SECTION: \n") (DT:DrawExtractedManholesOnLongSection) )
+  (defun c:cheatsheet() (alert
+    "LONGITUDINAL SECTION CHEATSHEET\n
+    Manholes to section:
+        1\tGet manholes
+        2\tDraw manholes\n
+  "))
+  (princ "\nLONGITUDINAL SECTION SETUP COMPLETED")(princ)
+
+  ; v0.0 - 2017.03.16 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.16
 )
 (defun c:WorkSet ()
   ; Working Drawing setup
