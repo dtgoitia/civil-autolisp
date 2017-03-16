@@ -2769,7 +2769,7 @@
 )
 (defun DT:AddLayer ( layerName layerColor layerLineType / layerObject )
   ; Create a new layer and set name, color and linetype.
-  (if (and layerName layerColor)
+  (if (and layerName layerColor layerLineType)
     (if
       (and
         (= 'str (type layerName))
@@ -2797,7 +2797,7 @@
       (cond
         ((/= 'str (type layerName))     (princ "\nERROR @ DT:AddLayer : layerName is not a string\n")      (princ) )
         ((/= 'int (type layerColor))    (princ "\nERROR @ DT:AddLayer : layerColor is not an integer\n")   (princ) )
-        ((/= 'str (type layerLineType)) (princ "\nERROR @ DT:AddLayer : layerLineType is not an integer\n")(princ) )
+        ((/= 'str (type layerLineType)) (princ "\nERROR @ DT:AddLayer : layerLineType is not a string\n")(princ) )
       );END cond
     );END if
     (cond
@@ -2807,9 +2807,10 @@
     );END cond
   );END if
 
+  ; v0.1 - 2017.03.16 - Type management fiexd for layerLineType
   ; v0.0 - 2017.03.10 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.10
+  ; Last revision: 2017.03.16
 )
 (defun DT:GetPointList ( msg / p pointList scapeVariable )
   ; Return a list with selected points, nil if none
