@@ -2227,17 +2227,22 @@
 )
 (defun c:LongSet ()
   ; Longitudinal Section setup
-  (defun c:1() (princ "\nGET MANHOLE DATA ACCORDING TO CENTRELINE: \n") (DT:ExtractManholeDataAlongCentrelines) )
-  (defun c:2() (princ "\nDRAW MANHOLES ONTO LONGITUDINAL SECTION: \n") (DT:DrawExtractedManholesOnLongSection) )
+  (defun c:1() (princ "\nFILLET: \n") (command "fillet") )
+  (defun c:11() (princ "\nExplode polyline: \n") (c:EP) )
+  (defun c:3() (princ "\nGET MANHOLE DATA ACCORDING TO CENTRELINE: \n") (DT:ExtractManholeDataAlongCentrelines) )
+  (defun c:4() (princ "\nDRAW MANHOLES ONTO LONGITUDINAL SECTION: \n") (DT:DrawExtractedManholesOnLongSection) )
   (defun c:cheatsheet() (alert
     "LONGITUDINAL SECTION CHEATSHEET\n
     Manholes to section:
-        1\tGet manholes
-        2\tDraw manholes\n
+        1\tFillet
+        11\tExplode polyline
+        3\tGet manholes
+        4\tDraw manholes\n
   "))
   (princ "\nLONGITUDINAL SECTION SETUP COMPLETED")(princ)
 
-  ; v0.0 - 2017.03.16 - First issue
+  ; v0.0 - 2017.03.16 - Add fillet and c:ep
+  ;                   - First issue
   ; Author: David Torralba
   ; Last revision: 2017.03.16
 )
