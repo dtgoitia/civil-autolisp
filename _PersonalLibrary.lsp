@@ -1467,6 +1467,26 @@
   ; Author: David Torralba
   ; Last revision: 2017.02.14
 )
+(defun c:tm()    (c:testmode))
+(defun c:tmode() (c:testmode))
+(defun c:testmode()
+  ; Switch between testmode 0 and 1
+  (cond
+    ((/= 1 testmode)
+      (setq testmode 1)
+      (princ "\nTest mode ON")
+    );END subcond
+    ((= 1 testmode)
+      (setq testmode 0)
+      (princ "\nTest mode OFF")
+    );END subcond
+  );END cond
+  (princ)
+
+  ; v0.0 - 2017.03.17 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.17
+)
 (defun c:lb( / ans)
   ; Layout Background
   (initget "White Black")
