@@ -2322,9 +2322,21 @@
   ; 3D Modelling setup
   (defun c:1()  (princ "\n3D POLYLINE\n") (command "_.3dpoly" pause) (princ))
   (defun c:11() (princ "\nJOIN\n") (command "_.join" pause) (princ))
-  (defun c:2()  (princ "\nADD VERTICES\n") (c:KTF_3DPLADVX) )
+  (defun c:2()
+    (princ "\nADD VERTICES\n")
+    (if c:ktf_3dpladvx
+      (c:ktf_3dpladvx)
+      (progn (load "3dpladvx") (c:ktf_3dpladvx) )
+    );END if
+  )
   (defun c:22() (princ "\nEDIT VERTICE LEVEL\n") (c:3dpt) )
-  (defun c:3()  (princ "\n3D OFFSET\n") (c:KTF_3DOFFSET) )
+  (defun c:3()
+    (princ "\n3D OFFSET\n")
+    (if c:ktf_3doffset
+      (c:ktf_3doffset)
+      (progn (load "3doffset") (c:ktf_3doffset) )
+    );END if
+  )
   (defun c:cheatsheet() (alert
     "3D MODELLING CHEATSHEET\n
     Draw:
@@ -2338,6 +2350,7 @@
   (princ "\n3D MODELLING SETUP COMPLETED")(princ)
 
   ; v0.1 - 2017.03.20 - c:3dpt added
+  ;                   - Load KTF functions if needed
   ; v0.0 - 2017.02.24 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.03.20
