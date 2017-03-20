@@ -2320,10 +2320,11 @@
 )
 (defun c:ModSet ()
   ; 3D Modelling setup
-  (defun c:1() (princ "\n3D POLYLINE\n") (command "_.3dpoly" pause) (princ))
+  (defun c:1()  (princ "\n3D POLYLINE\n") (command "_.3dpoly" pause) (princ))
   (defun c:11() (princ "\nJOIN\n") (command "_.join" pause) (princ))
-  (defun c:2() (princ "\nADD VERTICES\n") (c:KTF_3DPLADVX) )
-  (defun c:3() (princ "\n3D OFFSET\n") (c:KTF_3DOFFSET) )
+  (defun c:2()  (princ "\nADD VERTICES\n") (c:KTF_3DPLADVX) )
+  (defun c:22() (princ "\nEDIT VERTICE LEVEL\n") (c:3dpt) )
+  (defun c:3()  (princ "\n3D OFFSET\n") (c:KTF_3DOFFSET) )
   (defun c:cheatsheet() (alert
     "3D MODELLING CHEATSHEET\n
     Draw:
@@ -2331,13 +2332,15 @@
     Modify:
         11\tjoin
         2\tadd vertices
+        22\tedit vertice level
         3\t3D offset\n
   "))
   (princ "\n3D MODELLING SETUP COMPLETED")(princ)
 
+  ; v0.1 - 2017.03.20 - c:3dpt added
   ; v0.0 - 2017.02.24 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.02.24
+  ; Last revision: 2017.03.20
 )
 (defun c:TitSet ()
   ; Title Block setup
