@@ -2345,6 +2345,24 @@
       (progn (load "3doffset") (c:ktf_3doffset) )
     );END if
   )
+  (defun c:33( / p ans )
+    ; Rise or lower selected object
+    ; tags: move up, move down, up/down
+    (if TEMP_global_diff
+      (if (setq ans (getreal (strcat "\nType +/- diff in mm <" (LM:rtos TEMP_global_diff 2 0) ">: ")) )
+        (setq TEMP_global_diff ans )
+      );END if
+      (setq TEMP_global_diff (getreal "\nType +/- diff in mm: ") )
+    );END if
+    (command
+      "_.move" pause ""
+      "_non" (setq p (cadr (grread 't)))
+      "_non" (list (nth 0 p) (nth 1 p) (+ (nth 2 p) (* 0.001 TEMP_global_diff)) )
+    )
+    ; v0.0 - 2017.03.20 - First issue
+    ; Author: David Torralba
+    ; Last revision: 2017.03.20
+  )
   (defun c:cheatsheet() (alert
     "3D MODELLING CHEATSHEET\n
     Draw:
@@ -2354,11 +2372,13 @@
         11\tjoin
         2\tadd vertices
         22\tedit vertice level
-        3\t3D offset\n
+        3\t3D offset
+        33\tup/down\n
   "))
   (princ "\n3D MODELLING SETUP COMPLETED")(princ)
 
   ; v0.2 - 2017.03.21 - 111 added
+  ;                   - 33 added
   ; v0.1 - 2017.03.20 - c:3dpt added
   ;                   - Load KTF functions if needed
   ; v0.0 - 2017.02.24 - First issue
