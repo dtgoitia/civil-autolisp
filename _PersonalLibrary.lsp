@@ -2160,17 +2160,19 @@
       "ModSet"  "\t3D Modelling setup\n"
       "TitSet"  "\tTitle Block setup\n"
       "ArchSet" "\tEngArch setup\n"
+      "KerbSet" "\tKerbing setup"
       "\n"
     );END strcat
   );END alert
 
+  ; v0.2 - 2017.03.21 - Kerbing setup added
   ; v0.2 - 2017.03.16 - LongSet setup added
   ; v0.2 - 2017.03.10 - EngArch setup added
   ;                   - Minor printing mistake fixed
   ; v0.1 - 2017.03.08 - Title Block setup added
   ; v0.0 - 2017.02.27 - First issue
   ; Author: David Torralban
-  ; Last revision: 2017.03.16
+  ; Last revision: 2017.03.21
 )
 (defun c:EngSet ()
   ; Engineering setup
@@ -2477,6 +2479,48 @@
   ; v0.0 - 2017.03.10 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.03.10
+)
+(defun c:KerbSet ()
+  ; Kerbing setup
+  (defun c:1 ( / ang )
+    ; Correct TEXT and MTEXT angle to be readable
+    (princ "\nUPDATE TEXT READABILITY ANGLE\n")
+    (if (setq ss (ssget))
+      (foreach a (ssnamex ss)
+        (if (= 'ename (type (cadr a)))
+          (if (or (= "TEXT" (cdr (assoc 0 (entget (cadr a))))) (= "MTEXT" (cdr (assoc 0 (entget (cadr a))))) )
+            (if
+              (/=
+                (cdr (assoc 50 (entget (cadr a)) ))
+                (setq ang (DT:ReadableTextAngle (cdr (assoc 50 (entget (cadr a)) )) ) )
+              )
+              (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Rotation ang )
+            );END if
+          );END if
+        );END if
+      );END foreach
+    );END if
+
+    ; v0.0 - 2017.02.15 - First issue
+    ; Author: David Torralba
+    ; Last revision: 2017.02.15
+  )
+  (defun c:oo()
+    ; Set OSMODE to end + int + nea
+    (setvar "osmode" 545)
+  )
+  (defun c:cheatsheet() (alert
+    "KERBING CHEATSHEET\n
+    Text:
+        1\treadability angle\n
+    OSMODE:
+        oo\tend + int + nea\n
+  "))
+  (princ "\nKERBING SETUP COMPLETED")(princ)
+
+  ; v0.0 - 2017.03.21 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.21
 )
 (defun DT:OffsetPartM ( ent_name / VL_ent_name p p0 p1 ang )
   ; Move Part M blocks 0.302 toward the inner part of the building (= BlockRotation - 90º)
