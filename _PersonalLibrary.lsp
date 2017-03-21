@@ -2367,6 +2367,87 @@
     ; Set current date to revision box
     (LM:vl-setattributevalue (vlax-ename->vla-object (car (entsel "\nSelect revision\nbox to set current date: "))) "DATE" (PrintSupersedDate))
   )
+  (defun c:3 ( / doNotEscapeVariable ent_name input currentRevisionLetter )
+    ; Update revision box or title block letter to the next (+) or previous (-) revision letter
+
+    ; Get current revision letter
+    (if (setq ent_name (car (entsel "\nSelect revision box \nto change revision: ")))
+      (cond
+        ( (= "Revision-box" (LM:effectivename (vlax-ename->vla-object ent_name)))
+          (setq doNotEscapeVariable 1)
+          (while doNotEscapeVariable
+            ; Ask user input
+            (princ "\nPress +/- to change revision letter (press ENTER to finish): ")
+            (setq input (grread nil 8))
+            (if (= 2 (car input))
+              (cond
+                ( (= (cadr input) 43)
+                  (if (setq currentRevisionLetter (LM:vl-getattributevalue (vlax-ename->vla-object ent_name) "REVISION-LETTER" ) )
+                    (if (setq updatedRevisionLetter (DT:NextRevisionLetter currentRevisionLetter))
+                      (LM:vl-setattributevalue (vlax-ename->vla-object ent_name) "REVISION-LETTER" updatedRevisionLetter)
+                    );END if
+                  );END if
+                );END subcond
+                ( (= (cadr input) 45)
+                  (if (setq currentRevisionLetter (LM:vl-getattributevalue (vlax-ename->vla-object ent_name) "REVISION-LETTER" ) )
+                    (if (setq updatedRevisionLetter (DT:PrevRevisionLetter currentRevisionLetter))
+                      (LM:vl-setattributevalue (vlax-ename->vla-object ent_name) "REVISION-LETTER" updatedRevisionLetter)
+                    );END if
+                  );END if
+                );END subcond
+                (t
+                  (setq doNotEscapeVariable nil)
+                )
+              );END cond
+              (setq doNotEscapeVariable nil)
+            );END if
+          );END while
+        );END subcond
+        ( (or
+            (= "A0-Portrait_D"  (LM:effectivename (vlax-ename->vla-object ent_name)))
+            (= "A0-Landscape_D" (LM:effectivename (vlax-ename->vla-object ent_name)))
+            (= "A1-Portrait_D"  (LM:effectivename (vlax-ename->vla-object ent_name)))
+            (= "A1-Landscape_D" (LM:effectivename (vlax-ename->vla-object ent_name)))
+            (= "A2-Portrait_D"  (LM:effectivename (vlax-ename->vla-object ent_name)))
+            (= "A2-Landscape_D" (LM:effectivename (vlax-ename->vla-object ent_name)))
+            (= "A3-Portrait_D"  (LM:effectivename (vlax-ename->vla-object ent_name)))
+            (= "A3-Landscape_D" (LM:effectivename (vlax-ename->vla-object ent_name)))
+            (= "A4-Portrait_D"  (LM:effectivename (vlax-ename->vla-object ent_name)))
+            (= "A4-Landscape_D" (LM:effectivename (vlax-ename->vla-object ent_name)))
+          );END or
+          (setq doNotEscapeVariable 1)
+          (while doNotEscapeVariable
+            ; Ask user input
+            (princ "\nPress +/- to change revision letter (press ENTER to finish): ")
+            (setq input (grread nil 8))
+            (if (= 2 (car input))
+              (cond
+                ( (= (cadr input) 43)
+                  (if (setq currentRevisionLetter (LM:vl-getattributevalue (vlax-ename->vla-object ent_name) "*" ) )
+                    (if (setq updatedRevisionLetter (DT:NextRevisionLetter currentRevisionLetter))
+                      (LM:vl-setattributevalue (vlax-ename->vla-object ent_name) "*" updatedRevisionLetter)
+                    );END if
+                  );END if
+                );END subcond
+                ( (= (cadr input) 45)
+                  (if (setq currentRevisionLetter (LM:vl-getattributevalue (vlax-ename->vla-object ent_name) "*" ) )
+                    (if (setq updatedRevisionLetter (DT:PrevRevisionLetter currentRevisionLetter))
+                      (LM:vl-setattributevalue (vlax-ename->vla-object ent_name) "*" updatedRevisionLetter)
+                    );END if
+                  );END if
+                );END subcond
+                (t
+                  (setq doNotEscapeVariable nil)
+                )
+              );END cond
+              (setq doNotEscapeVariable nil)
+            );END if
+          );END while
+        );END subcond
+      );END cond
+
+    );END if
+  )
   (defun c:5 () (princ "\nAdd NOT ISSUED YET note:\n") (princ) )
   (defun c:55() (princ "\nRemove NOT ISSUED YET note:\n") (princ) )
   (defun c:oo()
@@ -2379,15 +2460,15 @@
         1\tRemove date
         2\tSet current date\n
     Revision letter:
-        3\tup TODO
-        4\tdown TODO\n
+        3\tup/down\n
     Not Issued Yet note:
         5\tAdd TODO
         5\tRemove TODO\n
   "))
   (princ "\nTITLE BLOCK SETUP COMPLETED")(princ)
 
-  ; v0.2 - 2017.03.21 - TODO added
+  ; v0.2 - 2017.03.21 - 3 command completed
+  ;                   - TODO added
   ; v0.1 - 2017.03.14 - Custom OSMODE added
   ; v0.0 - 2017.03.08 - First issue
   ; Author: David Torralba
