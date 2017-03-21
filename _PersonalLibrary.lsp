@@ -2933,3 +2933,97 @@
   (DT:ib "e-psd-rwp" nil nil 4)
   (command "_.pline" "_non" (getvar "lastpoint") "_nea" pause "")
 )
+(defun DT:NextRevisionLetter ( letter )
+  ; Return next letter for a revision box
+  (if letter
+    (if (= 'str (type letter))
+      (cond
+        ( (= (ascii letter) 45)
+          ; if "-", return "A"
+          "A"
+        );END subcond
+        ( (or
+            (and (>= (ascii letter)  65) (<  (ascii letter)  72)) ; single alphabetical character between "A" (65) and "Z" (90), excluding "H" (72), "I" (73) and "Z" (90)
+            (and (>  (ascii letter)  73) (<  (ascii letter)  90))
+            (and (>= (ascii letter)  97) (<  (ascii letter) 104)) ; single alphabetical character between "a" (97) and "z" (122), excluding "h" (104) "i" (105) and "z" (122)
+            (and (>  (ascii letter) 105) (<  (ascii letter) 122))
+          );END or
+          (chr (+ (ascii letter) 1))
+        );END subcond
+        ( (or
+            (= (ascii letter)  72) ; "H" (72)
+            (= (ascii letter) 104) ; "h" (104)
+          );END or
+          (chr (+ (ascii letter) 2))
+        );END subcond
+        ( (or
+            (= (ascii letter)  73) ; "H" (73)
+            (= (ascii letter) 104) ; "i" (105)
+          );END or
+          (princ "\nWHY DOES THIS REVISION HAVE AN \"I\" LETTER!?!?\n")(princ)
+          nil
+        );END subcond
+        ( (or
+            (= (ascii letter)  90) ; "Z" (90)
+            (= (ascii letter) 122) ; "z" (122)
+          );END or
+          (princ "\nOops... last letter reached!\n")
+          nil
+        );END subcond
+      );END cond
+      (progn (princ "\nERROR @ DT:NextLetter : letter is not a string\n")(princ) )
+    );END if
+    (progn (princ "\nERROR @ DT:NextLetter : letter=nil\n")(princ) )
+  );END if
+
+  ; v0.0 - 2017.03.21 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.21
+)
+(defun DT:PrevRevisionLetter ( letter )
+  ; Return previous letter for a revision box
+  (if letter
+    (if (= 'str (type letter))
+      (cond
+        ( (= (ascii letter) 45)
+          ; if "-", return nil
+          (princ "\nOops...no previous revision letter where to go!\n")
+          nil
+        );END subcond
+        ( (or
+            (and (>  (ascii letter)  65) (<  (ascii letter)  73)) ; single alphabetical character between "A" (65) and "Z" (90), excluding "A" (65), "I" (73) and "J" (74)
+            (and (>  (ascii letter)  74) (<= (ascii letter)  90))
+            (and (>  (ascii letter)  97) (<  (ascii letter) 105)) ; single alphabetical character between "a" (97) and "z" (122), excluding "a" (97) "i" (105) and "j" (106)
+            (and (>  (ascii letter) 106) (<= (ascii letter) 122))
+          );END or
+          (chr (- (ascii letter) 1))
+        );END subcond
+        ( (or
+            (= (ascii letter)  74) ; "J" (74)
+            (= (ascii letter) 106) ; "j" (106)
+          );END or
+          (chr (+ (ascii letter) 2))
+        );END subcond
+        ( (or
+            (= (ascii letter)  73) ; "H" (73)
+            (= (ascii letter) 104) ; "i" (105)
+          );END or
+          (princ "\nWHY DOES THIS REVISION HAVE AN \"I\" LETTER!?!?\n")(princ)
+          nil
+        );END subcond
+        ( (or
+            (= (ascii letter)  65) ; "A" (65)
+            (= (ascii letter)  97) ; "a" (97)
+          );END or
+          "-"
+        );END subcond
+      );END cond
+      (progn (princ "\nERROR @ DT:NextLetter : letter is not a string\n")(princ) )
+    );END if
+    (progn (princ "\nERROR @ DT:NextLetter : letter=nil\n")(princ) )
+  );END if
+
+  ; v0.0 - 2017.03.21 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.21
+)
