@@ -3002,7 +3002,7 @@
             (= (ascii letter)  74) ; "J" (74)
             (= (ascii letter) 106) ; "j" (106)
           );END or
-          (chr (+ (ascii letter) 2))
+          (chr (- (ascii letter) 2))
         );END subcond
         ( (or
             (= (ascii letter)  73) ; "H" (73)
@@ -3023,7 +3023,8 @@
     (progn (princ "\nERROR @ DT:NextLetter : letter=nil\n")(princ) )
   );END if
 
-  ; v0.0 - 2017.03.21 - First issue
+  ; v0.0 - 2017.03.21 - Minor bug fixed
+  ;                   - First issue
   ; Author: David Torralba
   ; Last revision: 2017.03.21
 )
