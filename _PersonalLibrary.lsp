@@ -2448,8 +2448,32 @@
 
     );END if
   )
-  (defun c:5 () (princ "\nAdd NOT ISSUED YET note:\n") (princ) )
-  (defun c:55() (princ "\nRemove NOT ISSUED YET note:\n") (princ) )
+  (defun c:4 ( / ent_name pt ang )
+    (princ "\nAdd NOT ISSUED YET note:\n")
+    (if
+      (entmake
+        (append
+          (list
+            (cons 0 "TEXT")                                                               ; entity type
+            (cons 1 "NOT ISSUED YET")                                                     ; content
+            (cons 8 "MJA-Title")                                                          ; layer
+            (cons 10 '(0.0 0.0 0.0))
+            (cons 11 (if (setq pt (cadr (grread 't))) pt (setq pt (getvar 'viewctr))) )   ; insertion point (mouse position, if not viewport centre)
+            (cons 40 20.0)                                                                ; text size
+            (cons 50 0.267424)                                                            ; rotation
+            (cons 62 1)
+            (cons 72 1)
+            (cons 73 2)
+          );END list
+          (if (not (tblsearch "style" "ARIAL")) (list (cons 7 "standard")) (list (cons 7 "ARIAL"))) ; Text style: ARIAL, if possible
+        );END append
+      );END entmake
+      (command "_.move" (entlast) "" "_non" pt "_non" pause)
+      (princ "\nent_name = nil")
+    );END if
+    (princ)
+  )
+  (defun c:44() (princ "\nRemove NOT ISSUED YET note:\n") (princ) )
   (defun c:oo()
     ; Set OSMODE to end + per
     (setvar "osmode" 129)
@@ -2462,12 +2486,13 @@
     Revision letter:
         3\tup/down\n
     Not Issued Yet note:
-        5\tAdd TODO
-        5\tRemove TODO\n
+        4\tAdd
+        4\tRemove TODO\n
   "))
   (princ "\nTITLE BLOCK SETUP COMPLETED")(princ)
 
-  ; v0.2 - 2017.03.21 - 3 command completed
+  ; v0.2 - 2017.03.21 - Command 4 completed
+  ;                   - Command 3 completed
   ;                   - TODO added
   ; v0.1 - 2017.03.14 - Custom OSMODE added
   ; v0.0 - 2017.03.08 - First issue
