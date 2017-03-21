@@ -2365,6 +2365,8 @@
     ; Set current date to revision box
     (LM:vl-setattributevalue (vlax-ename->vla-object (car (entsel "\nSelect revision\nbox to set current date: "))) "DATE" (PrintSupersedDate))
   )
+  (defun c:5 () (princ "\nAdd NOT ISSUED YET note:\n") (princ) )
+  (defun c:55() (princ "\nRemove NOT ISSUED YET note:\n") (princ) )
   (defun c:oo()
     ; Set OSMODE to end + per
     (setvar "osmode" 129)
@@ -2377,13 +2379,17 @@
     Revision letter:
         3\tup TODO
         4\tdown TODO\n
+    Not Issued Yet note:
+        5\tAdd TODO
+        5\tRemove TODO\n
   "))
   (princ "\nTITLE BLOCK SETUP COMPLETED")(princ)
 
-  ; v0.0 - 2017.03.14 - Custom OSMODE added
+  ; v0.2 - 2017.03.21 - TODO added
+  ; v0.1 - 2017.03.14 - Custom OSMODE added
   ; v0.0 - 2017.03.08 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.14
+  ; Last revision: 2017.03.21
 )
 (defun c:ArchSet ()
   ; EngArch setup
