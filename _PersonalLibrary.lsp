@@ -2324,6 +2324,12 @@
   ; 3D Modelling setup
   (defun c:1()  (princ "\n3D POLYLINE\n") (command "_.3dpoly" pause) (princ))
   (defun c:11() (princ "\nJOIN\n") (command "_.join" pause) (princ))
+  (defun c:111 ( / x )
+    (princ "\n3D POLYLINE CLICKING LEVELS\n")
+    (command "_.3dpoly")
+    (while T (command (list (nth 0 (setq x (getpoint "\nSelect XY position: "))) (nth 1 x) (DT:clic_or_type_level)) ))
+    (princ)
+  )
   (defun c:2()
     (princ "\nADD VERTICES\n")
     (if c:ktf_3dpladvx
@@ -2342,7 +2348,8 @@
   (defun c:cheatsheet() (alert
     "3D MODELLING CHEATSHEET\n
     Draw:
-        1\t3dpoly\n
+        1\t3dpoly
+        111\t3dpoly click\n
     Modify:
         11\tjoin
         2\tadd vertices
@@ -2351,11 +2358,12 @@
   "))
   (princ "\n3D MODELLING SETUP COMPLETED")(princ)
 
+  ; v0.2 - 2017.03.21 - 111 added
   ; v0.1 - 2017.03.20 - c:3dpt added
   ;                   - Load KTF functions if needed
   ; v0.0 - 2017.02.24 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.20
+  ; Last revision: 2017.03.21
 )
 (defun c:TitSet ()
   ; Title Block setup
