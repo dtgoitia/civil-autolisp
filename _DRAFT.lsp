@@ -3132,29 +3132,7 @@
   );END while
   (princ)
 )
-(defun c:11( / ang )
-  ; Correct TEXT and MTEXT angle to be readable
-  (princ "\nUPDATE TEXT READABILITY ANGLE\n")
-  (if (setq ss (ssget))
-    (foreach a (ssnamex ss)
-      (if (= 'ename (type (cadr a)))
-        (if (or (= "TEXT" (cdr (assoc 0 (entget (cadr a))))) (= "MTEXT" (cdr (assoc 0 (entget (cadr a))))) )
-          (if
-            (/=
-              (cdr (assoc 50 (entget (cadr a)) ))
-              (setq ang (DT:ReadableTextAngle (cdr (assoc 50 (entget (cadr a)) )) ) )
-            )
-            (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Rotation ang )
-          );END if
-        );END if
-      );END if
-    );END foreach
-  );END if
 
-  ; v0.0 - 2017.02.15 - First issue
-  ; Author: David Torralban
-  ; Last revision: 2017.02.15
-)
 (defun c:1( / ss )
   ; Correct all text angle to be readable within layer "LABELS"
   (princ "\nUPDATE CONTOUR ANNOTATION TEXT READABILITY ANGLE\n")
@@ -3298,4 +3276,22 @@
   ; v0.0 - 2017.03.16
   ; Author: David Torralba
   ; Last revision: 2017.03.16
+)
+(defun c:xx( / p ans )
+  ; Rise or lower selected object
+  ; tags: move up, move down, up/down
+  (if TEMP_global_diff
+    (if (setq ans (getreal (strcat "\nType +/- diff in mm <" (LM:rtos TEMP_global_diff 2 0) ">: ")) )
+      (setq TEMP_global_diff ans )
+    );END if
+    (setq TEMP_global_diff (getreal "\nType +/- diff in mm: ") )
+  );END if
+  (command
+    "_.move" pause ""
+    "_non" (setq p (cadr (grread 't)))
+    "_non" (list (nth 0 p) (nth 1 p) (+ (nth 2 p) (* 0.001 TEMP_global_diff)) )
+  )
+  ; v0.0 - 2017.03.20 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.20
 )
