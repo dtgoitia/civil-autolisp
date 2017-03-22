@@ -12,7 +12,7 @@
 ;    entity aligns to reference and starts following the mouse
 ;  - clic 3 / Enter / Space / Esc = stop dragging entity and finish command
 )
-(defun DT:RR ( ent_name1 ent_name2 )
+(defun DT:R1 ( ent_name1 ent_name2 )
   ; Align ent_name1 to ent_name2 dynamically
   ; Return aligned and reference entity names
   ; or nil if something wrong
@@ -32,13 +32,13 @@
         ; y las que aun no hayas desarrollado pon simplemente (princ "\nSorry this entity cannot be a reference.")(princ)
         ; a medida las vas desarrollando vas quitando mensajes y metiendo funciones
       (cond
-        ((/= 'ename (type ent_name1)) (princ "\nERROR @ DT:RR > ent_name1 type is incorreect")(princ))
-        ((/= 'ename (type ent_name2)) (princ "\nERROR @ DT:RR > ent_name2 type is incorreect")(princ))
+        ((/= 'ename (type ent_name1)) (princ "\nERROR @ DT:R1 > ent_name1 is not a ename")(princ))
+        ((/= 'ename (type ent_name2)) (princ "\nERROR @ DT:R1 > ent_name2 is not a ename")(princ))
       );END cond
     );END if
     (cond
-      ((not ent_name1) (princ "\nERROR @ DT:RR > ent_name1 = nil")(princ))
-      ((not ent_name2) (princ "\nERROR @ DT:RR > ent_name2 = nil")(princ))
+      ((not ent_name1) (princ "\nERROR @ DT:R1 > ent_name1=nil")(princ))
+      ((not ent_name2) (princ "\nERROR @ DT:R1 > ent_name2=nil")(princ))
     );END cond
   );END if
   ; Get object, cases:
