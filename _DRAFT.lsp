@@ -3188,7 +3188,7 @@
   ; Build DT:GetSewerSize and mark just DN100 steeper than 1/80 and D150 steeper 1/150.
   (foreach a (ssnamex (ssget))
     (if (= 'ename (type (cadr a)))
-      (if (= "TEXT" (cdr (assoc 0 (entget (cadr a)))))
+      (if (or (= "TEXT" (cdr (assoc 0 (entget ent_name)))) (= "MTEXT" (cdr (assoc 0 (entget ent_name)))))
         (if
           (and
             (DT:GetSewerGradient (cadr a))
@@ -3200,6 +3200,11 @@
       );END if
     );END if
   )
+
+  ; v0.1 - 2017.03.23 - MTEXT object type added
+  ; v0.0 - 2017.03.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.23
 )
 (defun AT:InsertBlock (#Name #InsPt #XScale #YScale #Rot)
   ;;; Insert block into drawing
