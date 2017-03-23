@@ -2054,7 +2054,7 @@
   ; Returns a integer with the ent_name sewer-label gradient
   ; If not, returns nil
   (if ent_name
-    (if (= "TEXT" (cdr (assoc 0 (entget ent_name))))
+    (if (or (= "TEXT" (cdr (assoc 0 (entget ent_name)))) (= "MTEXT" (cdr (assoc 0 (entget ent_name)))))
       (if (DT:GetCharPositions (cdr (assoc 1 (entget ent_name))) "/")
         ; If the text contains "/" (ergo, is a sewer label):
         (atoi
@@ -2069,9 +2069,10 @@
     nil
   );END if
 
+  ; v0.1 - 2017.03.23 - MTEXT object type added
   ; v0.0 - 2017.03.08 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.08
+  ; Last revision: 2017.03.23
 )
 (defun DT:SetGroup ( ent_nameList / i l s )
   ; Create a group with the entities passed on ent_nameList
