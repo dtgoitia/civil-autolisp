@@ -3175,3 +3175,15 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.23
 )
+(defun DT:RadTogToRad ( angle )
+  ; Return angle in sexagesimal degrees
+  (if angle
+    (if (numberp angle)
+      (* 180 (/ (float angle) pi) )
+    );END if
+  );END if
+
+  ; v0.0 - 2017.03.23 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.23
+)
