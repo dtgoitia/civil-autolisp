@@ -79,7 +79,7 @@
 )
 (defun GetPolylineStyle (ent_name)
   (if (not (assoc 6 (entget ent_name)))
-    nil
+    "ByLayer"
     (cdr (assoc 6 (entget ent_name)))
   );END if
 )
