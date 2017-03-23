@@ -3163,3 +3163,15 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.21
 )
+(defun DT:DegToRad ( angle )
+  ; Return angle in radians
+  (if angle
+    (if (numberp angle)
+      (* pi (/ (float angle) 180) )
+    );END if
+  );END if
+
+  ; v0.0 - 2017.03.23 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.23
+)
