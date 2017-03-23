@@ -3188,7 +3188,7 @@
   ; Build DT:GetSewerSize and mark just DN100 steeper than 1/80 and D150 steeper 1/150.
   (foreach a (ssnamex (ssget))
     (if (= 'ename (type (cadr a)))
-      (if (or (= "TEXT" (cdr (assoc 0 (entget ent_name)))) (= "MTEXT" (cdr (assoc 0 (entget ent_name)))))
+      (if (or (= "TEXT" (cdr (assoc 0 (entget (cadr a))))) (= "MTEXT" (cdr (assoc 0 (entget (cadr a))))))
         (if
           (and
             (DT:GetSewerGradient (cadr a))
