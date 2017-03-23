@@ -3182,26 +3182,36 @@
   )
   "newLayerName"
 )
-(defun c:zzz()
+(defun c:zzz ( / i )
   ; Mark in yellow the sewer labels with a gradient bigger than 80
   ; TODO:
   ; Build DT:GetSewerSize and mark just DN100 steeper than 1/80 and D150 steeper 1/150.
+  (setq i 0)
   (foreach a (ssnamex (ssget))
     (if (= 'ename (type (cadr a)))
       (if (or (= "TEXT" (cdr (assoc 0 (entget (cadr a))))) (= "MTEXT" (cdr (assoc 0 (entget (cadr a))))))
         (if
           (and
             (DT:GetSewerGradient (cadr a))
-            (> (DT:GetSewerGradient (cadr a)) 75)
+            (< (DT:GetSewerGradient (cadr a)) 5)
           );END and
-          ; Change color to yellow
-          (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 2)
+          (progn
+            ; Change color to yellow
+            (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 2)
+            ; Add it to counter
+            (setq i (+ i 1) )
+          );END progn
         )
       );END if
     );END if
   )
+  (if (= 1 i)
+    (progn (princ (strcat "\n" (itoa i) " object marked.")) (princ))
+    (progn (princ (strcat "\n" (itoa i) " objects marked.")) (princ))
+  );END if
 
-  ; v0.1 - 2017.03.23 - MTEXT object type added
+  ; v0.1 - 2017.03.23 - Marked object counter added
+  ;                   - MTEXT object type added
   ; v0.0 - 2017.03.?? - First issue
   ; Author: David Torralba
   ; Last revision: 2017.03.23
