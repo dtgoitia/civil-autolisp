@@ -3175,7 +3175,7 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.23
 )
-(defun DT:RadTogToRad ( angle )
+(defun DT:RadToDeg ( angle )
   ; Return angle in sexagesimal degrees
   (if angle
     (if (numberp angle)
