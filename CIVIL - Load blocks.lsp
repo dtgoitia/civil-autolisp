@@ -83,7 +83,10 @@
         )
       );END cond
     );END progn
-    (alert "Sorry, this block is not loaded.\nGo to:\nMenu bar\n   MJA Engineering\n      Load all blocks\nThis will load all the missing blocks.")
+    (if (findfile (strcat blk ".dwg") )
+      (command "-insert" (strcat blk ".dwg") pause 1 1 pause)
+      (alert "Sorry, this block is not loaded.\nGo to:\nMenu bar\n   MJA Engineering\n      Load all blocks\nThis will load all the missing blocks.")
+    );END if
   );END if
 
   ; RESTORE PREVIOUS SETTINGS
@@ -96,6 +99,7 @@
   (setvar "osmode" oldosmode)
   (princ)
 
+  ; v0.6 - 2017.03.24 - Bug fixed: look of unloaded blocks separated in their own drawings
   ; v0.5 - 2017.03.13 - Minor bug fixed when rot = nil
   ; v0.4 - 2016.12.02 - Function argument interpretation updated
   ;                   - System variable managment updated
@@ -104,7 +108,7 @@
   ; v0.1 - 2016.04.15 - ATTDIA and ATTREQ system variable control added
   ; v0.0 - 2016.04.14 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.13
+  ; Last revision: 2017.03.24
 )
 ;
 ;---------------------------------------------------------------------------
