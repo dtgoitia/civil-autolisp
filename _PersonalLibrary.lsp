@@ -854,7 +854,7 @@
   );END if
   (princ)
 )
-(defun c:SDIPforPrivateDrainage( / z1 p1 p2 dist ans targetPoint gradient ent_name)
+(defun c:SDIPforPrivateDrainage ( / z1 p1 p2 dist ans targetPoint gradient ent_name)
   ; Get level with fixed gradient between 2 points,
   ; write the level rounded to 2 decimals,
   ; and formated according to target text (foul/storm)
@@ -950,7 +950,7 @@
 					(progn (princ "\nNo sewer label selected.\n"))
 				);END if
 				; If no gradient:
-        (progn (princ "\nERROR @ c:SDIPforPrivateDrainage > gradient = nil"))
+        (progn (princ "\nERROR @ c:SDIPforPrivateDrainage > gradient = nil\n") nil)
       );END if
     );END subcond
     ; If not private manhole label selected:
@@ -981,6 +981,7 @@
 		gradient	; Real gradient
 	);END list
 
+  ; v0.3 - 2017.03.28 - Error management updated
   ; v0.2 - 2017.03.10 - Turn off OSnap when selecting target labels to be updated
   ; v0.2 - 2017.01.30 - Gradient to absolute value
   ; v0.1 - 2017.01.28 - DT:ChangePrivateSewerGradient implementation
@@ -988,7 +989,7 @@
 	;										- CommandLine messages suppressed
   ; v0.0 - 2017.01.23 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.10
+  ; Last revision: 2017.03.28
 )
 (defun c:garden_gradient (
                           /
