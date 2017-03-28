@@ -1,4 +1,3 @@
-(defun c:1() (c:road_levels) )
 (defun c:road_levels (
                       /
                       oldosmode
@@ -62,7 +61,7 @@
 
   ; INPUT - Ask user 3D polyline of reference, chainage interval, offset
   (setq
-    ent_name (car (entsel "\nSelect centreline"))
+    ent_name (car (entsel "\nSelect 3D centreline"))
     interval (getreal "\nSelect interval: ")
     offset (getreal "\nSelect offset: ")
   )
@@ -143,9 +142,10 @@
 
   (princ)
 
-  ; v0.0 - _DATE_ - First issue
+  ; v0.0 - 2017.03.28 - Input messages clarified
+  ; v0.0 - 2016.??.?? - First issue
   ; Author: David Torralban
-  ; Last revision: _DATE_
+  ; Last revision: 2017.03.28
 );END defun
 (defun DT:get_chainage_data ( ent_name ch
                         /
@@ -411,3 +411,13 @@
   ; Author: David Torralban
   ; Last revision: 2016.08.26
 );END defun
+(princ
+  (strcat
+    "\n.\n.\n."
+    "\nLOADED COMMAND REFERENCE:"
+    "\nc:road_levels --> draw road levels"
+    "\nc:mch         --> mark chainage"
+    "\n"
+  );END strcat
+);END princ
+(princ)
