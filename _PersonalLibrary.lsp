@@ -2188,11 +2188,13 @@
       "ModSet"  "\t3D Modelling setup\n"
       "TitSet"  "\tTitle Block setup\n"
       "ArchSet" "\tEngArch setup\n"
-      "KerbSet" "\tKerbing setup"
+      "KerbSet" "\tKerbing setup\n"
+      "SurvSet" "\tSurvey setup\n"
       "\n"
     );END strcat
   );END alert
 
+  ; v0.2 - 2017.03.28 - Survey setup added
   ; v0.2 - 2017.03.21 - Kerbing setup added
   ; v0.2 - 2017.03.16 - LongSet setup added
   ; v0.2 - 2017.03.10 - EngArch setup added
@@ -2200,7 +2202,7 @@
   ; v0.1 - 2017.03.08 - Title Block setup added
   ; v0.0 - 2017.02.27 - First issue
   ; Author: David Torralban
-  ; Last revision: 2017.03.21
+  ; Last revision: 2017.03.28
 )
 (defun c:EngSet ()
   ; Engineering setup
@@ -2689,6 +2691,22 @@
   ; v0.0 - 2017.03.21 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.03.21
+)
+(defun c:SurvSet ()
+  ; Survey setup
+  (defun c:1() (princ "\nTie blocks and text AUTOMATIC\n") (c:TieSurvey))
+  (defun c:2() (princ "\nTIe blocks and text MANUAL\n") (c:TieSinglePoint))
+  (defun c:cheatsheet() (alert
+    "\nSURVEY CHEATSHEET\n
+    Draw:
+        1\tAutomatic
+        2\tSingle\n
+  "))
+  (princ "\nSURVEY SETUP COMPLETED")(princ)
+
+  ; v0.0 - 2017.02.28 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.28
 )
 (defun DT:OffsetPartM ( ent_name / VL_ent_name p p0 p1 ang )
   ; Move Part M blocks 0.302 toward the inner part of the building (= BlockRotation - 90º)
