@@ -254,6 +254,7 @@
   (entmakex
     (list
       (cons 0 "POINT" )
+      (cons 8 "_3Dpoints" )
       (cons 10 (list (nth 0 pXY) (nth 1 pXY) (DT:clic_or_type_level)) )
     )
   )
