@@ -2421,11 +2421,11 @@
   )
   (defun c:2()
     ; Set current date to revision box
-    (LM:vl-setattributevalue (vlax-ename->vla-object (car (entsel "\nSelect revision\nbox to set current date: "))) "DATE" (PrintSupersedDate))
+    (LM:vl-setattributevalue (vlax-ename->vla-object (car (entsel "\nSelect revision\nbox to set current date: "))) "DATE" (DT:Date 1))
   )
   (defun c:22()
     ; Set current date to revision box with long format
-    (LM:vl-setattributevalue (vlax-ename->vla-object (car (entsel "\nSelect revision\nbox to set current date: "))) "DATE" (PrintSupersedDate))
+    (LM:vl-setattributevalue (vlax-ename->vla-object (car (entsel "\nSelect revision\nbox to set current date: "))) "DATE" (DT:Date 2))
   )
   (defun c:3 ( / doNotEscapeVariable ent_name input currentRevisionLetter )
     ; Update revision box or title block letter to the next (+) or previous (-) revision letter
