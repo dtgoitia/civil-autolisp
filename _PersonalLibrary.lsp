@@ -161,21 +161,22 @@
         (vlax-put-property (vlax-ename->vla-object ent_name) 'Rotation ang )
       );END progn
       (cond
-        ((/= 'ename (type ent_name)) (princ "\nERROR @ DT:R2 > ent_name is not an ename")(princ))
-        ((/= 'list  (type p1       )) (princ "\nERROR @ DT:R2 > p1 is not a list")         (princ))
-        ((/= 'list  (type p2       )) (princ "\nERROR @ DT:R2 > p2 is not a list")         (princ))
+        ((/= 'ename (type ent_name)) (princ "\nERROR @ DT:R2 > ent_name is not an ename\n") (princ) nil)
+        ((/= 'list  (type p1      )) (princ "\nERROR @ DT:R2 > p1 is not a list\n")         (princ) nil)
+        ((/= 'list  (type p2      )) (princ "\nERROR @ DT:R2 > p2 is not a list\n")         (princ) nil)
       );END cond
     );END if
     (cond
-      ((not ent_name) (princ "\nERROR @ DT:R2 > ent_name=nil")(princ))
-      ((not p1      ) (princ "\nERROR @ DT:R2 > p1=nil")      (princ))
-      ((not p2      ) (princ "\nERROR @ DT:R2 > p2=nil")      (princ))
+      ((not ent_name) (princ "\nERROR @ DT:R2 > ent_name = nil\n")(princ) nil)
+      ((not p1      ) (princ "\nERROR @ DT:R2 > p1 = nil\n")      (princ) nil)
+      ((not p2      ) (princ "\nERROR @ DT:R2 > p2 = nil\n")      (princ) nil)
     );END cond
   );END if
 
-  ; v0.0 - 2017-03.13 - First issue
+  ; v0.1 - 2017.03.28 - Error management updated
+  ; v0.0 - 2017.03.13 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017-03.13
+  ; Last revision: 2017.03.28
 )
 (defun c:rr () (princ "\nMultiple rotate:") (c:RTM))
 (defun c:rrr() (princ "\nRegenerating...") (command "_.regenall") (princ " done.")(princ))
