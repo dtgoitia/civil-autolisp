@@ -248,3 +248,16 @@
   ; Create an INSERT of the block (instantiation)
   (entmakex (list (cons 0 "INSERT") (cons 8 layerName) (cons 2 blockName) (cons 10 (list 0 0 0)) ))
 )
+(defun c:TieSinglePoint ( / pXY p )
+  ; Draw a point with in the selected XY coordinates with the selected level
+  (setq pXY (DT:flatPoint (getpoint "\nSelect point to get XY coordinates: ")) )
+  (entmakex
+    (list
+      (cons 0 "POINT" )
+      (cons 10 (list (nth 0 pXY) (nth 1 pXY) (DT:clic_or_type_level)) )
+    )
+  )
+  ; v0.0 - 2017.03.28 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.28
+)
