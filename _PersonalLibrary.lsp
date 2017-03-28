@@ -3189,3 +3189,43 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.23
 )
+(defun DT:GetLayoutStatus ( tab / ss found )
+  ; Return 1 if "NOT ISSUED YET" text found within the tab,
+  ; return 0 if not found
+  (if tab
+    (if (= 'str (type tab))
+      ; Look for "NOT ISSUED YET" text within "tab" layout
+      ;(if (setq ss (ssget "_x" (list (cons 0 "TEXT") ) ))
+      (if (setq ss (ssget "_x" (list (cons 0 "TEXT") (cons 410 tab)) ))
+        (progn
+          ; Set "found" value to "not-found"
+          (setq found 0)
+
+          ; Check all objects in ss
+          (foreach a (ssnamex ss)
+            (if (= 'ename (type (cadr a)))
+              (if
+                (and
+                  (= "NOT ISSUED YET" (cdr (assoc  1 (entget (cadr a)))))
+                  (= "MJA-Title"      (cdr (assoc  8 (entget (cadr a)))))
+                  (= 1                (cdr (assoc 62 (entget (cadr a)))))
+                );END and
+                (setq found 1)
+              );END if
+            );END if
+          );END foreach
+          ; Return result
+          (if found found 0)
+        );END progn
+        ;0
+        "nothing found"
+      );END if
+      (progn (princ "\nERROR @ DT:GetLayoutStatus > tab is not a string\n") nil)
+    );END if
+    (progn (princ "\nERROR @ DT:GetLayoutStatus > tab = nil\n") nil)
+  );END if
+
+  ; v0.0 - 2017.03.28 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.28
+)
