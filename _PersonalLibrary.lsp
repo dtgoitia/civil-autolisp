@@ -1529,6 +1529,31 @@
   (setq d (rtos (getvar "CDATE") 2 6))
   (strcat (substr d 7 2) "." (substr d 5 2) "." (substr d 3 2))
 )
+(defun DT:Date ( mode / d )
+  ; Returns a string with the date formated as requested:
+  ; mode=1 - DD.MM.YY
+  ; mode=2 - DD.MM.YYYY
+  (if mode
+    (if (= 'int (type mode))
+      (cond
+        ( (= 1 mode)
+          (setq d (rtos (getvar "CDATE") 2 6))
+          (strcat (substr d 7 2) "." (substr d 5 2) "." (substr d 3 2))
+        );END subcond
+        ( (= 2 mode)
+          (setq d (rtos (getvar "CDATE") 2 6))
+          (strcat (substr d 7 2) "." (substr d 5 2) "." (substr d 1 4))
+        );END subcond
+      );END cond
+      (progn (princ "\nERROR @ DT:Date > mode is not an integer\n") nil)
+    );END if
+    (progn (princ "\nERROR @ DT:Date > mode = nil\n") nil)
+  );END if
+
+  ; v0.0 - 2017.03.28 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.28
+)
 (defun ReloadXref (file)
   (command "-xref" "R" file)
 )
@@ -2398,6 +2423,10 @@
     ; Set current date to revision box
     (LM:vl-setattributevalue (vlax-ename->vla-object (car (entsel "\nSelect revision\nbox to set current date: "))) "DATE" (PrintSupersedDate))
   )
+  (defun c:22()
+    ; Set current date to revision box with long format
+    (LM:vl-setattributevalue (vlax-ename->vla-object (car (entsel "\nSelect revision\nbox to set current date: "))) "DATE" (PrintSupersedDate))
+  )
   (defun c:3 ( / doNotEscapeVariable ent_name input currentRevisionLetter )
     ; Update revision box or title block letter to the next (+) or previous (-) revision letter
 
@@ -2513,7 +2542,8 @@
     "TITLE BLOCK CHEATSHEET\n
     Revision box date:
         1\tRemove date
-        2\tSet current date\n
+        2\tSet current date
+        22\tSet current date (long)\n
     Revision letter:
         3\tup/down\n
     Not Issued Yet note:
@@ -2522,13 +2552,14 @@
   "))
   (princ "\nTITLE BLOCK SETUP COMPLETED")(princ)
 
+  ; v0.3 - 2017.03.28 - Command 22 added to set long formatted date
   ; v0.2 - 2017.03.21 - Command 4 completed
   ;                   - Command 3 completed
   ;                   - TODO added
   ; v0.1 - 2017.03.14 - Custom OSMODE added
   ; v0.0 - 2017.03.08 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.21
+  ; Last revision: 2017.03.28
 )
 (defun c:ArchSet ()
   ; EngArch setup
