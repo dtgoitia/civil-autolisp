@@ -3301,3 +3301,54 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.28
 )
+(defun DT:ListToTable ( lst / maxColumnLength )
+  ; Return the provided list as a table
+  (if lst
+    (if (= 'list (type lst))
+      (if (= 1 (DT:CheckListTableFormat lst)) ; Check that list has correct format
+        (progn
+          (setq
+            ; Get column width: measure the nth element of each row and get the maximum
+            maxColumnLength (GetColumnLength lst)
+            ; Get list values as a table formated string
+            stringTable (NL_GetTextFormatted lst maxColumnLength)
+          )
+        );END progn
+        (progn (princ "\nERROR @ DT:ListToTable > lst doesn't have table format\n") nil)
+      );END if
+      (progn (princ "\nERROR @ DT:ListToTable > lst is not a list\n") nil)
+    );END if
+    (progn (princ "\nERROR @ DT:ListToTable > lst = nil\n") nil)
+  );END if
+
+  ; v0.0 - 2017.03.28 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.28
+)
+(defun DT:CheckListTableFormat ( lst / elementAmount return )
+  ; Return 1 if the provided list has table format, 0 if not, nil otherwise.
+  (if lst
+    (if (= 'list (type lst))
+      (progn
+        (setq
+          return 1                            ; set return value to 1
+          elementAmount (length (nth 0 lst))  ; get first row (element) length
+        )
+        ; Run through all elements and check they have the same length
+        ; if any row (element) doesn't have the same legth as the first one, return 0
+        (foreach element lst
+          (if (/= elementAmount (length element))
+            (setq return 0)
+          );END if
+        );END foreach
+        return
+      );END progn
+      (progn (princ "\nERROR @ DT:CheckListTableFormat > lst is not a list\n") nil)
+    );END if
+    (progn (princ "\nERROR @ DT:CheckListTableFormat > lst = nil\n") nil)
+  );END if
+
+  ; v0.0 - 2017.03.28 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.28
+)
