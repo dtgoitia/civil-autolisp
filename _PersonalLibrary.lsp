@@ -3229,3 +3229,44 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.28
 )
+(defun DT:GetTabInformation ( tab / tabRevision tabStatus )
+  ; Return 1 if "NOT ISSUED YET" text found within the tab,
+  ; return 0 if not found
+  (if tab
+    (if (= 'str (type tab))
+      (progn
+        ; Get last revision
+        ;(if (not (setq tabRevision (DT:GetLayoutLatestRevision tabName)))
+        ;  (setq tabRevision "??")
+        ;);END if
+        (setq tabRevision "TODO")
+
+        ; Get layout status (issued/not issued)
+        (cond
+          ( (= 0 (DT:GetLayoutStatus tab))  ; ISSUED
+            (setq tabStatus "-")
+          );END subcond
+          ( (= 1 (DT:GetLayoutStatus tab))  ; NOT ISSUED YET
+            (setq tabStatus "NOT ISSUED YET")
+          );END subcond
+          (t                                    ; something when wrong
+            (setq tabStatus nil)
+          )
+        );END cond
+
+        ; Return tab information
+        (list
+          tab
+          tabRevision
+          tabStatus
+        );END list
+      );END progn
+      (progn (princ "\nERROR @ DT:GetTabInformation > tab is not a string\n") nil)
+    );END if
+    (progn (princ "\nERROR @ DT:GetTabInformation > tab = nil\n") nil)
+  );END if
+
+  ; v0.0 - 2017.03.28 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.28
+)
