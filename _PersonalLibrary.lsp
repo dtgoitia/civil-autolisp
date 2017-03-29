@@ -2219,6 +2219,7 @@
     (vlax-put-property (vlax-ename->vla-object (entlast)) 'YScaleFactor 0.7)
     (vlax-put-property (vlax-ename->vla-object (entlast)) 'ZScaleFactor 0.7)
   )
+  (defun c:ll() (princ "\nPLOT LEVEL: ") (DT:DrawPlotLevel 0 (getpoint "\nSelect point to draw plot level: ") 0) )
   (defun c:oo()(setvar "osmode" 4))
   (defun c:ne()(setvar "osmode" 512))
   (defun c:11 ( / targetLevel ent_name )
@@ -2262,6 +2263,7 @@
         4\tPlotLevel +/-50mm
         44\tChange Private Sewer Gradient\n
     Create:
+        ll\tplot level
         pa\tparking arrow
         ra\troad arrow\n
     Environment:
@@ -2270,12 +2272,13 @@
   "))
   (princ "\nENGINEERING SETUP COMPLETED")(princ)
 
+  ; v0.3 - 2017.03.29 - Plot level added
   ; v0.3 - 2017.03.10 - Change Private Sewer Gradient added
   ; v0.2 - 2017.03.09 - scale management added to c:ra
   ; v0.1 - 2017.02.21 - Cheatsheet added
   ; v0.0 - 2017.01.29 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.10
+  ; Last revision: 2017.03.29
 )
 (defun c:LongSet ()
   ; Longitudinal Section setup
