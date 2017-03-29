@@ -3409,3 +3409,40 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.29
 )
+(defun DT:DrawPlotLevel ( level point rotation )
+  ; Draw plot level with "level" value at "point" with with the correct format
+  (if (and level point rotation)
+    (if (and (numberp level) (= 'list (type point)) (numberp rotation))
+      (if (tblsearch "style" "ROMANS")
+        (entmakex
+          (list
+            (cons  0 "TEXT")
+            (cons  1 (strcat "%%U" (LM:rtos level 2 2)) )
+            (cons  7 "ROMANS")
+            (cons  8 "e-plot-lev")
+            (cons 10 (polar point (* 1.5 pi) 2.2))
+            (cons 11 point) ; needed for text justification
+            (cons 40 0.35)
+            (cons 71 0) ; needed for text justification
+            (cons 72 1) ; needed for text justification
+            (cons 73 2) ; needed for text justification
+          );END list
+        );END entmakex
+      );END if
+      (cond
+        ((not (numberp level))    (princ "\nERROR @ DT:DrawPlotLevel : level is not a number\n")    nil )
+        ((/= 'list (type point))  (princ "\nERROR @ DT:DrawPlotLevel : point is not a list\n")      nil )
+        ((not (numberp rotation)) (princ "\nERROR @ DT:DrawPlotLevel : rotation is not a number\n") nil )
+      );END cond
+    );END if
+    (cond
+      ((not level)    (princ "\nERROR @ DT:DrawPlotLevel : level=nil\n")    nil )
+      ((not point)    (princ "\nERROR @ DT:DrawPlotLevel : point=nil\n")    nil )
+      ((not rotation) (princ "\nERROR @ DT:DrawPlotLevel : rotation=nil\n") nil )
+    );END cond
+  );END if
+
+  ; v0.0 - 2017.03.29 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.29
+)
