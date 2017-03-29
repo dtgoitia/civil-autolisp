@@ -3322,7 +3322,7 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.28
 )
-(defun DT:ListToTable ( lst / maxColumnLength )
+(defun DT:ListToTable ( lst / maxColumnLength stringTable )
   ; Return the provided list as a table
   (if lst
     (if (= 'list (type lst))
@@ -3342,9 +3342,10 @@
     (progn (princ "\nERROR @ DT:ListToTable > lst = nil\n") nil)
   );END if
 
+  ; v0.0 - 2017.03.29 - Minor bug fixed
   ; v0.0 - 2017.03.28 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.28
+  ; Last revision: 2017.03.29
 )
 (defun DT:CheckListTableFormat ( lst / elementAmount return )
   ; Return 1 if the provided list has table format, 0 if not, nil otherwise.
