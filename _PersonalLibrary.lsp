@@ -2181,28 +2181,30 @@
   (alert
     (strcat
       "\nAVAILABLE SETUPS\n\n"
-      "EngSet"  "\tEgineering setup\n"
-      "LongSet" "\tLongSection setup\n"
-      "WorkSet" "\tWorking Drawings setup\n"
-      "SetSet"  "\tSetting Out setup\n"
-      "ModSet"  "\t3D Modelling setup\n"
-      "TitSet"  "\tTitle Block setup\n"
-      "ArchSet" "\tEngArch setup\n"
-      "KerbSet" "\tKerbing setup\n"
-      "SurvSet" "\tSurvey setup\n"
+      "EngSet"    "\tEgineering setup\n"
+      "LongSet"   "\tLongSection setup\n"
+      "WorkSet"   "\tWorking Drawings setup\n"
+      "SetSet"    "\tSetting Out setup\n"
+      "ModSet"    "\t3D Modelling setup\n"
+      "TitSet"    "\tTitle Block setup\n"
+      "ArchSet"   "\tEngArch setup\n"
+      "KerbSet"   "\tKerbing setup\n"
+      "SurvSet"   "\tSurvey setup\n"
+      "TrackSet"  "\tTracking setup\n"
       "\n"
     );END strcat
   );END alert
 
-  ; v0.2 - 2017.03.28 - Survey setup added
-  ; v0.2 - 2017.03.21 - Kerbing setup added
-  ; v0.2 - 2017.03.16 - LongSet setup added
+  ; v0.6 - 2017.03.29 - Tracking setup added
+  ; v0.5 - 2017.03.28 - Survey setup added
+  ; v0.4 - 2017.03.21 - Kerbing setup added
+  ; v0.3 - 2017.03.16 - LongSet setup added
   ; v0.2 - 2017.03.10 - EngArch setup added
   ;                   - Minor printing mistake fixed
   ; v0.1 - 2017.03.08 - Title Block setup added
   ; v0.0 - 2017.02.27 - First issue
-  ; Author: David Torralban
-  ; Last revision: 2017.03.28
+  ; Author: David Torralba
+  ; Last revision: 2017.03.29
 )
 (defun c:EngSet ()
   ; Engineering setup
@@ -2710,6 +2712,21 @@
   ; v0.0 - 2017.02.28 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.03.28
+)
+(defun c:TrackSet ()
+  ; Tracking Setup
+  (defun c:1() (princ "\nAUTODRIVE:\n") (command "_aeccDRIVEAUTO") )
+
+  (defun c:cheatsheet() (alert
+    "TRACKING CHEATSHEET\n
+    autoDrive:
+        1\tArc\n
+  "))
+  (princ "\nTRACKING SETUP COMPLETED")(princ)
+
+  ; v0.0 - 2017.03.29 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.29
 )
 (defun DT:OffsetPartM ( ent_name / VL_ent_name p p0 p1 ang )
   ; Move Part M blocks 0.302 toward the inner part of the building (= BlockRotation - 90º)
