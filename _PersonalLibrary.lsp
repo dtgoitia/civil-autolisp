@@ -3374,7 +3374,7 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.28
 )
-(defun DT:ListNilToString ( lst )
+(defun DT:ListNilToString ( lst / returnElement returnRow returnList)
   ; Return provided list (with table format) with all nil values changed to empty strings ("").
   ; NOTE: this function is designed for 2D tables, thus one list (table) with a first levels of
   ; nested lists (rows) in it. Only one nested level is allowed. See example:
