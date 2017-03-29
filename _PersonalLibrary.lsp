@@ -3370,3 +3370,42 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.28
 )
+(defun DT:ListNilToString ( lst )
+  ; Return provided list (with table format) with all nil values changed to empty strings ("").
+  ; NOTE: this function is designed for 2D tables, thus one list (table) with a first levels of
+  ; nested lists (rows) in it. Only one nested level is allowed. See example:
+  ; (list (list a b c) (list a            b c) (list a b c))  --> OK
+  ; (list (list a b c) (list (list a b c) b c) (list a b c))  --> wrong
+  (if lst
+    (if (= 'list (type lst))
+      (if (= 1 (DT:CheckListTableFormat lst)) ; Check that list has correct format
+        (progn
+          (foreach row lst
+            (foreach element row
+              (if element
+                (setq returnElement element)
+                (setq returnElement "")
+              );END if
+              (setq
+                returnRow (append returnRow (list returnElement))
+                returnElement nil
+              )
+            );END foreach
+            (setq
+              returnList (append returnList (list returnRow))
+              returnRow nil
+            )
+          );END foreach
+          returnList
+        );END progn
+        (progn (princ "\nERROR @ DT:ListNilToString > lst doesn't have table format\n") nil)
+      );END if
+      (progn (princ "\nERROR @ DT:ListNilToString > lst is not a list\n") nil)
+    );END if
+    (progn (princ "\nERROR @ DT:ListNilToString > lst = nil\n") nil)
+  );END if
+
+  ; v0.0 - 2017.03.29 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.29
+)
