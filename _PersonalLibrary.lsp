@@ -2716,15 +2716,17 @@
 (defun c:TrackSet ()
   ; Tracking Setup
   (defun c:1() (princ "\nAUTODRIVE:\n") (command "_aeccDRIVEAUTO") )
+  (defun c:2() (princ "\nPROPERTIES:\n") (command "'_aeccPATHPROPERTIES") )
 
   (defun c:0() (princ "\nRELEASING LICENSE:\n") (command "_aeccRELEASELICENCE") )
 
   (defun c:cheatsheet() (alert
     "TRACKING CHEATSHEET\n
     autoDrive:
-        1\tArc\n
+        1\tArc
+        2\tProperties\n
     license:
-        1\trelease\n
+        0\trelease\n
   "))
   (princ "\nTRACKING SETUP COMPLETED")(princ)
 
