@@ -2717,6 +2717,7 @@
   ; Tracking Setup
   (defun c:1() (princ "\nAUTODRIVE:\n") (command "_aeccDRIVEAUTO") )
   (defun c:2() (princ "\nPROPERTIES:\n") (command "'_aeccPATHPROPERTIES") )
+  (defun c:3() (princ "\nINSERT PROFILE:\n") (command "_aeccINSERTPROFILE") )
 
   (defun c:0() (princ "\nRELEASING LICENSE:\n") (command "_aeccRELEASELICENCE") )
 
@@ -2724,7 +2725,9 @@
     "TRACKING CHEATSHEET\n
     autoDrive:
         1\tArc
-        2\tProperties\n
+    Modify:
+        2\tProperties
+        3\tInsert profile\n
     license:
         0\trelease\n
   "))
