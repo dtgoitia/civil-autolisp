@@ -2717,10 +2717,14 @@
   ; Tracking Setup
   (defun c:1() (princ "\nAUTODRIVE:\n") (command "_aeccDRIVEAUTO") )
 
+  (defun c:0() (princ "\nRELEASING LICENSE:\n") (command "_aeccRELEASELICENCE") )
+
   (defun c:cheatsheet() (alert
     "TRACKING CHEATSHEET\n
     autoDrive:
         1\tArc\n
+    license:
+        1\trelease\n
   "))
   (princ "\nTRACKING SETUP COMPLETED")(princ)
 
