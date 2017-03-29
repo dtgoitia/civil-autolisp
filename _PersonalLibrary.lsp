@@ -3282,16 +3282,14 @@
   ; Last revision: 2017.03.28
 )
 (defun DT:GetTabInformation ( tab / tabRevision tabStatus )
-  ; Return 1 if "NOT ISSUED YET" text found within the tab,
-  ; return 0 if not found
+  ; Return a list with tab name, status (issued or not), and last revision
   (if tab
     (if (= 'str (type tab))
       (progn
         ; Get last revision
-        ;(if (not (setq tabRevision (DT:GetLayoutLatestRevision tabName)))
-        ;  (setq tabRevision "??")
-        ;);END if
-        (setq tabRevision "TODO")
+        (if (not (setq tabRevision (DT:GetLayoutLatestRevision tabName)))
+          (setq tabRevision "??")
+        );END if
 
         ; Get layout status (issued/not issued)
         (cond
@@ -3318,9 +3316,10 @@
     (progn (princ "\nERROR @ DT:GetTabInformation > tab = nil\n") nil)
   );END if
 
+  ; v0.1 - 2017.03.29 - DT:GetLayoutLatestRevision implemented
   ; v0.0 - 2017.03.28 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.28
+  ; Last revision: 2017.03.29
 )
 (defun DT:ListToTable ( lst / maxColumnLength stringTable )
   ; Return the provided list as a table
