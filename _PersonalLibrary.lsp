@@ -2700,18 +2700,22 @@
 (defun c:SurvSet ()
   ; Survey setup
   (defun c:1() (princ "\nTie blocks and text AUTOMATIC\n") (c:TieSurvey))
-  (defun c:2() (princ "\nTIe blocks and text MANUAL\n") (c:TieSinglePoint))
+  (defun c:2() (princ "\nTie blocks and text MANUAL\n") (c:TieSinglePoint))
+  (defun c:3() (c:UpdateTextReadabilityAngle))
   (defun c:cheatsheet() (alert
     "\nSURVEY CHEATSHEET\n
     Draw:
         1\tAutomatic
         2\tSingle\n
+    Modify
+        3\tText readability angle\n
   "))
   (princ "\nSURVEY SETUP COMPLETED")(princ)
 
+  ; v0.0 - 2017.04.03 - 3 added
   ; v0.0 - 2017.02.28 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.28
+  ; Last revision: 2017.04.03
 )
 (defun c:TrackSet ()
   ; Tracking Setup
