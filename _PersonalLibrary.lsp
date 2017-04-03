@@ -3475,3 +3475,28 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.29
 )
+(defun c:UpdateTextReadabilityAngle ( / ss )
+  ; Correct all selected text's rotation to be readable
+  ; Used to update contour level labels
+  (princ "\nUPDATE TEXT READABILITY ANGLE\n")
+  (if (setq ss (ssget '(( 0 . "TEXT"))))
+    (foreach a (ssnamex ss)
+      (if (= 'ename (type (cadr a)))
+        (if
+          (= "TEXT" (cdr (assoc 0 (entget (cadr a)))))
+          (if
+            (/=
+              (cdr (assoc 50 (entget (cadr a)) ))
+              (setq ang (DT:ReadableTextAngle (cdr (assoc 50 (entget (cadr a)) )) ) )
+            )
+            (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Rotation ang )
+          );END if
+        );END if
+      );END if
+    );END foreach
+  );END if
+
+  ; v0.0 - 2017.04.03 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.03
+)
