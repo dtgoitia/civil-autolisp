@@ -3310,3 +3310,15 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.20
 )
+(defun c:xx( / txt )
+  ; Add/substract level to selected level.
+  (setq
+    txt (strcat "%%U" (LM:rtos (+ (DT:clic_or_type_level) 0.050 (/ 1.20 40)) 2 3))
+  );END setq
+  (princ (strcat "\nLevel footpath backedge = " (substr txt 4) "m"))
+  (DT:SetText (car (entsel "\nSelect text to override: ")) txt )
+
+  ; v0.0 - 2017.04.03 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.03
+)
