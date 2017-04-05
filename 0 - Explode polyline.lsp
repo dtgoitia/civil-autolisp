@@ -12,6 +12,7 @@
   ; End without double messages
   (princ)
 
+  ; v0.5 - 2016.11.14 - No "Global Width" case considered
   ; v0.4 - 2016.11.14 - Linetype Scale management added
   ; v0.3 - 2016.11.14 - All code rewritten
   ; v0.2 - 2016.03.21 - Code optimized and comments translated into English.
@@ -22,14 +23,14 @@
   ; NOTE: Can be used in polylines with 2 vertexes in the same position.
   ; NOTE: No problem with closed polylines.
   ; Author: David Torralba
-  ; Last revision: 2016.11.14
+  ; Last revision: 2017.04.05
 )
 (defun ExplodeSinglePolyline (ent_name / i layerName ptList width color lineType lineTypeScale)
   (setq
     i 0
     layerName (GetPolylineLayer ent_name)
     ptList (GetPolylinePointList ent_name)
-    width (GetPolylineWidth ent_name)
+    width (if (setq width (GetPolylineWidth ent_name)) width 0 )
     color (GetPolylineColor ent_name)
     lineType (GetPolylineStyle ent_name)
     lineTypeScale (GetPolylineStyleScale ent_name)
