@@ -2705,17 +2705,18 @@
   (defun c:cheatsheet() (alert
     "\nSURVEY CHEATSHEET\n
     Draw:
-        1\tAutomatic
-        2\tSingle\n
+        1\tAutomatic points
+        2\tSingle points\n
     Modify
         3\tText readability angle\n
   "))
   (princ "\nSURVEY SETUP COMPLETED")(princ)
 
-  ; v0.0 - 2017.04.03 - 3 added
+  ; v0.2 - 2017.04.05 - Cheatsheet text updated
+  ; v0.1 - 2017.04.03 - 3 added
   ; v0.0 - 2017.02.28 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.04.03
+  ; Last revision: 2017.04.05
 )
 (defun c:TrackSet ()
   ; Tracking Setup
