@@ -3509,3 +3509,11 @@
   ; Author: David Torralba
   ; Last revision: 2017.04.03
 )
+(defun c:zp ( )
+  ; Return to previous view
+  (command "zoom" "P" ^C^C)
+
+  ; v0.0 - 2017.04.07 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.07
+)
