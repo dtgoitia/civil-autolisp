@@ -1164,6 +1164,45 @@
   ; Author: David Torralba
   ; Last revision: 2016.06.17
 )
+(defun c:nlayfv ( / obj lay)
+  ; Freeze nested object real layer in the current viewport
+  (if
+    (and
+      (/= "Model" (getvar "CTAB"  ) )
+      (<  1       (getvar "CVPORT") )
+    );END and
+    (progn
+      (if (setq obj (car (nentsel "\nSelect object to freeze layer: ")))
+        (mapcar
+          '(lambda (x)
+            (if (= (car x) 8)
+              (progn
+                (princ "\nDXF Layer = ")
+                (princ (cdr x))
+                (setq lay (cdr x))
+              ); END progn
+            )
+          )
+          (entget obj '("*"))
+        )
+      ); END if
+      (if (not lay)
+        (princ "\nLayer name has not been saved at lay variable. Take a look to the code.")
+        (command "vplayer" "F" lay "C" "")
+      );END if
+
+    );END progn true
+    (progn
+      (alert "You are not in a viewport.")
+      (quit)
+    );END progn false
+  );END if
+  (princ)
+
+  ; v0.0 - 2016.08.17
+  ; Author: David Torralba
+  ; Last revision: 2016.08.17
+)
 (defun c:TOTAL_AREA( / a ar art i)
   ; Select all hatches and iterate adding their areas.
   (setq
