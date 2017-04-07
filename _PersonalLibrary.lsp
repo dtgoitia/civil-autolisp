@@ -3511,7 +3511,10 @@
 )
 (defun c:zp ( )
   ; Return to previous view
+  (princ "\nReturning to previous view... ")
   (command "zoom" "P" ^C^C)
+  (princ "done!\n")
+  (princ)
 
   ; v0.0 - 2017.04.07 - First issue
   ; Author: David Torralba
