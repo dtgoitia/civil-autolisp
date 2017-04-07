@@ -2849,15 +2849,18 @@
   ; Move items in ss to lay layer and put them by Layer
   (if (and ss lay)
     (if (and (= 'pickset (type ss)) (= 'str (type lay)))
-      (foreach a (ssnamex ss)
-        (if (= 'ename (type (cadr a)))
-          (progn
-            (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Layer lay)
-            (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 256)
-            (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Linetype "ByLayer")
-          );END progn
-        );END if
-      );END foreach
+      (if (tblsearch "layer" lay)
+        (foreach a (ssnamex ss)
+          (if (= 'ename (type (cadr a)))
+            (progn
+              (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Layer lay)
+              (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 256)
+              (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Linetype "ByLayer")
+            );END progn
+          );END if
+        );END foreach
+        (progn (princ (strcat "\nERROR @ DT:MoveSelectionSetToLayer > layer \"" lay "\" does not exist\n"))(princ) nil)
+      );END if
       (cond
         ((/= 'pickset (type ss)) (princ "\nERROR @ DT:MoveSelectionSetToLayer > ss is not a pickset\n")(princ) nil )
         ((/= 'str    (type lay)) (princ "\nERROR @ DT:MoveSelectionSetToLayer > lay is not a string\n")(princ) nil )
@@ -2869,9 +2872,10 @@
     );END cond
   );END if
 
+  ; v0.1 - 2017.04.07 - Add error message when provided layer doesn't exist
   ; v0.0 - 2017.02.15 - First issue
   ; Author: David Torralban
-  ; Last revision: 2017.02.15
+  ; Last revision: 2017.04.07
 )
 (defun DT:SplitLevelDifference (textLevel)
   ; Return a pair list with the level and the difference, both as strings
