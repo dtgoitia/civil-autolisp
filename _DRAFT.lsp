@@ -3283,3 +3283,31 @@
   ; Author: David Torralba
   ; Last revision: 2017.04.03
 )
+(defun c:xx ( / VLCurrentLayout currentTabName newTabName )
+  ; Rename current tab    name
+  ; Rename current layout name
+  (setq
+    ; Get current layout object
+    VLCurrentLayout (vla-get-activelayout (vla-get-ActiveDocument (vlax-get-acad-object)))
+    currentTabName (vla-get-Name VLCurrentLayout)
+    newTabName (strcat "5613-" (substr currentTabName 6))
+  );END setq
+  (vla-Put-Name VLCurrentLayout newTabName)
+
+  ; v0.0 - 2017.04.10 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.10
+)
+(defun c:xx ( )
+  ; Rename all tabs    starting with "5092-" to "5613-"
+  ; Rename all layouts starting with "5092-" to "5613-"
+  (vlax-for x (vla-get-Layouts (vla-get-ActiveDocument (vlax-get-acad-object) ))
+    (if (= (substr (vla-get-Name x) 1 5) "5092-")
+      (vla-Put-Name x (strcat "5613-" (substr (vla-get-Name x) 6)))
+    );END if
+  );END vlax-for
+
+  ; v0.0 - 2017.04.10 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.10
+)
