@@ -25,28 +25,13 @@
   ;   rotation_value = "P"  --> let user select rotation
   ;   osmode_value = nil    --> use current osmode
 
-  ; ERROR HANDLING FUNCTION
-  (defun *error* ( msg )
-    (if (not (member msg '("Function cancelled" "quit / exit abort"))) (princ (strcat "\nError: " msg)))
-    (setvar "attdia" oldattdia)
-    (setvar "attreq" oldattreq)
-    (if (/= oldclayer nil)            (setvar "clayer" oldclayer))
-    (if (/= oldosmode nil)            (setvar "osmode" oldosmode))
-    (if (/= oldinsunits nil)          (setvar "insunits" oldinsunits))
-    (if (/= oldinsunitsdeftarget nil) (setvar "insunitsdeftarget" oldinsunitsdeftarget))
-    (if (/= oldinsunitsdefsource nil) (setvar "insunitsdefsource" oldinsunitsdefsource))
-    (princ)
-  )
-
   ; SAVE OLD SYSTEM VARIABLES
-  (setq
-    oldattdia (getvar "attdia")
-    oldattreq (getvar "attreq")
-    oldinsunits (getvar "insunits")
-    oldinsunitsdeftarget (getvar "insunitsdeftarget")
-    oldinsunitsdefsource (getvar "insunitsdefsource")
-    oldclayer (getvar "clayer")
-    oldosmode (getvar "osmode")
+  (save_environment
+    (list
+      "attdia" "attreq"
+      "insunits" "insunitsdeftarget" "insunitsdefsource"
+      "clayer" "osmode"
+    )
   )
 
   ; MODIFY SETTINGS
@@ -90,15 +75,10 @@
   );END if
 
   ; RESTORE PREVIOUS SETTINGS
-  (setvar "attdia" oldattdia)
-  (setvar "attreq" oldattreq)
-  (setvar "insunits" oldinsunits)
-  (setvar "insunitsdeftarget" oldinsunitsdeftarget)
-  (setvar "insunitsdefsource" oldinsunitsdefsource)
-  (setvar "clayer" oldclayer)
-  (setvar "osmode" oldosmode)
+  (restore_environment)
   (princ)
 
+  ; v0.7 - 2017.04.12 - Save/restore environment functions updated
   ; v0.6 - 2017.03.24 - Bug fixed: look of unloaded blocks separated in their own drawings
   ; v0.5 - 2017.03.13 - Minor bug fixed when rot = nil
   ; v0.4 - 2016.12.02 - Function argument interpretation updated
@@ -108,7 +88,7 @@
   ; v0.1 - 2016.04.15 - ATTDIA and ATTREQ system variable control added
   ; v0.0 - 2016.04.14 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.24
+  ; Last revision: 2017.04.12
 )
 ;
 ;---------------------------------------------------------------------------
