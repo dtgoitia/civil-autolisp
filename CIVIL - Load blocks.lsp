@@ -161,7 +161,7 @@
 (defun c:MJA_A2_Portrait () (title_block_insert "A2-Portrait") (princ))
 (defun c:MJA_A3_Portrait () (title_block_insert "A3-Portrait") (princ))
 (defun c:MJA_A4_landscape ( / oldosmode )
-  (if (DT:CheckIfBlockExists blk)
+  (if (DT:CheckIfBlockExists "A4-Landscape")
     (progn
       (setq oldosmode (getvar "osmode"))
       (setvar "osmode" 0)
@@ -176,7 +176,7 @@
   (princ)
 )
 (defun c:MJA_A4_portrait ( / oldosmode )
-  (if (DT:CheckIfBlockExists blk)
+  (if (DT:CheckIfBlockExists "A4-Portrait")
     (progn
       (setq oldosmode (getvar "osmode"))
       (setvar "osmode" 0)
@@ -199,7 +199,7 @@
 (defun c:MJA_A2_Portrait_D () (title_block_D_insert "A2-Portrait_D") (princ))
 (defun c:MJA_A3_Portrait_D () (title_block_D_insert "A3-Portrait_D") (princ))
 (defun c:MJA_A4_landscape_D ( / oldosmode )
-  (if (DT:CheckIfBlockExists blk)
+  (if (DT:CheckIfBlockExists "A4-Landscape_D")
     (progn
       (setq oldosmode (getvar "osmode"))
       (setvar "osmode" 0)
@@ -214,7 +214,7 @@
   (princ)
 )
 (defun c:MJA_A4_portrait_D ( / oldosmode )
-  (if (DT:CheckIfBlockExists blk)
+  (if (DT:CheckIfBlockExists "A4-Portrait_D")
     (progn
       (setq oldosmode (getvar "osmode"))
       (setvar "osmode" 0)
