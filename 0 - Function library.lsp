@@ -1396,3 +1396,26 @@
   ; Author: David Torralba
   ; Last revision: 2017.01.29
 )
+(defun DT:GetBlockVLAObject ( blockName / return )
+  ; Return VL object name of the block named "blockName", if any
+  (if blockName
+    (if (= 'str (type blockName))
+      (progn
+        (vlax-for blk (vla-get-Blocks (vla-get-ActiveDocument (vlax-get-acad-object)))
+          ;(princ "\n(vla-get-Name blk) = ")(princ (vla-get-Name blk))
+          (if (= blockName (vla-get-Name blk))
+            (setq return blk)
+          );END if
+        );END vlax-for
+      );END progn
+      (progn (princ "\nERROR @ DT:ib > blockName is not a string\n") nil )
+    );END if
+    (progn (princ "\nERROR @ DT:ib > blockName = nil\n") nil )
+  );END if
+
+  return
+
+  ; v0.0 - 2017.04.12 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.12
+)
