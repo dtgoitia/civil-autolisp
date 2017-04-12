@@ -3559,3 +3559,36 @@
   ; Author: David Torralba
   ; Last revision: 2017.04.07
 )
+
+(defun DT:GetTrustedPaths ( / trustedPaths )
+  ; Return a list with each trusted path as a list element
+  (if (setq trustedPaths (getvar "trustedpaths"))
+    (DT:StringToList trustedPaths ";")
+    (progn (princ "\nERROR @ DT:GetTrustedPaths > trustedPaths = nil\n") nil )
+  );END if
+
+  ; v0.2 - 2017.04.12 - Code tidy up
+  ; v0.1 - 2017.01.27 - DT:StringToList implemented
+  ; v0.0 - 2017.01.23 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.12
+)
+(defun DT:AddTrustedPath ( newTrustedPath )
+  (if newTrustedPath
+    (if (= 'str (type newTrustedPath))
+      (setvar "trustedpaths"
+        (strcat
+          (getvar "trustedpaths")
+          ";"
+          newTrustedPath
+        );END strcat
+      );END setvar
+      (progn (princ "\nERROR @ DT:AddTrustedPath > newTrustedPath is not a string\n") nil )
+    );END if
+    (progn (princ "\nERROR @ DT:AddTrustedPath > newTrustedPath = nil\n") nil )
+  );END if
+
+  ; v0.0 - 2017.04.12 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.12
+)
