@@ -96,12 +96,12 @@
 ; TITLE BLOCK INSERTION MASTER FUNCTION
 ;
 ;---------------------------------------------------------------------------
-(defun title_block_date ( / d yr mo )
-  ; Title block date function
+(defun DT:TitleBlockDate ( / d yr mo )
+  ; Return date formatter as "Apr'17"
   (setq
-    d (rtos (getvar "CDATE") 2 6) ;get the date and time and convert to text
-    yr (substr d 3 2)             ;extract the year
-    mo (substr d 5 2)             ;extract the month
+    d (rtos (getvar "CDATE") 2 6) ; get the date and time and convert to text
+    yr (substr d 3 2)             ; extract the year
+    mo (substr d 5 2)             ; extract the month
   )
   (cond
     ((= mo "01") (setq mo "Jan"))
@@ -117,117 +117,75 @@
     ((= mo "11") (setq mo "Nov"))
     ((= mo "12") (setq mo "Dec"))
   ); END cond
+
+  ; Concatenate strings and return date
   (strcat mo "\'" yr)
+
   ; v0.0 - 2016.03.29 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.03.29
 )
-(defun title_block_insert ( blk /  )
-  (if (DT:CheckIfBlockExists blk)
-    (command "-insert" blk "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) "" "" "" "" "PRELIMINARY" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "")
-    (alert "Sorry, this block is not loaded.\nGo to:\nMenu bar\n   MJA Engineering\n      Load all blocks\nThis will load all the missing blocks.")
+(defun DT:InsertTitleBLock ( blockName )
+  ; Insert "blockName" block in the layer "MJA-Title" and add current date
+  (if blockName
+    (if (= 'str (type blockName))
+      (progn
+        ; SAVE OLD SYSTEM VARIABLES
+        (save_environment (list "attdia" "attreq" "insunits" "insunitsdeftarget" "insunitsdefsource" "osmode"))
+
+        ; MODIFY SETTINGS
+        (setvar "osmode" 0)
+        (setvar "attdia" 0)
+        (setvar "attreq" 0)
+        (setvar "insunits" 0)
+        (setvar "insunitsdeftarget" 0)
+        (setvar "insunitsdefsource" 0)
+
+        ; Insert block at origin (0,0)
+        (command "-insert" blockName "0,0" 1 1 0)
+
+        ; Set block correct layer
+        (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
+
+        ; Set block color ByLayer
+        (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
+
+        ; Set title block date
+        (LM:vl-setattributevalue (vlax-ename->vla-object (entlast)) "***'**" (DT:TitleBlockDate) )
+
+        ; RESTORE PREVIOUS SETTINGS
+        (restore_environment)
+        (princ)
+      );END progn
+      (progn (princ "ERROR @ DT:CheckIfBlockExists > blockName is not a string\n") nil )
+    );END if
+    (progn (princ "ERROR @ DT:CheckIfBlockExists > blockName = nil\n") nil )
   );END if
-  ; v0.1 - 2016.12.02 - Check if the block exists before you insert it
-  ; v0.0 - 2016.03.29 - First issue
+
+  ; v0.0 - 2017.02.12 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.12.02
+  ; Last revision: 2017.02.12
 )
-(defun title_block_D_insert ( blk / oldosmode )
-  (if (DT:CheckIfBlockExists blk)
-    (progn
-      (setq oldosmode (getvar "osmode"))
-      (setvar "osmode" 0)
-      (command "-insert" blk "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) "" "" "" "" "PRELIMINARY")
-      (while (> (getvar "CMDACTIVE") 0) (command ""))
-      (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
-      (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
-      (setvar "osmode" oldosmode)
-    );END progn
-    (alert "Sorry, this block is not loaded.\nGo to:\nMenu bar\n   MJA Engineering\n      Load all blocks\nThis will load all the missing blocks.")
-  );END if
-  (princ)
-  ; v0.2 - 2016.12.02 - Check if the block exists before you insert it
-  ; v0.1 - 2016.08.23 - OSMODE, layer and color management added
-  ; v0.0 - 2016.03.29 - First issue
-  ; Author: David Torralba
-  ; Last revision: 2016.12.02
-)
-(defun c:MJA_A0_landscape () (title_block_insert "A0-Landscape") (princ))
-(defun c:MJA_A1_landscape () (title_block_insert "A1-Landscape") (princ))
-(defun c:MJA_A2_landscape () (title_block_insert "A2-Landscape") (princ))
-(defun c:MJA_A3_landscape () (title_block_insert "A3-Landscape") (princ))
-(defun c:MJA_A0_Portrait () (title_block_insert "A0-Portrait") (princ))
-(defun c:MJA_A1_Portrait () (title_block_insert "A1-Portrait") (princ))
-(defun c:MJA_A2_Portrait () (title_block_insert "A2-Portrait") (princ))
-(defun c:MJA_A3_Portrait () (title_block_insert "A3-Portrait") (princ))
-(defun c:MJA_A4_landscape ( / oldosmode )
-  (if (DT:CheckIfBlockExists "A4-Landscape")
-    (progn
-      (setq oldosmode (getvar "osmode"))
-      (setvar "osmode" 0)
-      (command "-insert" "A4-Landscape" "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) )
-      (while (> (getvar "CMDACTIVE") 0) (command ""))
-      (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
-      (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
-      (setvar "osmode" oldosmode)
-    );END progn
-    (alert "Sorry, this block is not loaded.\nGo to:\nMenu bar\n   MJA Engineering\n      Load all blocks\nThis will load all the missing blocks.")
-  );END if
-  (princ)
-)
-(defun c:MJA_A4_portrait ( / oldosmode )
-  (if (DT:CheckIfBlockExists "A4-Portrait")
-    (progn
-      (setq oldosmode (getvar "osmode"))
-      (setvar "osmode" 0)
-      (command "-insert" "A4-Portrait" "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) )
-      (while (> (getvar "CMDACTIVE") 0) (command ""))
-      (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
-      (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
-      (setvar "osmode" oldosmode)
-    );END progn
-    (alert "Sorry, this block is not loaded.\nGo to:\nMenu bar\n   MJA Engineering\n      Load all blocks\nThis will load all the missing blocks.")
-  );END if
-  (princ)
-)
-(defun c:MJA_A0_landscape_D () (title_block_D_insert "A0-Landscape_D") (princ))
-(defun c:MJA_A1_landscape_D () (title_block_D_insert "A1-Landscape_D") (princ))
-(defun c:MJA_A2_landscape_D () (title_block_D_insert "A2-Landscape_D") (princ))
-(defun c:MJA_A3_landscape_D () (title_block_D_insert "A3-Landscape_D") (princ))
-(defun c:MJA_A0_Portrait_D () (title_block_D_insert "A0-Portrait_D") (princ))
-(defun c:MJA_A1_Portrait_D () (title_block_D_insert "A1-Portrait_D") (princ))
-(defun c:MJA_A2_Portrait_D () (title_block_D_insert "A2-Portrait_D") (princ))
-(defun c:MJA_A3_Portrait_D () (title_block_D_insert "A3-Portrait_D") (princ))
-(defun c:MJA_A4_landscape_D ( / oldosmode )
-  (if (DT:CheckIfBlockExists "A4-Landscape_D")
-    (progn
-      (setq oldosmode (getvar "osmode"))
-      (setvar "osmode" 0)
-      (command "-insert" "A4-Landscape_D" "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) )
-      (while (> (getvar "CMDACTIVE") 0) (command ""))
-      (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
-      (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
-      (setvar "osmode" oldosmode)
-    );END progn
-    (alert "Sorry, this block is not loaded.\nGo to:\nMenu bar\n   MJA Engineering\n      Load all blocks\nThis will load all the missing blocks.")
-  );END if
-  (princ)
-)
-(defun c:MJA_A4_portrait_D ( / oldosmode )
-  (if (DT:CheckIfBlockExists "A4-Portrait_D")
-    (progn
-      (setq oldosmode (getvar "osmode"))
-      (setvar "osmode" 0)
-      (command "-insert" "A4-Portrait_D" "0,0" 1 1 0 "" "" "" "" "" "" (title_block_date) )
-      (while (> (getvar "CMDACTIVE") 0) (command ""))
-      (vla-put-layer (vlax-ename->vla-object (entlast)) "MJA-Title")
-      (vlax-put-property (vlax-ename->vla-object (entlast)) 'Color 256)
-      (setvar "osmode" oldosmode)
-    );END progn
-    (alert "Sorry, this block is not loaded.\nGo to:\nMenu bar\n   MJA Engineering\n      Load all blocks\nThis will load all the missing blocks.")
-  );END if
-  (princ)
-)
+(defun c:MJA_A0_Landscape ()   (DT:InsertTitleBLock "A0-Landscape")   (princ))
+(defun c:MJA_A1_Landscape ()   (DT:InsertTitleBLock "A1-Landscape")   (princ))
+(defun c:MJA_A2_Landscape ()   (DT:InsertTitleBLock "A2-Landscape")   (princ))
+(defun c:MJA_A3_Landscape ()   (DT:InsertTitleBLock "A3-Landscape")   (princ))
+(defun c:MJA_A4_Landscape ()   (DT:InsertTitleBLock "A4-Landscape")   (princ))
+(defun c:MJA_A0_Portrait ()    (DT:InsertTitleBLock "A0-Portrait")    (princ))
+(defun c:MJA_A1_Portrait ()    (DT:InsertTitleBLock "A1-Portrait")    (princ))
+(defun c:MJA_A2_Portrait ()    (DT:InsertTitleBLock "A2-Portrait")    (princ))
+(defun c:MJA_A3_Portrait ()    (DT:InsertTitleBLock "A3-Portrait")    (princ))
+(defun c:MJA_A4_Portrait ()    (DT:InsertTitleBLock "A4-Portrait")    (princ))
+(defun c:MJA_A0_Landscape_D () (DT:InsertTitleBLock "A0-Landscape_D") (princ))
+(defun c:MJA_A1_Landscape_D () (DT:InsertTitleBLock "A1-Landscape_D") (princ))
+(defun c:MJA_A2_Landscape_D () (DT:InsertTitleBLock "A2-Landscape_D") (princ))
+(defun c:MJA_A3_Landscape_D () (DT:InsertTitleBLock "A3-Landscape_D") (princ))
+(defun c:MJA_A4_Landscape_D () (DT:InsertTitleBLock "A4-Landscape_D") (princ))
+(defun c:MJA_A0_Portrait_D ()  (DT:InsertTitleBLock "A0-Portrait_D")  (princ))
+(defun c:MJA_A1_Portrait_D ()  (DT:InsertTitleBLock "A1-Portrait_D")  (princ))
+(defun c:MJA_A2_Portrait_D ()  (DT:InsertTitleBLock "A2-Portrait_D")  (princ))
+(defun c:MJA_A3_Portrait_D ()  (DT:InsertTitleBLock "A3-Portrait_D")  (princ))
+(defun c:MJA_A4_portrait_D ()  (DT:InsertTitleBLock "A4-Portrait_D")  (princ))
 (defun c:revision_box_D() (DT:ib "Revision-box" "MJA-Title" nil nil))
 ; v0.1 - 2016.04.07 - Dynamic functins added
 ; v0.0 - 2016.03.29 - First issue
