@@ -3592,3 +3592,41 @@
   ; Author: David Torralba
   ; Last revision: 2017.04.12
 )
+(defun DT:RemoveTrustedPath ( trustedPathToRemove / updatedTrustedPaths currentTrustedPaths return )
+  ; Return T if "trustedPathToRemove" was found and removed from trusted paths,
+  ; otherwise will return nil
+  (if trustedPathToRemove
+    (if (= 'str (type trustedPathToRemove))
+      (progn
+        (setq updatedTrustedPaths "")
+        ; Get current trusted paths
+        (if (setq currentTrustedPaths (DT:GetTrustedPaths))
+          (foreach path currentTrustedPaths
+            (if (/= path trustedPathToRemove)
+              (setq updatedTrustedPaths (strcat updatedTrustedPaths ";" path))
+            );END if
+          );END foreach
+        );END if
+
+        ; Set return
+        (if (= (getvar "trustedpaths") updatedTrustedPaths )
+          (setq return nil)
+          (setq return T)
+        );END if
+
+        ; Update trusted paths
+        (setvar "trustedpaths" updatedTrustedPaths)
+
+        ; Return value
+        return
+
+      );END progn
+      (progn (princ "\nERROR @ DT:RemoveTrustedPath > newTrustedPath is not a string\n") nil )
+    );END if
+    (progn (princ "\nERROR @ DT:RemoveTrustedPath > trustedPathToRemove = nil\n") nil )
+  );END if
+
+  ; v0.0 - 2017.04.12 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.12
+)
