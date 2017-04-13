@@ -3598,12 +3598,14 @@
   (if trustedPathToRemove
     (if (= 'str (type trustedPathToRemove))
       (progn
-        (setq updatedTrustedPaths "")
         ; Get current trusted paths
         (if (setq currentTrustedPaths (DT:GetTrustedPaths))
           (foreach path currentTrustedPaths
             (if (/= path trustedPathToRemove)
-              (setq updatedTrustedPaths (strcat updatedTrustedPaths ";" path))
+              (if updatedTrustedPaths
+                (setq updatedTrustedPaths (strcat updatedTrustedPaths ";" path))
+                (setq updatedTrustedPaths path)
+              );END if
             );END if
           );END foreach
         );END if
