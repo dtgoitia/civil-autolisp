@@ -3632,3 +3632,31 @@
   ; Author: David Torralba
   ; Last revision: 2017.04.12
 )
+(defun DT:TotalArea ( ss / totalArea )
+  ; Return total area (if any) of the objects within the pickset ss
+  (if ss
+    (if (= 'pickset (type ss))
+      (progn
+        (foreach a (ssnamex ss)
+          (if (= 'ename (type (cadr a)))
+            (if (vlax-property-available-p (vlax-ename->vla-object (cadr a)) 'Area)
+              (if totalArea
+                (setq totalArea (+ totalArea (vla-get-area (vlax-ename->vla-object (cadr a)))))
+                (setq totalArea (vla-get-area (vlax-ename->vla-object (cadr a))))
+              );END if
+            );END if
+          );END if
+        );END foreach
+
+        ; Return total area if any
+        (if totalArea totalArea)
+      );END progn
+      (progn (princ "\nERROR @ DT:TotalArea : ss is not a pickset\n") nil )
+    );END if
+    (progn (princ "\nERROR @ DT:TotalArea : ss=nil\n") nil )
+  );END if
+
+  ; v0.0 - 2017.04.18 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.18
+)
