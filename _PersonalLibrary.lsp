@@ -1628,16 +1628,34 @@
   (princ (strcat "\n" filePath "   \(copied to ClipBoard\)") )
   (princ)
 )
+(defun GetShortName ( strFileName / wshFSO fileObj)
+  ;; Credit to Lee Ambrosius
+  ;; Source: http://hyperpics.blogs.com/beyond_the_ui/2005/12/obtaining_a_sho.html
+  (vl-load-com)
+
+  (setq wshFSO (vlax-create-object "Scripting.FileSystemObject"))
+  (setq fileObj (vlax-invoke-method wshFSO 'GetFile strFileName))
+  (vlax-get-property fileObj 'ShortPath)
+)
 (defun c:cfolder()
   ; Open current file containing folder in Windows Explorer and select the file
   (startapp
     (strcat "explorer /select, "
-      (getvar "dwgprefix")
-      (getvar "dwgname")
+      (GetShortName
+        (strcat
+          (getvar "dwgprefix")
+          (getvar "dwgname")
+        );END strcat
+      );END GetShortName
       ", /e"
-    )
-  )
+    );END strcat
+  );END startapp
   (princ)
+
+  ; v0.1 - 2017.04.18 - Path with spaces supported
+  ; v0.0 - 2016.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.18
 )
 (defun c:f( / url)
   ; Open the default browser and search in Google for the desired term adding "Autodesk Help " at the beginning
