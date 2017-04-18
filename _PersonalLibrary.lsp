@@ -3660,3 +3660,24 @@
   ; Author: David Torralba
   ; Last revision: 2017.04.18
 )
+(defun DT:DrawText ( pt lay str height rotation )
+  ; Draw a text
+  (entmakex
+    (list
+      (cons 0 "TEXT")
+      (if (tblsearch "style" "ROMANS") (cons 7 "ROMANS"))
+      (cons 8 lay)
+      (cons 10 (polar pt (* 1.5 pi) 2.2))
+      (cons 11 pt) ; needed for text justification
+      (cons 40 height )
+      (cons 1  str)
+      (cons 50 rotation)
+      (cons 71 0) ; needed for text justification
+      (cons 72 1) ; needed for text justification
+    );END list
+  );END entmakex
+
+  ; v0.0 - 2017.04.18 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.18
+)
