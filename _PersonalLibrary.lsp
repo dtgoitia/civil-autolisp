@@ -1657,6 +1657,14 @@
   ; Author: David Torralba
   ; Last revision: 2017.04.18
 )
+(defun c:civ ()
+  ; Open civil-autolisp repository folder in explorer
+  (command "SH" "explorer %userprofile%\\projects\\civil-autolisp")
+
+  ; v0.0 - 2017.04.19 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.19
+)
 (defun c:f( / url)
   ; Open the default browser and search in Google for the desired term adding "Autodesk Help " at the beginning
   (setq
