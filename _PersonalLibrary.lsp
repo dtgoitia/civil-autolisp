@@ -1620,6 +1620,36 @@
   ; Author: David Torralba
   ; Last revision: 2017.04.20
 )
+(defun DT:ReplaceText ( ent_name pattern newString )
+  ; Replace pattern for newString in TEXTs and MTEXTs content
+  (if (and ent_name pattern newString)
+    (if (and (= 'ename (type ent_name)) (= 'str (type pattern)) (= 'str (type newString)))
+      (if (setq textContent (DT:GetText ent_name))
+        (if (setq position (vl-string-search pattern textContent))
+          (if (setq patternLength (strlen pattern))
+            (if (DT:SetText ent_name (strcat (substr textContent 1 position) newString (substr textContent (+ position patternLength 1)) ))
+              T
+            );END if
+          );END progn
+        );END if
+      );END if
+      (cond
+        ((/= 'ename (type ent_name))  (princ "\nERROR @ DT:ReplaceText : ent_name is not a ename\n")   nil )
+        ((/= 'str   (type pattern))   (princ "\nERROR @ DT:ReplaceText : pattern is not a string\n")   nil )
+        ((/= 'str   (type newString)) (princ "\nERROR @ DT:ReplaceText : newString is not a string\n") nil )
+      );END cond
+    );END if
+    (cond
+      ((not ent_name)  (princ "\nERROR @ DT:ReplaceText : ent_name=nil\n")  nil )
+      ((not pattern)   (princ "\nERROR @ DT:ReplaceText : pattern=nil\n")   nil )
+      ((not newString) (princ "\nERROR @ DT:ReplaceText : newString=nil\n") nil )
+    );END cond
+  );END if
+
+  ; v0.0 - 2017.04.20 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.20
+)
 (defun DT:FastMove ( ent_name / )
   (command "_.move" ent_name "" "_non" (cadr (grread 't)) "_non" pause)
 
