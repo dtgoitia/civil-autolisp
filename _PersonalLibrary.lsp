@@ -1604,13 +1604,21 @@
     );END if2
   );END if
 )
-(defun DT:SetText(ent_name txt)
+(defun DT:SetText ( ent_name txt )
   ; Sets the text of the selected object, if possible
   (if (= 'ename (type ent_name))
     (if (vlax-property-available-p (vlax-ename->vla-object ent_name) 'TextString)
-      (vlax-put-property (vlax-ename->vla-object ent_name) 'TextString txt)
+      (progn
+        (vlax-put-property (vlax-ename->vla-object ent_name) 'TextString txt)
+        T
+      );END progn
     );END if2
   );END if
+
+  ; v0.1 - 2017.04.20 - T retured if property available
+  ; v0.0 - 2017.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.20
 )
 (defun asin (sine) (atan sine (sqrt (- 1 (* sine sine)))))
 (defun acos (cosine) (atan (sqrt (- 1 (* cosine cosine))) cosine))
