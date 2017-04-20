@@ -1620,6 +1620,13 @@
   ; Author: David Torralba
   ; Last revision: 2017.04.20
 )
+(defun DT:FastMove ( ent_name / )
+  (command "_.move" ent_name "" "_non" (cadr (grread 't)) "_non" pause)
+
+  ; v0.0 - 2017.04.20 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.20
+)
 (defun asin (sine) (atan sine (sqrt (- 1 (* sine sine)))))
 (defun acos (cosine) (atan (sqrt (- 1 (* cosine cosine))) cosine))
 (defun c:cfile( / filePath )
