@@ -61,59 +61,6 @@
   ); END while
   (princ)
 )
-(defun c:s ()
-(command "-text" (cadr (grread 't)) "0.3" "" (strcat "S" (rtos (getreal"\nPica el nivel: ") 2 3)))
-(princ)
-)
-(defun c:ct()
-  ; Copy any nested string into the clipboard
-  (CopyToClipboard (DT:destripar_txt))
-)
-
-(defun c:k1()
-	(command "ncopy" pause "" "" "")
-	(command "MATCHPROP" objeto_base "L" "")
-	(exit)
-)
-(defun c:HAS()
-	(command "-hatch" "S" (ssget) "" "")
-	(princ)
-)
-
-(defun c:k2 ( / pt)
-	(command "-text" "S" "ROMANS" "J" "M" (setq pt (cadr (grread 't))) "1.5" "90" (getstring 't "\nMete texto: "))
-  (princ "\nPunto = ")(princ pt)
-;	(c:rt)
-)
-
-(defun c:2() (command ".-insert" "Twin Garage 22 35-42 48-55 58-63 82-87 93 29.03.16" pause 1000 1000 pause))
-(defun c:1() (command ".-insert" "Single Garage 29.03.16" pause 1000 1000 pause))
-
-
-(defun c:1()
-  (command "-text" "S" "ROMANS" (getpoint "\nElige punto: ") "0.3" "90" (strcat "F" (LM:rtos (- (DT:level_detection) 0.75) 2 2) ))
-  (princ)
-)
-
-(defun c:1(/ p1)
-	(command ".-insert" "Private-Square300-Foul-Manhole" (setq p1 (getpoint)) 1 1 0)
-	(while (not kkkkk)
-		(command ".pline" p1 pause "")
-	)
-)
-(defun c:2(/ p1)
-  (princ "\nSelect point to insert RWP: ")
-	(command ".-insert" "e-psd-rwp" (setq p1 (getpoint)) 1 1 0)
-	(command ".line" p1 pause "")
-)
-(defun c:3(/ p1)
-	(setvar "OSMODE" 4)
-	(setq p1 (getpoint))
-	(command ".line" p1 pause "")
-)
-(defun c:2 ( / pt)
-	(command "-text" "S" "ARIAL" "J" "BC" (getpoint "\nSelect insertion point") "0.5" "90" (getstring "\nIntroduce text: "))
-)
 (defun c:1 ( /
 									ent p0 p1 pm12 d level
 								)
@@ -141,56 +88,6 @@
 	(princ "\nlevel = ")(princ level)(princ "  \(copied to clipboard\)")
   (setvar "OSMODE" 33)
 	(princ)
-)
-(defun c:2( / p msg oldosmode)
-  (setvar "osmode" 33)
-  (setq p (getpoint "\nSelect base point: "))
-  (setq
-    d (- (getreal "\nIntroduce distancia: ") 58)
-    oldosmode (getvar "osmode")
-  )
-  (setvar "osmode" 0)
-  (command "pline" p (polar p (* 0.5 pi) d) "")
-  (setvar "osmode" oldosmode)
-  (princ)
-)
-; Igualar propiedades de la última entidad creada con la entidad ent_ref (nombre DXF) y luego enviarla al fondo.
-(defun c:3()
-	(command ".matchprop" ent_ref (entlast))
-	(command "draworder" (entlast) "" "B")
-)
-; Coger el contenido de un texto desde su carácter número 3 hasta el final y copiarlo al ClipBoard
-(defun c:2()
-  (CopyToClipboard (substr (cdr (assoc 1 (entget (car (entsel "\nSelect a text: "))))) 3))
-)
-(defun c:1 ()
-  (command "area" "Object" (car (entsel "\nSelect closed polyline: ")))
-  (CopyToClipboard (LM:rtos (getvar "Area") 2 3))
-)
-(defun c:2( / ent_name)
-  (while (not kkkk)
-    (setq ent_name (car (entsel)))
-    (command "offset" "E" "Y" (* 0.5 (cdr (assoc 41 (entget ent_name)))) ent_name (getpoint "\nClica dentro del objeto: ") "")
-  )
-)
-; Medir nivel en el long section CON EXAGERACION y copiarlo al ClipBoard: mide distancia vertical, multiplica por exageracion y suma el datum
-(defun c:2 ()
-  (princ "\nLongsection level (exageration = 10)")
-  (CopyToClipboard (LM:rtos (+ 57 (* 0.1 (distance (getpoint "\nPunto inicial: ") (getpoint "\nPunto final: ")))) 2 5))
-)
-
-; Medir nivel en el long section sin exageración y copiarlo al ClipBoard: mide distancia vertical y suma el datum
-(defun c:1 ()
-  (CopyToClipboard (LM:rtos (+ 57 (distance (getpoint "\nPunto inicial: ") (getpoint "\nPunto final: "))) 2 3))
-)
-
-; Medir distancia con 3 decimales y copiarla al clipboard
-(defun c:2 ()
-  (CopyToClipboard (LM:rtos (distance (getpoint "\nPunto inicial: ") (getpoint "\nPunto final: ")) 2 3))
-)
-; COORD function shortcut, para meter el bloque con las coordenadas rapido
-(defun c:3()
-  (c:coord)
 )
 (defun c:1( / ent VL_ent_name pt ch)
   (while (not ent)
@@ -225,29 +122,6 @@
 (defun c:1() (princ "\nRoad")     (command "-hatch" "LA" "e-sec38-road"     "CO" "." "." "P" "SOLID" "1" "" (getpoint) "")(princ))
 (defun c:2() (princ "\nFootpath") (command "-hatch" "LA" "e-sec38-footpath" "CO" "." "." "P" "SOLID" "1" "" (getpoint) "")(princ))
 (defun c:3() (princ "\nVerge")    (command "-hatch" "LA" "e-sec38-verge"    "CO" "." "." "P" "SOLID" "1" "" (getpoint) "")(princ))
-
-;EngArch Surfacing
-(defun c:1()
-  (while (not kkk)
-    (princ "\nRoad")
-    (command "-hatch" "CO" "." "." "P" "AR-HBONE" "7" "" "A" "A" "N" "" (getpoint) "")
-  )
-  (princ)
-)
-(defun c:2()
-  (while (not kkk)
-    (princ "\nFootpath")
-    (command "-hatch" "CO" "." "." "P" "DOTS" "350" "" "A" "A" "N" "" (getpoint) "")
-  )
-  (princ)
-)
-(defun c:3()
-  (while (not kkk)
-    (princ "\nVerge")
-    (command "-hatch" "CO" "." "." "P" "SQUARE" "200" "" "A" "A" "N" "" (getpoint) "")
-  )
-  (princ)
-)
 (defun c:1()
 ; Draw kerbing polyline with 0.2 width and 150 color
   (princ "\nPOLYLINE. Width 0.2 and color 150")
@@ -312,22 +186,6 @@
 ; Set blue color to selected object
 (vlax-put-property (vlax-ename->vla-object (car (entsel "\nSelect object to be blue: "))) 'Color 5))
 (defun c:00(/ ss ) (setq ss (ssget "p")) (command "._SetByLayer" ss "" "y" "y"))
-
-(defun c:kk ()
-  (vlax-map-collection
-    (vla-get-blocks
-      (vla-get-activedocument
-        (vlax-get-acad-object)
-      ); END vla-get-activedocument
-    ); END vla-get-blocks
-    '(lambda (x)
-      (and
-      (vlax-property-available-p x 'explodable)
-      (eq (vlax-get-property x 'explodable) :vlax-true)
-      (not (vlax-put-property x 'explodable :vlax-false)))
-    )
-  ); END vlax-map-collection
-)
 (defun c:9( / VL_ent_name )
   (setq VL_ent_name (vlax-ename->vla-object (car (entsel "\nSelect centerline: "))))
     ;(vlax-property-available-p VL_ent_name 'explode)
@@ -3327,4 +3185,50 @@
   ; v0.0 - 2017.04.10 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.04.10
+)
+(defun c:xx ( / ent_name )
+  ; Add "VC" to selected sewer label and relocate it
+  (if (DT:ReplaceText
+        (setq ent_name (car (entsel "\nSelect sewer label to add \"VC\": ")))
+        "@ 1"
+        "VC @ 1"
+      );END DT:ReplaceText
+    (DT:FastMove ent_name)
+  );END if
+
+  ; v0.0 - 2017.04.20 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.20
+)
+(defun c:xx ( / ent_name )
+  ; Replace "VC" for "CO" at selected sewer label and relocate it
+  (if (DT:ReplaceText
+        (setq ent_name (car (entsel "\nSelect sewer label to add \"VC\": ")))
+        "VC @ 1"
+        "CO @ 1"
+      );END DT:ReplaceText
+    (DT:FastMove ent_name)
+  );END if
+
+  ; v0.0 - 2017.04.21 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.21
+)
+(defun c:xx ( / ss size )
+  ; Find to every sewer label and mark them if they are DN300 or bigger and they have "VC"
+  (if (setq ss (ssget "x" '( ( 0 . "TEXT") )))
+    (foreach a (ssnamex ss)
+      (if (= 'ename (type (cadr a)))
+        (if (>= (DT:GetSewerSize (cadr a)) 300)
+          (if (= "VC" (substr (DT:GetText (cadr a)) 13 2))
+            (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 2)
+          );END if
+        );END if
+      );END if
+    );END foreach
+  );END if
+
+  ; v0.0 - 2017.04.21 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.21
 )
