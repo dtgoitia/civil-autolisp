@@ -2201,15 +2201,16 @@
           );END substr
         );END atoi
       );END if
-      nil
+      (progn (princ "\nERROR @ DT:GetSewerGradient : ent_name is not a text\n") nil )
     );END if
-    nil
+    (progn (princ "\nERROR @ DT:GetSewerGradient : ent_name=nil\n") nil )
   );END if
 
+  ; v0.2 - 2017.04.21 - Error management updated
   ; v0.1 - 2017.03.23 - MTEXT object type added
   ; v0.0 - 2017.03.08 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.23
+  ; Last revision: 2017.04.21
 )
 (defun DT:GetSewerSize ( ent_name )
   ; Returns a integer with the ent_name sewer-label size
