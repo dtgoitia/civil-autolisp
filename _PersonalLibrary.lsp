@@ -2211,6 +2211,30 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.23
 )
+(defun DT:GetSewerSize ( ent_name )
+  ; Returns a integer with the ent_name sewer-label size
+  ; If not, returns nil
+  (if ent_name
+    (if (or (= "TEXT" (cdr (assoc 0 (entget ent_name)))) (= "MTEXT" (cdr (assoc 0 (entget ent_name)))))
+      (if (vl-string-search "DN" (cdr (assoc 1 (entget ent_name))))
+        ; If the text contains "DN" (ergo, is a sewer label):
+        (atoi
+          (substr ; Get text after "DN" character
+            (cdr (assoc 1 (entget ent_name)))
+            (+ 3 (vl-string-search "DN" (cdr (assoc 1 (entget ent_name))))) ; Position after "DN" in ent_name text
+            4 ; Get only the 4 following characters
+          );END substr
+        );END atoi
+      );END if
+      (progn (princ "\nERROR @ DT:GetSewerSize : ent_name is not a text\n") nil )
+    );END if
+    (progn (princ "\nERROR @ DT:GetSewerSize : ent_name=nil\n") nil )
+  );END if
+
+  ; v0.0 - 2017.04.21 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.21
+)
 (defun DT:SetGroup ( ent_nameList / i l s )
   ; Create a group with the entities passed on ent_nameList
   ; ent_nameList [list] - List with entity names to include in the group
