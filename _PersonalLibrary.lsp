@@ -3741,6 +3741,17 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.04
 )
+(defun DT:GetSupportPaths ( / supportPaths )
+  ; Return a list with each trusted path as a list element
+  (if (setq supportPaths (getenv "ACAD"))
+    (DT:StringToList supportPaths ";")
+    (progn (princ "\nERROR @ DT:GetSupportPaths > supportPaths = nil\n") nil )
+  );END if
+
+  ; v0.0 - 2017.05.04 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.04
+)
 (defun DT:TotalArea ( ss / totalArea )
   ; Return total area (if any) of the objects within the pickset ss
   (if ss
