@@ -3811,6 +3811,23 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.04
 )
+(defun c:flip ( / mainMenuPath enterpriseMenuPath )
+  ; Flip between Enterprise CUI file read and edition mode
+  ; Credit to Lee Ambrosius
+
+  ; Get current main CUI filename
+  (setq mainMenuPath (getvar "MenuName") )
+  ; Get current enterprise CUI filename
+  (setq enterpriseMenuPath (getenv "EnterpriseMenuFile") )
+  ; Set the main CUI as as the enterprise CUI
+  (setenv "EnterpriseMenuFile" mainMenuPath)
+  ; Load the enterprise menu as the main CUI file
+  (command "._menu" enterpriseMenuPath)
+
+  ; v0.0 - 2017.05.04 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.04
+)
 (defun DT:TotalArea ( ss / totalArea )
   ; Return total area (if any) of the objects within the pickset ss
   (if ss
