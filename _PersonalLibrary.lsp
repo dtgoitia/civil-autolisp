@@ -3771,6 +3771,46 @@
   ; Author: David Torralba
   ; Last revision: 2017.04.12
 )
+(defun DT:RemoveSupportPath ( supportPathToRemove / updatedSupportPaths currentSupportPaths return )
+  ; Return T if "supportPathToRemove" was found and removed from trusted paths,
+  ; otherwise will return nil
+  (if supportPathToRemove
+    (if (= 'str (type supportPathToRemove))
+      (progn
+        ; Get current trusted paths
+        (if (setq currentSupportPaths (DT:GetSupportPaths))
+          (foreach path currentSupportPaths
+            (if (/= path supportPathToRemove)
+              (if updatedSupportPaths
+                (setq updatedSupportPaths (strcat updatedSupportPaths ";" path))
+                (setq updatedSupportPaths path)
+              );END if
+            );END if
+          );END foreach
+        );END if
+
+        ; Set return
+        (if (= (getenv "acad") updatedSupportPaths )
+          (setq return nil)
+          (setq return T)
+        );END if
+
+        ; Update trusted paths
+        (setenv "acad" updatedSupportPaths)
+
+        ; Return value
+        return
+
+      );END progn
+      (progn (princ "\nERROR @ DT:RemoveSupportPath > newSupportPath is not a string\n") nil )
+    );END if
+    (progn (princ "\nERROR @ DT:RemoveSupportPath > supportPathToRemove = nil\n") nil )
+  );END if
+
+  ; v0.0 - 2017.05.04 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.04
+)
 (defun DT:TotalArea ( ss / totalArea )
   ; Return total area (if any) of the objects within the pickset ss
   (if ss
