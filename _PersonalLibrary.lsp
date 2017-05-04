@@ -3752,6 +3752,25 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.04
 )
+(defun DT:AddSupportPath ( newSupportPath )
+  (if newSupportPath
+    (if (= 'str (type newSupportPath))
+      (setenv "ACAD"
+        (strcat
+          (getenv "ACAD")
+          ";"
+          newSupportPath
+        );END strcat
+      );END setvar
+      (progn (princ "\nERROR @ DT:AddSupportPath > newSupportPath is not a string\n") nil )
+    );END if
+    (progn (princ "\nERROR @ DT:AddSupportPath > newSupportPath = nil\n") nil )
+  );END if
+
+  ; v0.0 - 2017.04.12 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.04.12
+)
 (defun DT:TotalArea ( ss / totalArea )
   ; Return total area (if any) of the objects within the pickset ss
   (if ss
