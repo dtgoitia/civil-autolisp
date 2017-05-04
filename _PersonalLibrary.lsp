@@ -3728,6 +3728,19 @@
   ; Author: David Torralba
   ; Last revision: 2017.04.12
 )
+(defun DT:ShowTrustedPaths ( / i )
+  ; Print on screen the trusted paths numbered
+  (setq i 0 )
+  (foreach path (DT:GetTrustedPaths)
+    (setq i (+ i 1))
+    (princ (strcat "\n" (itoa i) ": " path) )
+  );END foreach
+  (princ)
+
+  ; v0.0 - 2017.05.04 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.04
+)
 (defun DT:TotalArea ( ss / totalArea )
   ; Return total area (if any) of the objects within the pickset ss
   (if ss
