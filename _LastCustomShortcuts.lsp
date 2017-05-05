@@ -32,3 +32,4 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.13
 )
+(defun c:3() (command "_.FILLET"))
