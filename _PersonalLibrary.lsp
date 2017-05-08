@@ -3877,3 +3877,12 @@
   ; Author: David Torralba
   ; Last revision: 2017.04.18
 )
+(defun dump ( VlaObject )
+  ; Shortcut to show VLA object properties and methods
+
+  (vlax-dump-object VlaObject)
+  
+  ; v0.0 - 2017.05.08 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.08
+)
