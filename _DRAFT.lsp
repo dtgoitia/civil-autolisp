@@ -3232,3 +3232,18 @@
   ; Author: David Torralba
   ; Last revision: 2017.04.21
 )
+(defun c:2 ( / ss )
+  ; Change selected entities' color to blue
+  (princ "\nMarking in blue:")
+  (if (setq ss (ssget))
+    (foreach a (ssnamex ss)
+      (if (= 'ename (type (cadr a)))
+        (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 2)
+      );END if
+    );END foreach
+  );END if
+
+  ; v0.0 - 2017.03.13 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.03.13
+)
