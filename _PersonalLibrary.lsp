@@ -1397,6 +1397,7 @@
 	; Author: David Torralba
 	; Last revision: 2016.08.15
 )
+(defun c:mpedit () (command "pedit" "M" (ssget) "" "Y" "") )
 (defun c:erase_bylayer (
     /
     oldclayer oldcmdecho olderror
@@ -3881,7 +3882,7 @@
   ; Shortcut to show VLA object properties and methods
 
   (vlax-dump-object VlaObject)
-  
+
   ; v0.0 - 2017.05.08 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.05.08
