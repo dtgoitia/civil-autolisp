@@ -1,7 +1,7 @@
 (defun c:mof ( / ss offsetDistance colorIndex activeDocument i )
   ; Offset either side selected objects
   (vl-load-com)
-  (if (setq ss (ssget '((-4 . "<OR")(0 . "CIRCLE")(0 . "LWPOLYLINE")(0 . "LINE")(-4 . "OR>"))))
+  (if (setq ss (ssget '((-4 . "<OR")(0 . "ARC")(0 . "CIRCLE")(0 . "LWPOLYLINE")(0 . "LINE")(-4 . "OR>"))))
     (if (setq offsetDistance (getreal "\nType offset distance: "))
       (if (setq colorIndex (getint "\nType color index: "))
         (progn
@@ -31,6 +31,7 @@
 
   (princ)
 
+  ; v0.1 - 2017.05.10 - ARC type added to selection filter
   ; v0.0 - 2017.05.09 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.05.09
