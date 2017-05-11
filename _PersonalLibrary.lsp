@@ -1,5 +1,90 @@
 ; DO NOT REMOVE THIS LINE. It's a checking.
 (vl-load-com)
+(defun DT:LoadFromProjects ( fileName onFailMessage / return )
+  ; Load "fileName" from %username%\projects\civil-autolisp repository
+  ; Return T if succesful
+  ; Print error message and return nil otherwise
+  (if (and fileName onFailMessage )
+    (if (and (= 'str (type fileName)) (= 'str (type onFailMessage)))
+      (progn
+        (setq
+          return (DT:LoadWithoutSecureload
+            (strcat "C:\\Users\\" (getvar "LOGINNAME") "\\projects\\civil-autolisp\\" fileName)
+            onFailMessage
+          ); END DT:LoadWithoutSecureload
+        );END setq
+        (if (= return onFailMessage)
+          (progn
+            (princ (strcat "\nERROR @ DT:LoadFromProjects : " onFailMessage "\n"))
+            nil
+          );END progn
+          T
+        );END if
+      );END progn
+      (cond
+        ((/= 'str (type filePath))      (princ "\nERROR @ DT:LoadFromProjects : filePath is not a string\n") nil )
+        ((/= 'str (type onFailMessage)) (princ "\nERROR @ DT:LoadFromProjects : onFailMessage is not a string\n") nil )
+      );END cond
+    );END if
+    (cond
+      ((not filePath)      (princ "\nERROR @ DT:LoadFromProjects : filePath=nil\n") nil )
+      ((not onFailMessage) (princ "\nERROR @ DT:LoadFromProjects : onFailMessage=nil\n") nil )
+    );END cond
+  );END if
+
+  ; v0.0 - 2017.05.11 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.11
+)
+(defun DT:LoadWithoutSecureload ( filePath onFailMessage / old_secureload return)
+  ; Load "filePath" skipping SECURELOAD
+  ; Return the same output as (load) function
+  (if (and filePath onFailMessage)
+    (if (and (= 'str (type filePath)) (= 'str (type onFailMessage)))
+      (progn
+        (setq old_secureload (getvar "secureload")) ; get current SECURELOAD
+        (setvar "secureload" 0)                     ; set SECURELOAD to 0
+        (setq return (load filePath onFailMessage)) ; load file
+        (setvar "secureload" old_secureload)        ; reset SECURELOAD
+        return                                      ; Return (load) function output
+      );END progn
+      (cond
+        ((/= 'str (type filePath))      (princ "\nERROR @ DT:LoadWithoutSecureload : filePath is not a string\n") nil )
+        ((/= 'str (type onFailMessage)) (princ "\nERROR @ DT:LoadWithoutSecureload : onFailMessage is not a string\n") nil )
+      );END cond
+    );END if
+    (cond
+      ((not filePath)      (princ "\nERROR @ DT:LoadWithoutSecureload : filePath=nil\n") nil )
+      ((not onFailMessage) (princ "\nERROR @ DT:LoadWithoutSecureload : onFailMessage=nil\n") nil )
+    );END cond
+  );END if
+
+  ; v0.0 - 2017.05.11 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.11
+)
+(defun DT:LoadCustomRepository ( / customFiles )
+  ; Load repository custom libraries
+  (setq
+    customFiles '(
+        "_CustomShortcuts.lsp"
+      )
+  );END setq
+  (mapcar
+    '(lambda (fileName)
+        (princ (strcat "\nLoading " fileName " ..."))
+        (if (DT:LoadFromProjects fileName (strcat fileName " not loaded")) (princ " done."))
+      ); END lambda
+    customFiles
+  );END mapcar
+
+  (princ)
+
+  ; v0.0 - 2017.05.11 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.11
+)
+(DT:LoadCustomRepository)
 (defun loadRT( / filePath)
   ; Descarga mi libreria personal
   (setq filePath "C:/RT.lsp")
@@ -23,42 +108,6 @@
   (princ)
 )
 (loadRT)
-; UNDEFINE
-;(command
-;  "_.undefine" "intersect"
-;  "_.undefine" "interfere"
-;  "_.undefine" "redraw"
-;  "_.undefine" "redrawall"
-;  "_.undefine" "fill"
-;  "_.undefine" "filletedge"
-;  "_.undefine" "surffillet"
-;  "_.undefine" "donut"
-;  "_.undefine" "donutid"
-;  "_.undefine" "donutod"
-;  "_.undefine" "targetpoint"
-;)
-(defun c:iso() (command "_.isolateobjects")(princ))
-(defun c:uiso() (command "_.unisolateobjects")(princ))
-(defun c:c() (command "_.copy" pause "" "_non" (cadr (grread 't)) "_non" pause) )
-(defun c:cc() (command "_.copy") )
-(defun c:m() (command "_.move" pause "" "_non" (cadr (grread 't)) "_non" pause) )
-(defun c:mo() (command "_.move"))
-(defun c:mm() (command "_.move"))
-(defun c:p00()
-  (command
-    "_.pasteblock" "0,0"
-    "_.scale" "L" "" "0,0" "1000"
-    "_.explode" "L" ""
-    "_.zoom" "O" "L" ""
-  )
-  (princ)
-)
-(defun c:ci()	(command "_.circle")(princ))
-(defun c:n() (command "_.NCOPY" pause "" "" ""))
-(defun c:xu() (command "_-xref" "u" "*")(alert "Xref Unload finished!")(princ)) ;Unload all Xrefs
-(defun c:xr() (command "_-xref" "r" "*")(alert "Xref Reload finished!")(princ)) ;Reload all Xrefs
-(defun c:t () (command "_.textedit" "M" "S" pause))
-(defun c:tt () (command "_.textedit" "M" "M" pause))
 (defun c:nt( / oldtextstyle olderror pt)
   (setq
     oldtextstyle (getvar "textstyle")
@@ -88,25 +137,6 @@
   (setq *error* olderror)
   (princ)
 ); Add note
-(defun c:pp()(command "_.publish"))
-(defun c:las() (command "_.layerstate")(princ))
-(defun c:zz ( / ss )
-  ; Change selected entities' color to blue
-  (princ "\nMarking in blue:")
-  (if (setq ss (ssget))
-    (foreach a (ssnamex ss)
-      (if (= 'ename (type (cadr a)))
-        (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 5)
-      );END if
-    );END foreach
-  );END if
-
-  ; v0.0 - 2017.03.13 - First issue
-  ; Author: David Torralba
-  ; Last revision: 2017.03.13
-)
-(defun c:o ( / x ) (if (setq x (getint (strcat "\nObject Snap Mode <" (itoa (getvar "osmode")) ">: "))) (setvar "osmode" x) (princ "*Cancel*"))(princ))
-(defun c:os () (c:o))
 (defun c:r ( / ent_name )
   ; Rotate a single entity given 2 points
   (princ "\nSingle rotate:")
@@ -178,8 +208,6 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.28
 )
-(defun c:rr () (princ "\nMultiple rotate:") (c:RTM))
-(defun c:rrr() (princ "\nRegenerating...") (command "_.regenall") (princ " done.")(princ))
 (defun c:RTM ()
 	; RT and move together
 	(c:RT)
