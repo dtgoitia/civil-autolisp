@@ -2388,10 +2388,42 @@
     );END if
     (princ)
   )
+  (defun c:z1 ( / ss )
+    ; Change selected entities' color to white
+    (princ "\nMarking in white:")
+    (if (setq ss (ssget))
+      (foreach a (ssnamex ss)
+        (if (= 'ename (type (cadr a)))
+          (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 7)
+        );END if
+      );END foreach
+    );END if
+
+    ; v0.0 - 2017.05.11 - First issue
+    ; Author: David Torralba
+    ; Last revision: 2017.05.11
+  )
+  (defun c:z2 ( / ss )
+    ; Change selected entities' color to yellow
+    (princ "\nMarking in yellow:")
+    (if (setq ss (ssget))
+      (foreach a (ssnamex ss)
+        (if (= 'ename (type (cadr a)))
+          (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 2)
+        );END if
+      );END foreach
+    );END if
+
+    ; v0.0 - 2017.05.11 - First issue
+    ; Author: David Torralba
+    ; Last revision: 2017.05.11
+  )
   (defun c:cheatsheet() (alert
     "ENGINEERING CHEATSHEET\n
     Marking:
-        1\tBYC\n
+        1\tBYC
+        z1\tWhite (storm)
+        z2\tYellow (foul)\n
     Calculations:
         11\tStorm-FFL
         2\tINT
@@ -2410,13 +2442,14 @@
   "))
   (princ "\nENGINEERING SETUP COMPLETED")(princ)
 
-  ; v0.3 - 2017.03.29 - Plot level added
+  ; v0.5 - 2017.05.11 - White and yellow colouring tools added
+  ; v0.4 - 2017.03.29 - Plot level added
   ; v0.3 - 2017.03.10 - Change Private Sewer Gradient added
   ; v0.2 - 2017.03.09 - scale management added to c:ra
   ; v0.1 - 2017.02.21 - Cheatsheet added
   ; v0.0 - 2017.01.29 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.29
+  ; Last revision: 2017.05.11
 )
 (defun c:LongSet ()
   ; Longitudinal Section setup
