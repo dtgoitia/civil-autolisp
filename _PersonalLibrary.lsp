@@ -993,6 +993,7 @@
         );END if
       );END or
       ; Try to insert block "PI_DT" with level, if it is defined in the drawing
+			(setvar "osmode" 0)
     	(if (tblsearch "block" "PI_DT")
     		(command "._insert" "PI_DT" (list (nth 0 p2) (nth 1 p2) 0.0) "0.25" "0.25" "" (LM:rtos (nth 2 p2) 2 3))
     	);END if
@@ -1009,6 +1010,7 @@
 		gradient	; Real gradient
 	);END list
 
+  ; v0.4 - 2017.05.11 - Ensure OSnap is off when inserting 
   ; v0.3 - 2017.03.28 - Error management updated
   ; v0.2 - 2017.03.10 - Turn off OSnap when selecting target labels to be updated
   ; v0.2 - 2017.01.30 - Gradient to absolute value
@@ -1017,7 +1019,7 @@
 	;										- CommandLine messages suppressed
   ; v0.0 - 2017.01.23 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.28
+  ; Last revision: 2017.05.11
 )
 (defun c:garden_gradient (
                           /
