@@ -2286,16 +2286,19 @@
   (defun c:11() (princ "\nExplode polyline: \n") (c:EP) )
   (defun c:3() (princ "\nGET MANHOLE DATA ACCORDING TO CENTRELINE: \n") (DT:ExtractManholeDataAlongCentrelines) )
   (defun c:4() (princ "\nDRAW MANHOLES ONTO LONGITUDINAL SECTION: \n") (DT:DrawExtractedManholesOnLongSection) )
+  (defun c:5() (princ "\nDRAW MANHOLES' BODY ONTO LONGITUDINAL SECTION: \n") (c:DrawManholeBodyOnLongSection) )
   (defun c:cheatsheet() (alert
     "LONGITUDINAL SECTION CHEATSHEET\n
     Manholes to section:
         1\tFillet
         11\tExplode polyline
         3\tGet manholes
-        4\tDraw manholes\n
+        4\tDraw manholes
+        5\tDraw manholes body\n
   "))
   (princ "\nLONGITUDINAL SECTION SETUP COMPLETED")(princ)
 
+  ; v0.1 - 2017.05.12 - DT:DrawManholeBodyOnLongSection added
   ; v0.0 - 2017.03.16 - Add fillet and c:ep
   ;                   - First issue
   ; Author: David Torralba
@@ -3748,4 +3751,21 @@
   ; v0.0 - 2017.05.08 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.05.08
+)
+(defun c:DrawManholeBodyOnLongSection ()
+  ; Draw manhole body on long section using selected manhole axis
+  (setq ss (ssget '((-4 . "<OR")(0 . "LINE")(0 . "LWPOLYLINE")(-4 . "OR>"))))
+  (if ss
+    (foreach a (ssnamex ss)
+      (if (= 'ename (type (cadr a)))
+        (DT:DrawManholeBodyOnLongSection (cadr a))
+      );END if
+    );END foreach
+  );END if
+
+  (princ)
+
+  ; v0.0 - 2017.05.12 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.12
 )

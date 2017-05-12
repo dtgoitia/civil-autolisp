@@ -182,6 +182,14 @@
     (setq *manholeDatabaseForLongitudinalSection* (DT:GetManholeDatabaseForLongSection centrelineEnt_name))
   );END if
 
+  (if *manholeDatabaseForLongitudinalSection*
+    (foreach a *manholeDatabaseForLongitudinalSection*
+      (princ "\n")(princ a)
+    );END foreach
+  );END if
+
+  (princ)
+
   ; v0.1 - 2017.01.29 - Centreline selection warning message fixed
   ;                   - Code tidy up
   ; v0.0 - 2017.01.25 - First issue
@@ -428,4 +436,41 @@
   ; v0.0 - 2017.01.25 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.01.25
+)
+(defun DT:DrawManholeBodyOnLongSection ( manholeAxis / manholeAxisObject lastObject )
+  ; Draw manhole body on long section using manhole axis as reference
+  ; manholeAxis [ename] - Entity name of the vertical line representing manhole axis
+
+  (if manholeAxis
+    (if (= 'ename (type manholeAxis))
+      (progn
+        (setq manholeAxisObject (vlax-ename->vla-object manholeAxis))
+
+        ; Offset to the right
+        (vla-offset manholeAxisObject 0.6)
+        (setq lastObject (vlax-ename->vla-object (entlast)))
+        (vlax-put-property lastObject 'Color 256)
+        (if (tblsearch "ltype" "Continuous")
+          (vlax-put-property lastObject 'Linetype "Continuous")
+          (princ "\n\"Continuous\" linetype style is not available.\n")
+        );END if
+
+        ; Offset to the left
+        (vla-offset manholeAxisObject -0.6)
+        (setq lastObject (vlax-ename->vla-object (entlast)))
+        (vlax-put-property lastObject 'Color 256)
+        (if (tblsearch "ltype" "Continuous")
+          (vlax-put-property lastObject 'Linetype "Continuous")
+          (princ "\n\"Continuous\" linetype style is not available.\n")
+        );END if
+
+      );END progn
+      (progn (princ "\nERROR @ function : manholeAxis is not an ename\n") nil )
+    );END if
+    (progn (princ "\nERROR @ function : manholeAxis=nil\n") nil )
+  );END if
+
+  ; v0.0 - 2017.05.12 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.12
 )
