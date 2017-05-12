@@ -2518,6 +2518,7 @@
   )
   (defun c:4 ( / ent_name pt ang )
     (princ "\nAdd NOT ISSUED YET note:\n")
+    (setvar "orthomode" 0)
     (if
       (entmake
         (append
@@ -2540,6 +2541,11 @@
       (princ "\nent_name = nil")
     );END if
     (princ)
+
+    ; v0.1 - 2017.05.12 - Ortho management added
+    ; v0.0 - 2017.0?.?? - First issue
+    ; Author: David Torralba
+    ; Last revision: 2017.05.12
   )
   (defun c:44() (princ "\nRemove NOT ISSUED YET note:\n") (princ) )
   (defun c:oo()
@@ -3830,6 +3836,14 @@
   (if (setq text (DT:GetText (car (nentselp "\nClick on source text: "))))
     (DT:SetText (car (nentsel (strcat "\nClick to override for \"" text "\": "))) text )
   );END if
+
+  ; v0.0 - 2017.05.12 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.12
+)
+(defun c:wt ( / text )
+  ; Override selected text content
+  (DT:SetText (car (nentsel "\nClick on text: ")) (getstring "\nWrite text (use \"\\P\" as newlines) :" t) )
 
   ; v0.0 - 2017.05.12 - First issue
   ; Author: David Torralba
