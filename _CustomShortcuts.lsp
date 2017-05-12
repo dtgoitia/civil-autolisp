@@ -192,3 +192,5 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.12
 )
+(defun c:v1 () (command "-vports" "si") )
+(defun c:v2 () (command "-vports" "2" "v") )
