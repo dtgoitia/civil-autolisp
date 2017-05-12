@@ -3825,3 +3825,13 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.12
 )
+(defun c:tt ( / text )
+  ; Copy any text anywhere with 2 clicks
+  (if (setq text (DT:GetText (car (nentselp "\nClick on source text: "))))
+    (DT:SetText (car (nentsel (strcat "\nClick to override for \"" text "\": "))) text )
+  );END if
+
+  ; v0.0 - 2017.05.12 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.12
+)
