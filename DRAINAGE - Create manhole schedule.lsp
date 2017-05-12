@@ -513,28 +513,19 @@
   ; Author: David Torralba
   ; Last revision: 2016.04.10
 )
-(defun c:UpdateManholeSchedule (/
-                        ;*error*
-                        mnhsch mnh
-                        mnhsch_ID mnh_ID
-                        ans
-                        )
-  ; AUXILIARY FUNCTIONS
-  (defun DT:UpdateManholeCoordinate (mnhsch mnh)
-    (LM:vl-setattributevalue (vlax-ename->vla-object mnhsch) "E" (LM:rtos (car  (cdr (assoc 10 (entget mnh)))) 2 3))
-    (LM:vl-setattributevalue (vlax-ename->vla-object mnhsch) "N" (LM:rtos (cadr (cdr (assoc 10 (entget mnh)))) 2 3))
-  )
+(defun c:UpdateManholeSchedule ( / manSchedule manhole manScheduleId manholeId ans )
+  ; Update selected manhole's CL and coordinates
 
   ; INPUT - Ask user to select Manhole Schedule block to update
-  (while (not mnhsch)
-    (if (not (setq mnhsch (car (entsel "\nSelect Manhole Schedule block to update coordinates: "))))
+  (while (not manSchedule)
+    (if (not (setq manSchedule (car (entsel "\nSelect Manhole Schedule block to update coordinates: "))))
       (princ "missed. Try again.")
       (princ "object selected.\n")
     ); END if
   );END while
 
   ; OPERATION - Check selected object is a Manhole Schedule block
-  (if (/= "ManScheduleBody" (LM:effectivename (vlax-ename->vla-object mnhsch)))
+  (if (/= "ManScheduleBody" (LM:effectivename (vlax-ename->vla-object manSchedule)))
     (progn
       (alert "Selected object is not a Manhole Schedule Block.")
       (exit)
@@ -542,15 +533,15 @@
   );END if
 
   ; INPUT - Ask user to select Manhole Block to update to
-  (while (not mnh)
-    (if (not (setq mnh (car (entsel "\nSelect Manhole block to update coordinates to: "))))
+  (while (not manhole)
+    (if (not (setq manhole (car (entsel "\nSelect Manhole block to update coordinates to: "))))
       (princ "missed. Try again.")
       (princ "object selected.\n")
     ); END if
   );END while
 
   ; OPERATION - Check selected object is a Manhole block
-  (if (/= "W-Manhole" (substr (LM:effectivename (vlax-ename->vla-object mnh)) 2 9))
+  (if (/= "W-Manhole" (substr (LM:effectivename (vlax-ename->vla-object manhole)) 2 9))
     (progn
       (alert "Selected object is not a Manhole Block.")
       (exit)
@@ -559,24 +550,119 @@
 
   ; OPERATION - Get block "ID" attributes
   (setq
-    mnhsch_ID (LM:vl-getattributevalue (vlax-ename->vla-object mnhsch) "ID")
-    mnh_ID (LM:vl-getattributevalue (vlax-ename->vla-object mnh) "ID")
+    manScheduleId (LM:vl-getattributevalue (vlax-ename->vla-object manSchedule) "ID")
+    manholeId (LM:vl-getattributevalue (vlax-ename->vla-object manhole) "ID")
   )
 
   ; OPERATION - Update block attributes
-  (if (= mnh_ID mnhsch_ID)
-    (if (= nil (DT:UpdateManholeCoordinate mnhsch mnh)) (princ "\nManhole Schedule not updated.") (princ "\nManhole Schedule succesfully updated.") )
+  (if (= manholeId manScheduleId)
+    (progn
+      (DT:SetManholeScheduleCoordinates manSchedule (cdr (assoc 10 (entget manhole))) )
+      (DT:SetManholeScheduleCoverLevel manSchedule (atof (LM:vl-getattributevalue (vlax-ename->vla-object manhole) "CL")) )
+    );END progn
     (progn
       (initget "Yes No")
-      (setq ans (getkword "\nSelected object don't match.\nAre you sure you want to update the manhole schedule? <Yes/No>: [No]"))
+      (setq ans (getkword "\nSelected object don't match. They have different ID.\nAre you sure you want to update the manhole schedule? <Yes/No>: [No]"))
       (if (not ans) (setq ans "No"))
       (if (= ans "Yes")
-        (if (= nil (DT:UpdateManholeCoordinate mnhsch mnh)) (princ "\nManhole Schedule not updated.") (princ "\nManhole Schedule succesfully updated.") )
+        (progn
+          (DT:SetManholeScheduleCoordinates manSchedule (cdr (assoc 10 (entget manhole))) )
+          (DT:SetManholeScheduleCoverLevel manSchedule (atof (LM:vl-getattributevalue (vlax-ename->vla-object manhole) "CL")) )
+        );END progn
       );END if
     );END progn
   );END if
+
   (princ)
+
+  ; v0.1 - 2017.05.12 - DT:SetManholeScheduleCoordinates implemented
+  ;                   - DT:SetManholeScheduleCoverLevel implemented
+  ;                   - Messages updated
   ; v0.0 - 2016.08.05 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.08.05
+  ; Last revision: 2017.05.12
+)
+(defun DT:SetManholeScheduleCoordinates ( manSchedule coordinates / manScheduleObject oldE oldN newE newN Eupdated Nupdated )
+  ; Set the coordinate value of Manhole Schedule block
+  ; manSchedule [ename] - Manhole Schedule block entity name
+  ; coordinates [lst] - List with the point coordinates of the manhole, being
+  ;                     list values real numbers
+  (if (and manSchedule coordinates)
+    (if (and (= 'ename (type manSchedule)) (DT:TypePoint coordinates))
+      (progn
+        (setq
+          manScheduleObject (vlax-ename->vla-object manSchedule)
+          oldE (LM:vl-getattributevalue manScheduleObject "E")
+          oldN (LM:vl-getattributevalue manScheduleObject "N")
+          newE (LM:rtos (nth 0 coordinates) 2 3)
+          newN (LM:rtos (nth 1 coordinates) 2 3)
+        )
+        (if (/= oldE newE)
+          (progn
+            (LM:vl-setattributevalue manScheduleObject "E" newE)
+            (setq Eupdated T)
+          );END progn
+        );END if
+        (if (/= oldN newN)
+          (progn
+            (LM:vl-setattributevalue manScheduleObject "N" newN)
+            (setq Nupdated T)
+          );END progn
+        );END if
+        (cond
+          ((and Eupdated Nupdated) (princ "\nE and N coordinates updated.\n") T)
+          ((and Eupdated (not Nupdated)) (princ "\nE coordinate updated.\n") T)
+          ((and (not Eupdated) Nupdated) (princ "\nN coordinate updated.\n") T)
+          (t T)
+        );END cond
+      );END progn
+      (cond
+        ((/= 'ename (type manSchedule))   (princ "\nERROR @ DT:SetManholeScheduleCoordinates : manSchedule is not a ename\n") nil )
+        ((not (DT:TypePoint coordinates)) (princ "\nERROR @ DT:SetManholeScheduleCoordinates : coordinates is not a point\n")   nil )
+      );END cond
+    );END if
+    (cond
+      ((not manSchedule) (princ "\nERROR @ DT:SetManholeScheduleCoordinates : manSchedule=nil\n") nil )
+      ((not coordinates) (princ "\nERROR @ DT:SetManholeScheduleCoordinates : coordinates=nil\n") nil )
+    );END cond
+  );END if
+
+  ; v0.0 - 2017.05.12 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.12
+)
+(defun DT:SetManholeScheduleCoverLevel ( manSchedule coverLevel / manScheduleObject oldCoverLevel newCoverLevel )
+  ; Set the cover level value of Manhole Schedule block
+  ; manSchedule [ename] - Manhole Schedule block entity name
+  ; coverLevel [number] - Number indicating manhole cover level
+  (if (and manSchedule coverLevel)
+    (if (and (= 'ename (type manSchedule)) (numberp coverLevel))
+      (progn
+        (setq
+          manScheduleObject (vlax-ename->vla-object manSchedule)
+          oldCoverLevel (LM:vl-getattributevalue manScheduleObject "CL")
+          newCoverLevel (LM:rtos coverLevel 2 3)
+        )
+        (if (/= oldCoverLevel newCoverLevel)
+          (progn
+            (LM:vl-setattributevalue manScheduleObject "CL" newCoverLevel)
+            (progn (princ "\nCL updated.\n") T)
+          );END progn
+          T
+        );END if
+      );END progn
+      (cond
+        ((/= 'ename (type manSchedule)) (princ "\nERROR @ DT:SetManholeScheduleCoverLevel : manSchedule is not a ename\n") nil )
+        ((not (numberp coverLevel))     (princ "\nERROR @ DT:SetManholeScheduleCoverLevel : coverLevel is not a number\n")   nil )
+      );END cond
+    );END if
+    (cond
+      ((not manSchedule) (princ "\nERROR @ DT:SetManholeScheduleCoverLevel : manSchedule=nil\n") nil )
+      ((not coverLevel)  (princ "\nERROR @ DT:SetManholeScheduleCoverLevel : coverLevel=nil\n") nil )
+    );END cond
+  );END if
+
+  ; v0.0 - 2017.05.12 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.12
 )
