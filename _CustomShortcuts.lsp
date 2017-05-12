@@ -181,3 +181,14 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.12
 )
+(defun c:dump ( / object )
+  ; Print object methods and attributes
+  (if (setq ent_name (car (entsel "\nSelect object to see methods and properties: ")) )
+    (vlax-dump-object (vlax-ename->vla-object ent_name))
+  );END if
+  (princ)
+
+  ; v0.0 - 2017.05.12 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.12
+)
