@@ -3769,3 +3769,59 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.12
 )
+(defun DT:Type3DPoint ( pt )
+  ; Return T if pt is a 3D point, otherwise return nil
+  (if pt
+    (if (= 'list (type pt))
+      (if (= 3 (length pt))
+        (if (and (numberp (nth 0 pt)) (numberp (nth 1 pt)) (numberp (nth 2 pt)))
+          T
+          (progn (princ "\nERROR @ DT:Type3DPoint : some elements in pt are not numbers\n") nil )
+        );END if
+        (progn (princ "\nERROR @ DT:Type3DPoint : pt needs to have 3 elements\n") nil )
+      );END if
+      (progn (princ "\nERROR @ DT:Type3DPoint : pt is not a list\n") nil )
+    );END if
+    (progn (princ "\nERROR @ DT:Type3DPoint : pt=nil\n") nil )
+  );END if
+
+  ; v0.0 - 2017.05.12 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.12
+)
+(defun DT:Type2DPoint ( pt )
+  ; Return T if pt is a 2D point, otherwise return nil
+  (if pt
+    (if (= 'list (type pt))
+      (if (= 2 (length pt))
+        (if (and (numberp (nth 0 pt)) (numberp (nth 1 pt)))
+          T
+          (progn (princ "\nERROR @ DT:Type3DPoint : some elements in pt are not numbers\n") nil )
+        );END if
+        (progn (princ "\nERROR @ DT:Type2DPoint : pt needs to have 2 elements\n") nil )
+      );END if
+      (progn (princ "\nERROR @ DT:Type2DPoint : pt is not a list\n") nil )
+    );END if
+    (progn (princ "\nERROR @ DT:Type2DPoint : pt=nil\n") nil )
+  );END if
+
+  ; v0.0 - 2017.05.12 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.12
+)
+(defun DT:TypePoint ( pt )
+  ; Return T if pt is a point, otherwise return nil
+  (if pt
+    (if (or
+          (DT:Type3DPoint pt)
+          (DT:Type2DPoint pt)
+        );END or
+      T
+      nil
+    );END if
+  );END if
+
+  ; v0.0 - 2017.05.12 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.12
+)
