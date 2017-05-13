@@ -1419,3 +1419,62 @@
   ; Author: David Torralba
   ; Last revision: 2017.04.12
 )
+(defun DT:Arg ( functionName argumentList / argumentSymbol argumentType errorList err )
+  ; Return T if the passed arguments are right, otherwise print error message and return nil
+  ; functionName [SYM]  - Symbol of the function to check
+  ; argumentList [LIST] - Non-evaluated list of argument symbols and argument types as bellow:
+  ;                     - '( (argumentSymbol argumentType) (argumentSymbol argumentType) (argumentSymbol argumentType) )
+  (if (and functionName argumentList)
+    (if (and (= 'sym (type functionName)) (= 'list (type argumentList)))
+      (progn
+        (foreach argument argumentList
+          ; Save argumentSymbol and argumentType
+          (setq
+            argumentSymbol (nth 0 argument)
+            argumentType   (nth 1 argument)
+          );END setq
+
+          ; If argumentSymbol and argumentType values are different to nil
+          (if (and (/= nil (eval argumentSymbol)) (/= nil (eval argumentType)))
+            (progn
+              ; If argument type is correct
+              (if (= (eval argumentType) (type (eval argumentSymbol)))
+                nil
+                (setq errorList (append errorList (list (strcat "ERROR @ " (vl-symbol-name functionName) " : " (vl-symbol-name argumentSymbol) " is not a " (vl-symbol-name (eval argumentType))))))
+              );END if
+            );END progn
+            (cond
+              ((not (eval argumentSymbol)) (setq errorList (append errorList (list (strcat "ERROR @ DT:Arg : " (vl-symbol-name argumentSymbol) "=nil")))))
+              ((not (eval argumentType))   (setq errorList (append errorList (list (strcat "ERROR @ DT:Arg : " (vl-symbol-name (eval argumentType)) "=nil")))))
+            );END cond
+          );END if
+        );END foreach
+      );END progn
+      (cond
+        ((/= 'str (type functionName))  (setq errorList (append errorList (list "ERROR @ DT:Arg : functionName is not a symbol"))))
+        ((/= 'list (type argumentList)) (setq errorList (append errorList (list "ERROR @ DT:Arg : argumentList is not a list"))))
+      );END cond
+    );END if
+    (cond
+      ((not functionName) (setq errorList (append errorList (list "ERROR @ DT:Arg : functionName=nil"))))
+      ((not argumentList) (setq errorList (append errorList (list "ERROR @ DT:Arg : argumentList=nil"))))
+    );END cond
+  );END if
+
+  ; If any error message print them and return nil, otherwise return T
+  (if errorList
+    (progn
+      (foreach err errorList
+        (princ "\n")(princ err)
+      );END foreach
+      nil
+    );END progn
+    T
+  );END if
+
+  ; v0.1 - 2017.05.13 - Update variable names for clarity purporse
+  ;                   - Update error printing system
+  ; v0.0 - 2017.05.12 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.13
+)
