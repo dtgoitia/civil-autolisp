@@ -78,3 +78,37 @@ As shown in the examples above, you need to reference a function within `(mapcar
 The code above will pass a temporary function to `(mapcar)`. This temporary function takes a single argumen (`a`) and executes the code inside. The code inside, in this case is `(alert a)`. This code could be more complex, but for the time begin, let's keep it simple. And to finish we pass to `(mapcar)` the values we want we want to use as arguments (as always, in a list format): `(list "Hi!" "I am a cheecky lambda!")`.
 
 Last update: 2017.01.15
+
+# `(apply)` function
+
+It evaluates a function with the passed arguments.
+```lisp
+(apply functionSymbol listOfArguments)
+```
+* `functionSymbol` is the symbol of the function, which usually is passed with the `'` symbol as prefix (otherwise, autolisp doesn't get it's the function).
+* `listOfArguments` is a list which contains the arguments. If the function doesn't need any argument, `listOfArguments` should be `nil`.
+
+## Example of usage
+
+If we pass the function `(strcat "string1" ", " "string2")`, we get `"string1, string2"`:
+```lisp
+Command: (strcat "string1" ", " "string2")
+"string1, string2"
+```
+
+To do this using `apply` function we should do the following:
+```lisp
+Command: (apply 'strcat '("string1" ", " "string2"))
+"string1, string2"
+```
+Let's expand this expression to make it more clear:
+```lisp
+(setq myFunctionSymbol 'strcat)
+(setq myArgumentList (list "string1" ", " "string2"))
+(apply myFunctionSymbol myArgumentList)
+```
+And once more, the console will return us:
+```lisp
+"string1, string2"
+```
+That's fine. But... what do I need this for? Well, one example is to pass functions as arguments to other functions. This can help you to test functions, for example.
