@@ -108,29 +108,43 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.12
 )
-(defun c:BY ( / ss)
-  ; Set by layer
+(defun c:BYR ( / ss)
+  ; Set by layer recursive
+  (princ "\nSet ByLayer recursive: ")
   (setq ss (ssget))
   (command "._SetByLayer" ss "" "y" "y")
 
+  ; v0.1 - 2017.05.15 - Command renamed to BYR
   ; v0.0 - 2016.03.18 - First issue
   ; Author: David Torralba
   ; Last revision: 2016.03.18
 )
-(defun c:BYC ()
+(defun c:BY ()
+  ; Shortcut to c:BYC
+  ; NOTE: old c:BY command renamed to BYR (BYlayer Recursive)
+  (c:BYC)
+
+  ; v0.0 - 2017.05.15 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.15
+)
+(defun c:BYC ( / ss )
   (princ "\nSelet objects to set ByLayer:")
-  (foreach a (ssnamex (ssget))
-    (if (= 'ename (type (cadr a)))
-      (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 256)
-    );END if1
-  );END foreach
+  (if (setq ss (ssget))
+    (foreach a (ssnamex ss)
+      (if (= 'ename (type (cadr a)))
+        (vlax-put-property (vlax-ename->vla-object (cadr a)) 'Color 256)
+      );END if1
+    );END foreach
+  );END if
   (princ)
 
+  ; v0.3 - 2017.05.15 - ss=nil case management
   ; v0.2 - 2017.03.14 - Xref' filter removed, pointless
   ; v0.1 - 2016.11.14 - Xref's filtered and excluded to speed up command
   ; v0.0 - 2016.11.11 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.14
+  ; Last revision: 2017.05.15
 )
 (defun c:c0()
   ; Shortcut for copybase with origin (0 0 0) as reference coordinates
