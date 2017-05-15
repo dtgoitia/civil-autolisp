@@ -69,6 +69,7 @@
     customFiles '(
         "_CustomShortcuts.lsp"
         "_LongitudinalSections.lsp"
+        "_Viewport.lsp"
       )
   );END setq
   (mapcar
@@ -81,6 +82,7 @@
 
   (princ)
 
+  ; v0,1 - 2017.05.15 - Viewport functions added
   ; v0.0 - 2017.05.11 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.05.11
