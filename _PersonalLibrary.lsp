@@ -3851,3 +3851,24 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.12
 )
+(defun c:gp ( / pt )
+  ; Copy point coordinates to clipboard
+  (if (setq pt (getpoint "\nSelect point to copy to clipboard: "))
+    (CopyToClipboard
+      (setq pt
+        (strcat
+          (LM:rtos (nth 0 pt) 2 3) ","
+          (LM:rtos (nth 1 pt) 2 3) ","
+          (LM:rtos (nth 2 pt) 2 3)
+        );END strcat
+      );END setq
+    );END CopyToClipboard
+    (progn
+      (princ "\nNothing copied.\n")(princ)
+    );END progn
+  );END if
+
+  ; v0.0 - 2017.05.16 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.16
+)
