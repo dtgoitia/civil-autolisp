@@ -360,7 +360,7 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.01
 )
-(defun c:PK( / ent centreline_VL_ent_name ans i pt ch)
+(defun c:PK ( / ent centreline_VL_ent_name ans i scapeVariable pt ch chList)
   ; INPUT - Select centreline
   (while (not ent)
     (setq ent (entsel "\nSelect centreline: "))
@@ -379,7 +379,7 @@
   (if (not ans) (setq ans "Pick") )
 
   ; OPERATION - Start infinite loop with selected option:
-  (while (not kkkk)
+  (while (not scapeVariable)
     (cond
       ((= ans "Type")
         (if (setq dist (getreal "\nIntroduce distance to mark: ") )
@@ -395,16 +395,27 @@
           (progn
             (setq
               ch (DT:PK centreline_VL_ent_name pt)
+              chList (if chList (strcat chList "\n" (LM:rtos ch 2 3)) (LM:rtos ch 2 3))
               i (+ i 1)
             )
             (princ (strcat (itoa i) " chainage = " (LM:rtos ch 2 3)))
           );END progn
-          (exit)
+          (progn
+            (CopyToClipboard chList)
+            (setq scapeVariable T)
+            (princ (strcat "\n" (itoa i) " points coppied to clipboard."))
+          );END progn
         );END if
     );END subcond
     );END cond
   );END while
+
   (princ)
+
+  ; v0.1 - 2017.05.16 - Picked points copied to clipboard
+  ; v0.0 - 2016.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.16
 )
 (defun DT:BlockPerpendicularToPolyline ( VL_ent_name blk / *error* VL_ent_name gr p0 p1 )
   ; Insert block perpendicular to selected polyline
