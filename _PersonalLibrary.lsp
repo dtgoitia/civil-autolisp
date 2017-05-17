@@ -70,6 +70,7 @@
         "_CustomShortcuts.lsp"
         "_LongitudinalSections.lsp"
         "_Viewport.lsp"
+        "_ManholeSchedule.lsp"
       )
   );END setq
   (mapcar
@@ -82,10 +83,11 @@
 
   (princ)
 
-  ; v0,1 - 2017.05.15 - Viewport functions added
+  ; v0.2 - 2017.05.17 - Manhole Schedule functions added
+  ; v0.1 - 2017.05.15 - Viewport functions added
   ; v0.0 - 2017.05.11 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.05.11
+  ; Last revision: 2017.05.17
 )
 (DT:LoadCustomRepository)
 (defun loadRT( / filePath)
