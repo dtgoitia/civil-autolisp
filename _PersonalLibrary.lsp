@@ -614,14 +614,14 @@
 )
 (defun c:SDIPP( /
   ; Recursive DT:SDIP along polyline vertexes
-                ent_name insertionMode
+                activeDocument ent_name insertionMode
                 startZ startPoint startParam endPoint endParam gradient
                 p1 p2 param
                 )
   ; AUXILIARY FUNCTIONS
   (defun DT:AskBlockInAllVertex( / ans )
-  ; Returns T if the user wants blocks in every vertex,
-  ; or nil if the user want just one block in the last vertex
+    ; Return T if the user wants blocks in every vertex,
+    ; or nil if the user want just one block in the last vertex
     (initget "All Last")
     (if (not (setq ans (getkword "\nSelect block vertexes to insert the blocks [All/Last] <Last>? ") ))
       (setq ans Last)
@@ -641,6 +641,7 @@
     );END if
   )
 
+  (setq activeDocument (vla-get-ActiveDocument (vlax-get-acad-object)))
   (if (setq ent_name (car (entsel "\nSelect a 2D polyline: ")) )
     (if (= "LWPOLYLINE" (cdr (assoc 0 (entget ent_name))) )
       (progn
@@ -663,6 +664,7 @@
             (princ "\nStart and end point are the same.")
           );END subcond
           ((< startParam endParam) ; normal direction
+            (vla-startUndoMark activeDocument)
             (while (< param endParam)
               (setq
                 param (+ param 1)
@@ -673,8 +675,10 @@
               (setq p1 p2)
             );END while
             (DT:InsertFlatLevelBlock p2)
+            (vla-endUndoMark activeDocument)
           );END subcond
           ((> startParam endParam) ; reverse direction
+            (vla-startUndoMark activeDocument)
             (while (> param endParam)
               (setq
                 param (- param 1)
@@ -685,6 +689,7 @@
               (setq p1 p2)
             );END while
             (DT:InsertFlatLevelBlock p2)
+            (vla-endUndoMark activeDocument)
           );END subcond
         );END cond
         (princ "\nto clipboard: ")
@@ -694,7 +699,13 @@
     );END if
     (princ "\nNothing selected.")
   );END if
+
   (princ)
+
+  ; v0.1 - 2017.05.22 - Add start and end undo marks
+  ; v0.0 - 2016.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.22
 )
 (defun c:SDIPforPrivateDrainage ( / z1 p1 p2 dist ans targetPoint gradient ent_name)
   ; Get level with fixed gradient between 2 points,
