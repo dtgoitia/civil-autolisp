@@ -1252,6 +1252,31 @@
 	; Author: David Torralba
 	; Last revision: 2016.08.15
 )
+(defun DT:GetActiveViewportScale ()
+  ; Get active viewport scale
+  (vla-get-CustomScale (vla-get-ActivePViewport (vla-get-activedocument (vlax-get-acad-object))))
+
+  ; v0.0 - 2017.05.23 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.23
+)
+(defun c:ccs ( / str )
+  ; Copy Current Scale
+  ; Print active viewport scale formated as so "1:100"
+  ; and print it on screen
+  (if (setq str (strcat "1:"(LM:rtos (/ 1000 (DT:GetActiveViewportScale)) 2 0)))
+    (progn
+      (CopyToClipboard str)
+      (princ (strcat "\nCurrent viewport scale = " str "\n"))
+      (princ)
+    );END progn
+    nil
+  );END if
+
+  ; v0.0 - 2017.05.23 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.23
+)
 (defun c:mpedit () (command "pedit" "M" (ssget) "" "Y" "") )
 (defun c:erase_bylayer (
     /
