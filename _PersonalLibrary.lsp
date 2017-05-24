@@ -913,8 +913,30 @@
   (setvar "osmode" oldosmode)
   (princ)
 )
-(defun c:DB() (command "draworder" (ssget) "" "Back"))
-(defun c:DF() (command "draworder" (ssget) "" "Front"))
+(defun c:DB ( / ss)
+  ; Shortcut for "Draworder Back"
+  (if (setq ss (ssget))
+    (command "draworder" ss "" "Back")
+    (command "draworder" (ssget) "" "Back")
+  );END if
+
+  ; v0.1 - 2017.05.24 - pickfirst enabled
+  ; v0.0 - 2017.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.24
+)
+(defun c:DF ( / ss)
+  ; Shortcut for "Draworder Front"
+  (if (setq ss (ssget))
+    (command "draworder" ss "" "Front")
+    (command "draworder" (ssget) "" "Front")
+  );END if
+
+  ; v0.1 - 2017.05.24 - pickfirst enabled
+  ; v0.0 - 2017.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.24
+)
 (defun c:DT:move_KTF_SettingOutLabel( /
                             ent_name VL_ent_name
                             label_X label_Y p0 p_ins gr
