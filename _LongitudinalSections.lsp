@@ -1,3 +1,6 @@
+; TODO:
+; - unify DT:DrawStormInvertLevelBoxLine, DT:DrawFoulInvertLevelBoxLine, and DT:DrawOtherInvertLevelBoxLine
+;   to have a single function to which you pass the distance to the datum as an argument.
 (defun DT:DrawExtractedManholesOnLongSection ( / ent_name startPoint datum verticalExageration)
   ; Draw manholes stored in globalVariableManholesData on a longitudinal section
 
@@ -261,6 +264,22 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.02
 )
+(defun DT:DrawOtherInvertLevelBoxLine ( pBase lay )
+  (entmakex
+    (list
+      (cons 0 "LINE")
+      (if (tblsearch "LTYPE" "CONTINUOUS") (cons 6 "CONTINUOUS"))  ; Linetype CONTINUOUS, if possible
+      (cons 8 lay)
+      (cons 10 (polar pBase (* 1.5 pi) 54) )
+      (cons 11 (polar pBase (* 1.5 pi) 60) )
+      (cons 62 256)
+    );END list
+  );END entmakex
+
+  ; v0.0 - 2017.05.24 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.24
+)
 (defun DT:DrawInverLevelText (pt lay str)
   (entmakex
     (list
@@ -383,49 +402,61 @@
   (if (and manholeData datum startPoint)
     (if (= 'list (type manholeData))
       (if (= 9 (length manholeData))
-        (if (or (= (substr (nth 1 manholeData) 1 1) "S") (= (substr (nth 1 manholeData) 1 1) "F") )
-          (progn
-            (setq
-              ; Get manhole position in long section according to its chainage
-              pBase (polar startPoint 0 (nth 0 manholeData))
-              ; Get manhole layer
-              lay (nth 8 manholeData)
-            )
-            ; Draw manhole data on long section
-            (cond
-              ((= (substr (nth 1 manholeData) 1 1) "S")
-                ; Return all drawn entity names, and append them to later wrap them in a group (name the group with the manhole name)
-                (DT:SetGroup
-                  (append
-                    (list (DT:DrawStormInvertLevelBoxLine pBase lay))
-                    (DT:DrawManholeInvertLevelTexts (polar pBase (* 1.5 pi) 45) lay (nth 2 manholeData) (nth 3 manholeData) (nth 4 manholeData) (nth 5 manholeData))
-                    (list
-                      (DT:DrawVerticalAxis pBase (polar pBase (* 0.5 pi) 110) lay)
-                      (DT:WriteVerticalAxisLabel (polar pBase (* 0.5 pi) 110.5) lay (nth 1 manholeData))
-                    );END list
-                    (DT:MarkInvertLevel pBase (DT:GetILFromManholeData manholeData) datum verticalExageration lay)
-                  );END append
-                );END DT:SetGroup
-              );END subcond
-              ((= (substr (nth 1 manholeData) 1 1) "F")
-                (DT:SetGroup
-                  (append
-                    (list
-                      (DT:DrawFoulInvertLevelBoxLine pBase lay)
-                    );END list
-                    (DT:DrawManholeInvertLevelTexts (polar pBase (* 1.5 pi) 51) lay (nth 2 manholeData) (nth 3 manholeData) (nth 4 manholeData) (nth 5 manholeData))
-                    (list
-                      (DT:DrawVerticalAxis pBase (polar pBase (* 0.5 pi) 110) lay)
-                      (DT:WriteVerticalAxisLabel (polar pBase (* 0.5 pi) 110.5) lay (nth 1 manholeData))
-                    );END list
-                    (DT:MarkInvertLevel pBase (DT:GetILFromManholeData manholeData) datum verticalExageration lay)
-                  );END append
-                );END DT:SetGroup
-              );END subcond
-            );END cond
-          );END progn
-          (progn (princ "\nERROR @ DT:DrawManhole > manhole name doesn't start with \"S\" or \"F\"")(princ) nil )
-        );END if
+        (progn
+          (setq
+            ; Get manhole position in long section according to its chainage
+            pBase (polar startPoint 0 (nth 0 manholeData))
+            ; Get manhole layer
+            lay (nth 8 manholeData)
+          )
+          ; Draw manhole data on long section
+          (cond
+            ((= (substr (nth 1 manholeData) 1 1) "S")
+              ; Return all drawn entity names, and append them to later wrap them in a group (name the group with the manhole name)
+              (DT:SetGroup
+                (append
+                  (list (DT:DrawStormInvertLevelBoxLine pBase lay))
+                  (DT:DrawManholeInvertLevelTexts (polar pBase (* 1.5 pi) 45) lay (nth 2 manholeData) (nth 3 manholeData) (nth 4 manholeData) (nth 5 manholeData))
+                  (list
+                    (DT:DrawVerticalAxis pBase (polar pBase (* 0.5 pi) 110) lay)
+                    (DT:WriteVerticalAxisLabel (polar pBase (* 0.5 pi) 110.5) lay (nth 1 manholeData))
+                  );END list
+                  (DT:MarkInvertLevel pBase (DT:GetILFromManholeData manholeData) datum verticalExageration lay)
+                );END append
+              );END DT:SetGroup
+            );END subcond
+            ((= (substr (nth 1 manholeData) 1 1) "F")
+              (DT:SetGroup
+                (append
+                  (list
+                    (DT:DrawFoulInvertLevelBoxLine pBase lay)
+                  );END list
+                  (DT:DrawManholeInvertLevelTexts (polar pBase (* 1.5 pi) 51) lay (nth 2 manholeData) (nth 3 manholeData) (nth 4 manholeData) (nth 5 manholeData))
+                  (list
+                    (DT:DrawVerticalAxis pBase (polar pBase (* 0.5 pi) 110) lay)
+                    (DT:WriteVerticalAxisLabel (polar pBase (* 0.5 pi) 110.5) lay (nth 1 manholeData))
+                  );END list
+                  (DT:MarkInvertLevel pBase (DT:GetILFromManholeData manholeData) datum verticalExageration lay)
+                );END append
+              );END DT:SetGroup
+            );END subcond
+            (t
+              (DT:SetGroup
+                (append
+                  (list
+                    (DT:DrawOtherInvertLevelBoxLine pBase lay)
+                  );END list
+                  (DT:DrawManholeInvertLevelTexts (polar pBase (* 1.5 pi) 57) lay (nth 2 manholeData) (nth 3 manholeData) (nth 4 manholeData) (nth 5 manholeData))
+                  (list
+                    (DT:DrawVerticalAxis pBase (polar pBase (* 0.5 pi) 110) lay)
+                    (DT:WriteVerticalAxisLabel (polar pBase (* 0.5 pi) 110.5) lay (nth 1 manholeData))
+                  );END list
+                  (DT:MarkInvertLevel pBase (DT:GetILFromManholeData manholeData) datum verticalExageration lay)
+                );END append
+              );END DT:SetGroup
+            );END subcond
+          );END cond
+        );END progn
         (progn (princ "\nERROR @ DT:DrawManhole > provided manholeData list has wrong number of items")(princ) nil )
       );END if
       (progn (princ "\nERROR @ DT:DrawManhole > provided manholeData has wrong data type")(princ) nil )
