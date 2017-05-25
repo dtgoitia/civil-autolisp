@@ -1576,7 +1576,7 @@
   (princ (strcat "\n" filePath "   \(copied to ClipBoard\)") )
   (princ)
 )
-(defun GetShortName ( strFileName / wshFSO fileObj)
+(defun GetFileShortName ( strFileName / wshFSO fileObj)
   ;; Credit to Lee Ambrosius
   ;; Source: http://hyperpics.blogs.com/beyond_the_ui/2005/12/obtaining_a_sho.html
   (vl-load-com)
@@ -1585,16 +1585,46 @@
   (setq fileObj (vlax-invoke-method wshFSO 'GetFile strFileName))
   (vlax-get-property fileObj 'ShortPath)
 )
+(defun GetFolderShortName ( strFileName / wshFSO folderObj)
+  (vl-load-com)
+  (setq wshFSO (vlax-create-object "Scripting.FileSystemObject"))
+  (setq folderObj (vlax-invoke-method wshFSO 'GetFolder strFileName))
+  (vlax-get-property folderObj 'ShortPath)
+
+  ; v0.0 - 2017.05.25 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.25
+)
+(defun c:pdfolder()
+  ; Open company PDF folder in Windows Explorer and select the file
+  (startapp
+    (strcat "explorer "
+      (GetFolderShortName
+        (strcat
+          (getvar "dwgprefix")
+          "..\\"
+          "PDF & DWF\\Civil\\"
+        );END strcat
+      );END GetFileShortName
+      ", /e"
+    );END strcat
+  );END startapp
+  (princ)
+
+  ; v0.0 - 2017.05.25 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.25
+)
 (defun c:cfolder()
   ; Open current file containing folder in Windows Explorer and select the file
   (startapp
     (strcat "explorer /select, "
-      (GetShortName
+      (GetFileShortName
         (strcat
           (getvar "dwgprefix")
           (getvar "dwgname")
         );END strcat
-      );END GetShortName
+      );END GetFileShortName
       ", /e"
     );END strcat
   );END startapp
