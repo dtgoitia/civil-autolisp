@@ -3944,6 +3944,22 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.12
 )
+(defun c:ttt ( / text ss )
+  ; Same as c:tt but with multiple selection
+  (if (setq text (DT:GetText (car (nentselp "\nClick on source text: "))))
+    (if (setq ss (ssget '((-4 . "<OR")(0 . "TEXT")(0 . "MTEXT")(-4 . "OR>"))))
+      (foreach a (ssnamex ss)
+        (if (= 'ename (type (cadr a)))
+          (DT:SetText (cadr a) text)
+        );END if
+      );END foreach
+    );END if
+  );END if
+
+  ; v0.0 - 2017.05.25 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.25
+)
 (defun c:wt ( / text )
   ; Override selected text content
   (DT:SetText (car (nentsel "\nClick on text: ")) (getstring "\nWrite text (use \"\\P\" as newlines) :" t) )
