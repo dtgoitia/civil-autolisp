@@ -59,6 +59,7 @@
     );END cond
 
     ; OPERATION - Run the order through all selected buildings
+    (vla-startUndoMark (vla-get-ActiveDocument (vlax-get-acad-object)))
     (foreach a (ssnamex ss)
       (if (= 'ename (type (cadr a)))
         (progn
@@ -84,7 +85,7 @@
           (vla-put-layer (vla-copy VL_ent_name) "e-work-block")
 
           ; OPERATION - Offset form perimeter to draw work block
-          (command "._offset" "E" "Y" dist (entlast) (DT:AVE_vertex VL_ent_name) "")
+          (command "._offset" "E" "Y" dist (entlast) "_non" (DT:InnerPoint ent_name) "")
 
           ; OPERATION - Change polyline thickness
           (vlax-put-property (vlax-ename->vla-object (entlast)) 'ConstantWidth thickness)
@@ -98,6 +99,7 @@
 
     ; RESET OFFSET command to original settings
     (command "._offset" "E" "N" "" "")
+    (vla-endUndoMark (vla-get-ActiveDocument (vlax-get-acad-object)))
   ); END while
 
   ; RESET to original settings
@@ -108,6 +110,8 @@
   ; End without double messages
   (princ)
 
+  ; v0.7 - 2017.05.26 - DT:InnerPoint implemented to substitute DT:AVE_vertex
+  ;                   - Undo markers added
   ; v0.6 - 2016.07.01 - grread function substituted for initget and getkwrod functions as users requested
   ;                   - Use of DT:AVE_vertex function to find automatically polyline center and offset without asking to click a point inside the building
   ;                   - Allow to select multiple buildings at once, giving to all the same workblock thickness
@@ -121,5 +125,5 @@
   ; v0.1 - 2016.03.22 - Translate into English.
   ; v0.0 - 2016.03.14 - First issue.
   ; Author: David Torralba
-  ; Last revision: 2016.07.01
+  ; Last revision: 2017.05.26
 )
