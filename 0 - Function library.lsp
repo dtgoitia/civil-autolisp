@@ -1514,3 +1514,67 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.26
 )
+(defun DT:Spin ( ang0 ang1 )
+  ; Return spin direction from ang0 to ang1
+  ;  - 0 : clockwise
+  ;  - 1 : anticlockwise
+  ;  - 2 : inline
+  ; or return nil if error
+  (if (DT:Arg 'DT:Spin '((ang0 'real)(ang1 'real)))
+    (if (> ang0 pi)
+      (cond ; ang0 > pi
+        ((> ang0 ang1) ; ANG0 > ang1
+          ; ang1-ang0 < 0
+          (if (> (- (+ ang1 (* 2 pi)) ang0) pi)
+            0 ; right
+            1 ; left  *
+          );END if
+        );END subcond
+        ((< ang0 ang1) 1)                             ; left    ang0 < ANG1
+        ((= ang0 ang1) 2)                             ; inline  ang0 = ang1
+      );END cond
+      (cond ; ang0 <= pi
+        ((and (> ang1 ang0) (< ang1 (+ ang0 pi))) 1)  ; left    ANG0 > ang1  &&  ang1 > ang0+pi
+        ((= ang0 ang1) 2)                             ; inline  ang0 = ang1
+        (t 0)                                         ; right   ang0 < ANG1
+      );END cond
+    );END if
+  );END if
+
+  ; v0.0 - 2017.05.26 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.26
+)
+(defun DT:GetRelativeAngle ( ang0 ang1 / angleDifference spin return )
+  ; Return relative angle between angles ang0 and ang1
+  ;  - > 0  if clockwise anlge
+  ;  - < 0  if anticlockwise angle
+  (if (DT:Arg 'DT:GetRelativeAngle '((ang0 'real)(ang1 'real)))
+    (progn
+      (setq
+        angleDifference (- ang1 ang0)
+        spin (DT:Spin ang0 ang1)
+      )
+      (cond
+        ((= 2 spin)                             (setq return 0)                           )
+        ((< angleDifference 0)                  (setq return (- (+ ang1 (* 2 pi)) ang0))  )
+        ((and (= spin 1) (< angleDifference 0)) (setq return (- (+ ang1 (* 2 pi)) ang0))  )
+        ((and (= spin 0) (< angleDifference 0)) (setq return (- (+ ang1 (* 2 pi)) ang0))  )
+        (t                                      (setq return angleDifference)             )
+      );END cond
+    );END progn
+  );END if
+
+  ; Reverse angle value from pi to 2pi
+  (if (and (= spin 0) (> return pi) ) (setq return (- (* 2 pi) return)) )
+
+  ; Reverse the sign for anticlockwise relative angle
+  (if (= spin 1) (setq return (- 0 return)) )
+
+  ; Return value
+  return
+
+  ; v0.0 - 2017.05.26 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.26
+)
