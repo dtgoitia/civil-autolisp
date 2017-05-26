@@ -1444,8 +1444,8 @@
               );END if
             );END progn
             (cond
-              ((not (eval argumentSymbol)) (setq errorList (append errorList (list (strcat "ERROR @ DT:Arg : " (vl-symbol-name argumentSymbol) "=nil")))))
-              ((not (eval argumentType))   (setq errorList (append errorList (list (strcat "ERROR @ DT:Arg : " (vl-symbol-name (eval argumentType)) "=nil")))))
+              ((not (eval argumentSymbol)) (setq errorList (append errorList (list (strcat "ERROR @ " (vl-symbol-name functionName) " : " (vl-symbol-name argumentSymbol) "=nil")))))
+              ((not (eval argumentType))   (setq errorList (append errorList (list (strcat "ERROR @ " (vl-symbol-name functionName) " : " (vl-symbol-name (eval argumentType)) "=nil")))))
             );END cond
           );END if
         );END foreach
@@ -1472,9 +1472,10 @@
     T
   );END if
 
+  ; v0.2 - 2017.05.26 - Error message amended
   ; v0.1 - 2017.05.13 - Update variable names for clarity purporse
   ;                   - Update error printing system
   ; v0.0 - 2017.05.12 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.05.13
+  ; Last revision: 2017.05.26
 )
