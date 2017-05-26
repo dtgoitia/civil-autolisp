@@ -1479,3 +1479,38 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.26
 )
+(defun DT:GetLwpolyPoints ( ent_name / alternator Xcoord pointList )
+  ; Return a list with LWPOLYLINE coordinates
+  (if (DT:Arg 'DT:GetLwpolyPoints '((ent_name 'ename)))
+    (if (= "LWPOLYLINE" (cdr (assoc 0 (entget ent_name))))
+      (progn
+        (setq alternator T)
+        (foreach a (vlax-safearray->list (vlax-variant-value (vlax-get-property (vlax-ename->vla-object ent_name) 'Coordinates)))
+          (if alternator
+            (progn ; X value
+              (setq
+                alternator nil
+                Xcoord (list a)
+              );END setq
+            );END progn
+            (progn ; Y value
+              (setq
+                alternator T
+                pointList (append pointList (list (append Xcoord (list a))))
+              );END setq
+            );END progn
+          );END if
+        );END foreach
+
+        ; Return coordinate list
+        pointList
+
+      );END progn
+      (progn (princ "\nERROR @ DT:GetLwpolyPoints > ent_name is not LWPOLYLINE")(princ) nil)
+    );END if
+  );END if
+
+  ; v0.0 - 2017.05.26 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.26
+)
