@@ -3989,3 +3989,30 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.16
 )
+(defun c:pt ( / pointString )
+  ; Print point coordinates with 3 decimals and copy it to Clipboard
+  (if (setq pointString (DT:Pt (getpoint "\nSelect point to get coordinates: ")))
+    (progn
+      (princ (strcat "\n" pointString))
+      (CopyToClipboard pointString)
+      (princ)
+    );END progn
+  );END if
+  ; v0.0 - 2017.05.26 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.26
+)
+(defun DT:Pt ( point )
+  ; Print point coordinates with 3 decimals and copy it to Clipboard
+  (if (DT:Arg 'DT:Pt '((point 'list)))
+    (strcat
+      (LM:rtos (nth 0 point) 2 3) ","
+      (LM:rtos (nth 1 point) 2 3) ","
+      (LM:rtos (nth 2 point) 2 3)
+    );END strcat
+  );END if
+
+  ; v0.0 - 2017.05.26 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.26
+)
