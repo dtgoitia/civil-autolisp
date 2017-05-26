@@ -1669,3 +1669,19 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.26
 )
+(defun DT:TypePoint ( pt )
+  ; Return T if pt is a point, otherwise return nil
+  (if pt
+    (if (or
+          (DT:Type3DPoint pt)
+          (DT:Type2DPoint pt)
+        );END or
+      T
+      nil
+    );END if
+  );END if
+
+  ; v0.0 - 2017.05.12 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.12
+)
