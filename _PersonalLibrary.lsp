@@ -4053,3 +4053,22 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.31
 )
+(defun DT:RoundTo ( x r / r )
+  ; Round x to the nearest r
+
+  ; Convert to real
+  (if (and (numberp x) (numberp r))
+    (progn
+      (if (and (= 'int (type x)) (= 'int (type r)) )
+        (setq r (float r))
+      );END if
+      (setq multiple (* r (atof (LM:rtos (/ x r) 2 0))) )
+
+    );END progn
+    (DT:Error 'DT:RoundTo "x or r are not numbers")
+  );END if
+
+  ; v0.0 - 2017.05.31 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.31
+)
