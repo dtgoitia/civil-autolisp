@@ -1479,6 +1479,26 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.26
 )
+(defun DT:Error ( functionName errorMessage )
+  ; Print message on console correctly formated
+  (princ
+    (strcat
+      "\nERROR @ "
+      (vl-symbol-name functionName)
+      " : "
+      errorMessage
+      "\n"
+    );END strcat
+  );END princ
+
+  ; Return
+  nil
+
+  ; v0.0 - 2017.05.31 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.31
+)
+
 (defun DT:GetLwpolyPoints ( ent_name / alternator Xcoord pointList )
   ; Return a list with LWPOLYLINE coordinates
   (if (DT:Arg 'DT:GetLwpolyPoints '((ent_name 'ename)))
