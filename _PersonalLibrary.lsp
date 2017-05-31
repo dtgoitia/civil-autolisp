@@ -4000,3 +4000,19 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.26
 )
+(defun DT:ZoomToEntity ( ent_name / varMinPoint varMaxPoint)
+  ; Zoom to passed object
+  (if (DT:Arg 'DT:ZoomToEntityVla '((ent_name 'ename)))
+    (progn
+      (vla-GetBoundingBox (vlax-ename->vla-object ent_name) 'varMinPoint 'varMaxPoint)
+      (if (and varMinPoint varMaxPoint)
+        (vla-ZoomWindow (vlax-get-acad-object) varMinPoint varMaxPoint)
+        (DT:Error 'DT:ZoomToEntityVla "something wrong with vla-GetBoundingBox")
+      );END if
+    );END progn
+  );END if
+
+  ; v0.0 - 2017.05.31 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.31
+)
