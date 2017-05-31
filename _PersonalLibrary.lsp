@@ -4016,3 +4016,53 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.31
 )
+(defun DT:PrintVar ( var )
+  ; Show variable name, type and value
+  ; var argument can be any symbol or a list of symbols
+  ;  - Single symbol:    (DT:PrintVar 'variableToCheck)
+  ;  - List of symbols:  (DT:PrintVar '(var1 var2 var3 var4 var5))
+  ; NOTE: pass quoted values to check variables
+  (cond
+    ((= 'list (type var))
+      (foreach a var
+        (if (= 'sym (type a))
+          (princ
+            (strcat
+              "\n" (vl-symbol-name a)
+              " [" (vl-princ-to-string (type (eval a))) "]"
+              " = " (vl-princ-to-string (eval a))
+            );END strcat
+          );END princ
+          (princ
+            (strcat
+              "\n[" (vl-princ-to-string (type a)) "]"
+              " = " (vl-princ-to-string a)
+            );END strcat
+          );END princ
+        );END if
+      );END foreach
+    );END subcond
+    ((= 'sym (type var))
+      (princ
+        (strcat
+          "\n" (vl-symbol-name var)
+          " [" (vl-princ-to-string (type (eval var))) "]"
+          " = " (vl-princ-to-string (eval var))
+        );END strcat
+      );END princ
+    );END subcond
+    (t
+      (princ
+        (strcat
+          "\n[" (vl-princ-to-string (type var)) "]"
+          " = " (vl-princ-to-string var)
+        );END strcat
+      );END princ
+    );END subcond
+  );END cond
+  (princ)
+
+  ; v0.0 - 2017.05.31 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.31
+)
