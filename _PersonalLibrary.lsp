@@ -2268,7 +2268,7 @@
   (defun c:3() (princ "\nSDIPforPrivateDrainage: ") (c:SDIPforPrivateDrainage))
   (defun c:33() (princ "\nSDIP: ") (c:SDIP))
   (defun c:4() (DT:AddSubstractPlotLevel (car (entsel "\nSelect level: ")) ))
-  (defun c:44() (c:ChangePrivateSewerGradient))
+  (defun c:44() (princ "\nRECALC private sewer GRADIENT") (c:UpdatePrivateDrainageLabel))
   (defun c:pa()(fbi "Parking-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
   (defun c:ra()(fbi "Road-Fall-Arrow")
     (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow")
@@ -2350,7 +2350,7 @@
         3\tSDIP private drainage
         33\tSDIP
         4\tPlotLevel +/-50mm
-        44\tChange Private Sewer Gradient\n
+        44\tUpdate Private Sewer Gradient\n
     Create:
         ll\tplot level
         pa\tparking arrow
@@ -2361,6 +2361,7 @@
   "))
   (princ "\nENGINEERING SETUP COMPLETED")(princ)
 
+  ; v0.6 - 2017.06.01 - Private sewer gradient update function updated
   ; v0.5 - 2017.05.11 - White and yellow colouring tools added
   ; v0.4 - 2017.03.29 - Plot level added
   ; v0.3 - 2017.03.10 - Change Private Sewer Gradient added
@@ -2368,7 +2369,7 @@
   ; v0.1 - 2017.02.21 - Cheatsheet added
   ; v0.0 - 2017.01.29 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.05.11
+  ; Last revision: 2017.06.01
 )
 (defun c:LongSet ()
   ; Longitudinal Section setup
@@ -4066,6 +4067,105 @@
 
     );END progn
     (DT:Error 'DT:RoundTo "x or r are not numbers")
+  );END if
+
+  ; v0.0 - 2017.05.31 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.31
+)
+(defun c:UpdatePrivateDrainageLabel ()
+  (DT:UpdatePrivateDrainageLabel 5)
+  (princ)
+
+  ; v0.0 - 2017.05.31 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.05.31
+)
+(defun DT:UpdatePrivateDrainageLabel ( round / p1 p2 z1 z2 msg 3Dp1 3Dp2 gradient sewerLabel )
+  ; Update private drainage label
+  ; if round  = nil --> don't round
+  ; if round != nil --> rounded to nearest "round"
+
+  ; INPUT - Point 1
+  (if (not (setq p1 (getpoint "\nSelect point A: ")))
+    (if (not INT_lastPoints)
+      ; Force user to input a point if there is no INT_lastPoints saved yet
+      (while (not p1) (setq p1 (getpoint "\nSelect point A: ")) )
+      (setq
+        p1 (nth 0 INT_lastPoints)
+        z1 (nth 1 INT_lastPoints)
+        p2 (nth 2 INT_lastPoints)
+        z2 (nth 3 INT_lastPoints)
+      )
+    );END if
+  );END if
+
+  ; INPUT - Point 1 level, if not taken from INT_lastPoints
+  (if (not z1)
+   (setq z1 (DT:clic_or_type_level))
+  );END if
+
+  (princ "\nLevel A = ")(princ z1)(princ "m")
+
+  ; INPUT - Point 2, if not taken from INT_lastPoints
+  (if (not p2)
+    (setq p2 (getpoint "\nSelect point B: "))
+  );END if
+
+  ; INPUT - Point 2 level, if not taken from INT_lastPoints
+  (if (not z2)
+    (setq z2 (DT:clic_or_type_level))
+  );END if
+  (princ "\nLevel B = ")(princ z2)(princ "m")
+
+  ; Save input as global variables
+  (setq INT_lastPoints (list p1 z1 p2 z2) )
+
+  ; Calculate 3D points
+  (setq
+    3Dp1 (list (nth 0 p1) (nth 1 p1) z1)
+    3Dp2 (list (nth 0 p2) (nth 1 p2) z2)
+    gradient (abs (DT:Gradient 3Dp1 3Dp2))
+  )
+
+  (if (= z1 z2)
+    (setq msg "\nSelected points are at the same level.")
+    (if round
+      (setq msg (strcat
+        "\nGradient = 1/" (LM:rtos gradient 2 0) " (" (LM:rtos (/ 100 gradient) 2 2) "%)"
+        "\n                ~ 1/" (LM:rtos (DT:RoundTo gradient round) 2 0) " (" (LM:rtos (/ 100 (DT:RoundTo gradient round)) 2 2) "%)"
+        )
+      )
+      (setq msg (strcat "\nGradient = 1/" (LM:rtos gradient 2 0) " (" (LM:rtos (/ 100 gradient) 2 2) "%)"))
+    );END if
+  )
+
+  ; Select sewer label
+  (if (setq sewerLabel (car (entsel (strcat msg "\nSelect pipe label: "))))
+    (if (setq sewerSize (DT:GetSewerSize sewerLabel))
+      (cond
+        ((= 100 sewerSize)
+          (if (> gradient 80)
+            (progn (princ "\nDN100 flatter than 1/80. WRONG\n") nil)
+            (if round
+              (DT:ChangePrivateSewerGradient sewerLabel (DT:RoundTo gradient round))
+              (DT:ChangePrivateSewerGradient sewerLabel gradient)
+            );END if
+          )
+        );END subcond
+        ((= 150 sewerSize)
+          (if round
+            (DT:ChangePrivateSewerGradient sewerLabel (DT:RoundTo gradient round))
+            (DT:ChangePrivateSewerGradient sewerLabel gradient)
+          );END if
+        );END subcond
+        (t
+          (alert "I only can handle DN100 and\nDN150 pipe sizes... Sorry! :P")
+        );END subcond
+      );END cond
+      nil
+    );END if
+    nil
   );END if
 
   ; v0.0 - 2017.05.31 - First issue
