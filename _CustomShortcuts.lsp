@@ -15,7 +15,21 @@
 (defun c:iso() (command "_.isolateobjects")(princ))
 (defun c:iso() (command "_.isolateobjects")(princ))
 (defun c:uiso() (command "_.unisolateobjects")(princ))
-(defun c:c() (command "_.copy" pause "" "_non" (cadr (grread 't)) "_non" pause) )
+(defun c:c ( / ent_name )
+  ; Fast copy
+  (if (ssget "_I")
+    (command "_.copy" "_non" (cadr (grread 't)) "_non" pause)
+    (if (setq ent_name (car (entsel "\nSelect object: ")))
+      (command "_.copy" ent_name "" "_non" (cadr (grread 't)) "_non" pause)
+    );END if
+  );END if
+
+  ; v0.1 - 2017.06.01 - Previously selected entities considered
+  ;                   - Nul selection considered
+  ; v0.0 - 2017.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.01
+)
 (defun c:cc() (command "_.copy") )
 (defun c:m() (command "_.move" pause "" "_non" (cadr (grread 't)) "_non" pause) )
 (defun c:mo() (command "_.move"))
