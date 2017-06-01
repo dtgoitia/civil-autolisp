@@ -72,10 +72,10 @@
 
   (princ "\nSelect end chainage:")
   (cond
-    ((= 1 (car (setq length (DT:get_3Dpoly_2Dlength (vlax-ename->vla-object ent_name)) )))
+    ((= 1 (car (DT:get_3Dpoly_2Dlength (vlax-ename->vla-object ent_name)) ))
       (setq ch_f (DT:input_chainage (vlax-ename->vla-object ent_name) (cdr (DT:get_3Dpoly_2Dlength (vlax-ename->vla-object ent_name))) ))
     );END subcond
-    ((= 2 (car (setq length (DT:get_3Dpoly_2Dlength (vlax-ename->vla-object ent_name)) )))
+    ((= 2 (car (DT:get_3Dpoly_2Dlength (vlax-ename->vla-object ent_name)) ))
       (setq ch_f (getreal "\nImposible to detected selected polyline end chainage. Please, type it: "))
     );END subcond
 
@@ -142,11 +142,12 @@
 
   (princ)
 
-  ; v0.0 - 2017.03.28 - Input messages clarified
+  ; v0.2 - 2017.06.01 - Bug fixed: conflict between "length" function and variable identifier solved
+  ; v0.1 - 2017.03.28 - Input messages clarified
   ; v0.0 - 2016.??.?? - First issue
-  ; Author: David Torralban
-  ; Last revision: 2017.03.28
-);END defun
+  ; Author: David Torralba
+  ; Last revision: 2017.06.01
+)
 (defun DT:get_chainage_data ( ent_name ch
                         /
                         aux_ent_name
@@ -277,7 +278,7 @@
   ; Actualiza la función PK con este algoritmo para que funcione con 3Dpolys que ahora mismo sólo funciona con las 2D---------------------------------
 
   ; v0.0 - 2016.08.26 - First issue
-  ; Author: David Torralban
+  ; Author: David Torralba
   ; Last revision: 2016.08.26
 );END defun
 (defun DT:input_chainage ( VL_ent_name default_ch / ans)
@@ -321,50 +322,52 @@
   );END while
 
   ; v0.0 - 2016.09.29 - First issue
-  ; Author: David Torralban
+  ; Author: David Torralba
   ; Last revision: 2016.09.29
 )
 (defun DT:get_3Dpoly_2Dlength ( VL_ent_name )
-  ; PENDIENTE -------------------------------------------------------------------------------------------------------- PENDIENTE
   ; Return the 2D length of a 3d polyline
-  (cond
-    ((= "LWPOLYLINE" (cdr (assoc 0 (entget (vlax-vla-object->ename VL_ent_name) ))) )
-      (cons 1 (vla-get-length VL_ent_name))
-    );END subcond
-    ((= "POLYLINE" (cdr (assoc 0 (entget (vlax-vla-object->ename VL_ent_name) ))) )
-      ; OPERATION - Create an auxiliary 3D polyline
-      (setq
-        aux_VL_ent_name (vla-copy VL_ent_name)
-        ; OPERATION - Save coordinates array and convert it to a list
-        arr (vlax-variant-value (vla-get-Coordinates aux_VL_ent_name))
-        larr (vlax-safearray->list arr)
-        i 1
-      )
+  (if T ; (DT:Arg 'DT:get_3Dpoly_2Dlength '((VL_ent_name 'VLA-OBJECT)))
+    (cond
+      ((= "LWPOLYLINE" (cdr (assoc 0 (entget (vlax-vla-object->ename VL_ent_name) ))) )
+        (cons 1 (vla-get-length VL_ent_name))
+      );END subcond
+      ((= "POLYLINE" (cdr (assoc 0 (entget (vlax-vla-object->ename VL_ent_name) ))) )
+        ; OPERATION - Create an auxiliary 3D polyline
+        (setq
+          aux_VL_ent_name (vla-copy VL_ent_name)
+          ; OPERATION - Save coordinates array and convert it to a list
+          arr (vlax-variant-value (vla-get-Coordinates aux_VL_ent_name))
+          larr (vlax-safearray->list arr)
+          i 1
+        )
 
-      ; OPERATION - Set every Z value of the auxiliary 3D polyline to 0 (zero)
-      (foreach a larr
-          (if (= (* 3 (fix (/ (float i) 3))) i) (vlax-safearray-put-element arr (- i 1) 0.0))
-          (setq i (+ i 1))
-      );END foreach
-      (vlax-put-property aux_VL_ent_name 'Coordinates arr)
+        ; OPERATION - Set every Z value of the auxiliary 3D polyline to 0 (zero)
+        (foreach a larr
+            (if (= (* 3 (fix (/ (float i) 3))) i) (vlax-safearray-put-element arr (- i 1) 0.0))
+            (setq i (+ i 1))
+        );END foreach
+        (vlax-put-property aux_VL_ent_name 'Coordinates arr)
 
-      ; OPERATION - Find last point and save its chainage
-      (setq ch (vlax-curve-getDistAtParam aux_VL_ent_name (vlax-curve-getEndParam aux_VL_ent_name)) )
+        ; OPERATION - Find last point and save its chainage
+        (setq ch (vlax-curve-getDistAtParam aux_VL_ent_name (vlax-curve-getEndParam aux_VL_ent_name)) )
 
-      ; OPERATION - Remove the auxiliary polyline (3D flat polyline)
-      (vla-delete aux_VL_ent_name)
+        ; OPERATION - Remove the auxiliary polyline (3D flat polyline)
+        (vla-delete aux_VL_ent_name)
 
-      ; OPERATION - Return saved chainage
-      (cons 1 ch)
-    );END subcond
-    (t
-      (cons 2 "\nSelected object is not a polyline.")
-    );END subcond
-  );END cond
-  ; PENDIENTE -------------------------------------------------------------------------------------------------------- PENDIENTE
+        ; OPERATION - Return saved chainage
+        (cons 1 ch)
+      );END subcond
+      (t
+        (cons 2 "\nSelected object is not a polyline.")
+      );END subcond
+    );END cond
+  );END if
+
+  ; v0.1 - 2017.05.17 - DT:Arg implemented
   ; v0.0 - 2016.09.29 - First issue
-  ; Author: David Torralban
-  ; Last revision: 2016.09.29
+  ; Author: David Torralba
+  ; Last revision: 2017.05.17
 )
 (defun c:mch ( / oldosmode )
   ; Mark CHainage
@@ -408,9 +411,9 @@
   (princ)
 
   ; v0.0 - 2016.08.26 - First issue
-  ; Author: David Torralban
+  ; Author: David Torralba
   ; Last revision: 2016.08.26
-);END defun
+)
 (princ
   (strcat
     "\n.\n.\n."
