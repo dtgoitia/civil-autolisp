@@ -221,3 +221,18 @@
 )
 (defun c:v1 () (command "-vports" "si") )
 (defun c:v2 () (command "-vports" "2" "v") )
+(defun c:la ()
+  ; Open and close Layer Manager pannel
+  (if (= 0 (getvar "LayerManagerState"))
+    ; Open Layer Manager pannel
+    (command "LayerPalette")
+    ; Close Layer Manager pannel
+    (command "LayerClose")
+  );END if
+
+  (princ)
+
+  ; v0.0 - 2017.06.07 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.07
+)
