@@ -24,14 +24,32 @@
     );END if
   );END if
 
+  (princ)
+
+  ; v0.2 - 2017.06.07 - Silent exit added
   ; v0.1 - 2017.06.01 - Previously selected entities considered
   ;                   - Nul selection considered
   ; v0.0 - 2017.??.?? - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.06.01
+  ; Last revision: 2017.06.07
 )
 (defun c:cc() (command "_.copy") )
-(defun c:m() (command "_.move" pause "" "_non" (cadr (grread 't)) "_non" pause) )
+(defun c:m ( / ent_name )
+  ; Fast copy
+  (if (ssget "_I")
+    (command "_.move" "_non" (cadr (grread 't)) "_non" pause)
+    (if (setq ent_name (car (entsel "\nSelect object: ")))
+      (command "_.move" ent_name "" "_non" (cadr (grread 't)) "_non" pause)
+    );END if
+  );END if
+
+  (princ)
+
+  ; v0.0 - 2017.06.07 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.07
+)
+;(defun c:m() (command "_.move" pause "" "_non" (cadr (grread 't)) "_non" pause) )
 (defun c:mo() (command "_.move"))
 (defun c:mm() (command "_.move"))
 (defun c:p00()
