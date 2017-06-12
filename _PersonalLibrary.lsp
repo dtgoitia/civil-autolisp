@@ -3402,17 +3402,18 @@
           ; Return result
           (if found found 0)
         );END progn
-        ;0
-        "nothing found"
+        ; Return not found value if ss=nil
+        0
       );END if
       (progn (princ "\nERROR @ DT:GetLayoutStatus > tab is not a string\n") nil)
     );END if
     (progn (princ "\nERROR @ DT:GetLayoutStatus > tab = nil\n") nil)
   );END if
 
+  ; v0.1 - 2017.06.12 - Return value if ss=nil updated to be zero (0, as integer)
   ; v0.0 - 2017.03.28 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.28
+  ; Last revision: 2017.06.12
 )
 (defun DT:GetTabInformation ( tab / tabRevision tabStatus )
   ; Return a list with tab name, status (issued or not), and last revision
