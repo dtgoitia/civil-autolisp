@@ -3421,7 +3421,7 @@
     (if (= 'str (type tab))
       (progn
         ; Get last revision
-        (if (not (setq tabRevision (DT:GetLayoutLatestRevision tabName)))
+        (if (not (setq tabRevision (DT:GetLayoutLatestRevision tab)))
           (setq tabRevision "??")
         );END if
 
@@ -3450,10 +3450,11 @@
     (progn (princ "\nERROR @ DT:GetTabInformation > tab = nil\n") nil)
   );END if
 
+  ; v0.2 - 2017.06.14 - Minor bug fixed on DT:GetLayoutLatestRevision implementation
   ; v0.1 - 2017.03.29 - DT:GetLayoutLatestRevision implemented
   ; v0.0 - 2017.03.28 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.29
+  ; Last revision: 2017.06.14
 )
 (defun DT:ListToTable ( lst / maxColumnLength stringTable )
   ; Return the provided list as a table
