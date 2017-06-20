@@ -12,6 +12,7 @@
   ; points.
   ; TODO check if the same text has been used twice and solve conflicts.
 
+  (princ "\nSelect POINT objects to get XY values:")
   (setq
     ssp (ssget '(( 0 . "POINT")) )  ; Get points
     textFound 0                     ; Found text counter
@@ -106,6 +107,11 @@
   (princ msg)
   (alert msg)
   (princ)
+
+  ; v0.0 - 2017.06.20 - Message added for clarification purpose
+  ; v0.0 - 2016.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.20
 )
 (defun GetTextCoordinates (ent_name)
   ; Return text coordiantes
