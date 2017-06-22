@@ -2490,6 +2490,17 @@
     ; Author: David Torralba
     ; Last revision: 2017.03.20
   )
+  (defun c:4()
+    (princ "\nMASTER STRING:\n")
+    (if c:KTF_PMDSDES
+      (c:KTF_PMDSDES)
+      (progn (load "pmdsdes") (c:KTF_PMDSDES) )
+    );END if
+
+    ; v0.0 - 2017.06.22 - First issue
+    ; Author: David Torralba
+    ; Last revision: 2017.06.22
+  )
   (defun c:cheatsheet() (alert
     "3D MODELLING CHEATSHEET\n
     Draw:
@@ -2501,16 +2512,19 @@
         22\tedit vertice level
         3\t3D offset
         33\tup/down\n
+    Strings:
+        4\tmasterstring\n
   "))
   (princ "\n3D MODELLING SETUP COMPLETED")(princ)
 
+  ; v0.3 - 2017.06.22 - 4 added
   ; v0.2 - 2017.03.21 - 111 added
   ;                   - 33 added
   ; v0.1 - 2017.03.20 - c:3dpt added
   ;                   - Load KTF functions if needed
   ; v0.0 - 2017.02.24 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.21
+  ; Last revision: 2017.06.22
 )
 (defun c:TitSet ()
   ; Title Block setup
