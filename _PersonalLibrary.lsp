@@ -2491,10 +2491,21 @@
     ; Last revision: 2017.03.20
   )
   (defun c:4()
-    (princ "\nMASTER STRING:\n")
-    (if c:KTF_PMDSDES
-      (c:KTF_PMDSDES)
-      (progn (load "pmdsdes") (c:KTF_PMDSDES) )
+    (princ "\n3D JUNCTION\n")
+    (if c:ktf_revcurve3d
+      (c:ktf_revcurve3d)
+      (progn (load "revcurve3d") (c:ktf_revcurve3d) )
+    );END if
+
+    ; v0.0 - 2017.06.22 - First issue
+    ; Author: David Torralba
+    ; Last revision: 2017.06.22
+  )
+  (defun c:44()
+    (princ "\nMASTER STRING\n")
+    (if c:ktf_pmdsdes
+      (c:ktf_pmdsdes)
+      (progn (load "pmdsdes") (c:ktf_pmdsdes) )
     );END if
 
     ; v0.0 - 2017.06.22 - First issue
@@ -2513,11 +2524,13 @@
         3\t3D offset
         33\tup/down\n
     Strings:
-        4\tmasterstring\n
+        4\t3d junction
+        44\tmasterstring\n
   "))
   (princ "\n3D MODELLING SETUP COMPLETED")(princ)
 
   ; v0.3 - 2017.06.22 - 4 added
+  ;                   - 44 added
   ; v0.2 - 2017.03.21 - 111 added
   ;                   - 33 added
   ; v0.1 - 2017.03.20 - c:3dpt added
