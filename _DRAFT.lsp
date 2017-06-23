@@ -3247,3 +3247,24 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.13
 )
+(defun c:xx ()
+  ; Step one by one all layer objects and ask if to remove
+  (foreach a (ssnamex (ssget "x" '((8 . "00"))))
+    (if (= 'ename (type (cadr a)))
+      (progn
+        (princ "\n")
+        (princ (entget (cadr a)))
+        (DT:ZoomToEntity (cadr a))
+        (initget "Yes No")
+        (setq ans (getkword "\nDo you want to delete it [Yes/No]? <Yes>"))
+        (if (or (= ans "Yes") (not ans))
+          (vla-delete (vlax-ename->vla-object (cadr a)))
+        );END if
+      );END progn
+    );END if
+  );END foreach
+
+  ; v0.0 - 2017.06.23 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.23
+)
