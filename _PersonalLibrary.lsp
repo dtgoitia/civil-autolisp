@@ -4201,3 +4201,16 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.31
 )
+(defun DT:StringifyTableList ( tableList )
+  ; Convert all elements withing the list in strings
+  (if (DT:Arg 'DT:StringifyTableList '((tableList 'list)))
+    (mapcar
+      '(lambda (x) (mapcar 'vl-princ-to-string x))
+      tableList
+    );END mapcar
+  );END if
+
+  ; v0.0 - 2017.06.23 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.23
+)
