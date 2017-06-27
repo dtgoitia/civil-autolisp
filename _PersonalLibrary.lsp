@@ -4214,3 +4214,30 @@
   ; Author: David Torralba
   ; Last revision: 2017.06.23
 )
+(defun DT:EntityType ( ent_name )
+  ; Return a string with "ent_name" entity type
+  (if (DT:Arg 'DT:EntityType '((ent_name 'ename)))
+    (cdr (assoc 0 (entget ent_name)))
+  );END if
+
+  ; v0.0 - 2017.06.27 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.27
+)
+(defun DT:Delete ( ent_name )
+  ; Delete the passed entity and confirm if it's been deleted.
+  ; Return T if succesfully deleted, otherwise nil
+  (if ent_name
+    (progn
+      (vla-delete (vlax-ename->vla-object ent_name))
+      (if (entget ent_name)
+        nil
+        T
+      );END if
+    );END progn
+  );END if
+
+  ; v0.0 - 2017.06.27 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.27
+)
