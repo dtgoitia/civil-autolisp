@@ -734,6 +734,19 @@
   (setq i -1)
   (mapcar '(lambda ( x ) (if (= (setq i (1+ i)) n) a x)) l)
 )
+(defun LM:sublst ( lst idx len )
+  ;; Sublst  -  Lee Mac
+  ;; The list analog of the substr function
+  ;; lst - [lst] List from which sublist is to be returned
+  ;; idx - [int] Zero-based index at which to start the sublist
+  ;; len - [int] Length of the sublist or nil to return all items following idx
+  (cond
+    ((null lst) nil)
+    ((< 0  idx) (LM:sublst (cdr lst) (1- idx) len))
+    ((null len) lst)
+    ((< 0  len) (cons (car lst) (LM:sublst (cdr lst) idx (1- len))))
+  )
+)
 (defun invm ( m / c f p r )
   ;; Matrix Inverse  -  gile & Lee Mac
   ;; Uses Gauss-Jordan Elimination to return the inverse of a non-singular nxn matrix.
