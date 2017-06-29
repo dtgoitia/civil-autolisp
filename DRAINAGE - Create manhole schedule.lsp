@@ -270,7 +270,9 @@
 
   ; OPERATION - Insert Manhole Schedule Header blocks
 	(command "._insert" "ManScheduleHeader" pS0 "1" "1" "0")
+  (DT:DrawManholeScheduleSuperHeader (entlast) "STORM MANHOLE SCHEDULE")
 	(command "._insert" "ManScheduleHeader" pF0 "1" "1" "0")
+  (DT:DrawManholeScheduleSuperHeader (entlast) "FOUL MANHOLE SCHEDULE")
 
 	; OPERATION - Run though all existing manhole blocks
 	(foreach e (ssnamex ss)
@@ -326,6 +328,8 @@
 	);END foreach
 
 	(princ)
+
+  ; v0.3 - 2017.06.29 - DT:DrawManholeScheduleSuperHeader implemented as per request
   ; v0.2 - 2016.06.27 - Layer filters removed to select blocks in any layer
   ;                   - Message prompt tidy up
   ;                   - Update local variables
@@ -333,7 +337,7 @@
   ; v0.1 - 2016.05.03 - More layers added to filter
   ; v0.0 - 2016.04.10 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.06.27
+  ; Last revision: 2017.06.29
 )
 (defun c:MSCS (
                 /
@@ -665,4 +669,39 @@
   ; v0.0 - 2017.05.12 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.05.12
+)
+(defun DT:DrawManholeScheduleSuperHeader ( referenceHeader string / pointList )
+  ; Add Manhole Schedule Super Header
+  (setq pointList (list (cdr (assoc 10 (entget referenceHeader)))))
+  (setq pointList (append pointList (list (polar (nth 0 pointList) (* 0.5 pi) 8))) )
+  (setq pointList (append pointList (list (polar (nth 1 pointList) 0 156.4537693901))) )
+  (setq pointList (append pointList (list (polar (nth 2 pointList) (* -0.5 pi) 8))) )
+  (entmakex
+    (append
+      (list
+        (cons   0 "LWPOLYLINE")         ; Object type
+        (cons 100 "AcDbEntity")
+        (cons 100 "AcDbPolyline")
+        (cons  70 0)                  ; Open(0)/Closed(1)
+        (cons  90 (length pointList)) ; Number of vertices
+      )
+      (mapcar
+        '(lambda (pt) (cons 10 pt) )
+        pointList
+      );END mapcar
+    );END append
+  )
+  (entmakex
+    (list
+      (cons 0 "TEXT")
+      (cons 1 string)
+      (cons 10 (polar (nth 0 pointList) (* 0.25 pi) 4))
+      (cons 40 2.5)
+      (cons 7 "ROMANS")
+    );END list
+  );END entmakex
+
+  ; v0.0 - 2017.06.29 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.29
 )
