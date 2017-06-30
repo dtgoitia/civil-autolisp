@@ -3268,3 +3268,111 @@
   ; Author: David Torralba
   ; Last revision: 2017.06.23
 )
+(defun c:xx ( / pointList doc )
+  ; Mark point of given coordinates
+  ;
+
+  (setq
+    pointList
+    '(
+      (390354.583 230886.236 0.0)
+      (390355.743 230884.053 0.0)
+      (390354.485 230847.260 0.0)
+      (390353.152 230846.552 0.0)
+      (390352.109 230845.997 0.0)
+      (390291.254 230833.984 0.0)
+      (390204.809 231084.429 0.0)
+      (390204.919 231084.063 0.0)
+    )
+    doc (vla-get-ActiveDocument (vlax-get-acad-object))
+  );END setq
+
+  ; Create layer
+  (DT:AddLayer "__marks" 2 "CONTINUOUS")
+  (setvar "CLAYER" "__marks")
+
+  (vla-startUndoMark doc)
+  (foreach a pointList
+    (entmakex
+      (list
+        (cons 0 "CIRCLE")
+        (cons 10 a)
+        (cons 40 2)
+      );END list
+    );END entmakex
+  );END foreach
+  (vla-endUndoMark doc)
+
+  ; v0.0 - 2017.06.22 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.22
+)
+(defun c:xx ()
+  ; Step one by one all layer objects and ask if to remove
+  (foreach a (ssnamex (ssget "x" '((8 . "e-contours-ph2-0.025m-text"))))
+    (if (= 'ename (type (cadr a)))
+      (progn
+        (princ "\n")
+        (princ (entget (cadr a)))
+        (DT:ZoomToEntity (cadr a))
+        (initget "Yes No")
+        (setq ans (getkword "\nDo you want to delete it [Yes/No]? <Yes>"))
+        (if (or (= ans "Yes") (not ans))
+          (vla-delete (vlax-ename->vla-object (cadr a)))
+        );END if
+      );END progn
+    );END if
+  );END foreach
+
+  ; v0.0 - 2017.06.23 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.23
+)
+(defun c:xx (/ blockName doc FLST)
+  (vl-load-com)
+  (setq doc (vla-get-activedocument (vlax-get-acad-object)) )
+  (setq
+    blockName (cdr (assoc 2 (entget (car (entsel "\nSelect block: ")))))
+    FLST nil
+  )
+  (fix1 blockName)
+  (vl-cmdf "regen")
+  (prin1)
+)
+(defun fix1 (blockName / blockEntityName)
+  ; If the blockName is not in FLST, carry on
+  (if (not (member blockName FLST))
+    (progn
+      (setq
+        ; Add blockName to FLST
+        FLST (cons blockName FLST)
+        ; Get entity name of blockName
+        blockEntityName (tblobjname "block" blockName)
+      )
+      ; Get next object within the drawing object table
+      (while (setq blockEntityName (entnext blockEntityName))
+        ;(print (entget blockEntityName))
+        ; If the next object is an INSERT object
+        (if (= (cdr (assoc 0 (entget blockEntityName))) "INSERT")
+          ; If true, get the name block and pass it as argument to "fix1" (recursive)
+          (fix1 (cdr (assoc 2 (entget blockEntityName))))
+          ; If false, check if next object is a dimension, if it is DIMENSION object, delete it
+          (if
+            ;; EDIT THE CONDITION BELOW TO FILTER OBJECTS YOU WANT TO DELETE --------------------------------
+            (= (cdr (assoc 8 (entget blockEntityName))) "5396 EngArch$0$E-SURFACE WATER")
+            ;; EDIT THE CONDITION ABOVE TO FILTER OBJECTS YOU WANT TO DELETE --------------------------------
+            (progn
+              (setq
+                objectToDelete (vlax-ename->vla-object blockEntityName)
+                blk (vla-ObjectIdToObject doc (vla-get-ownerID objectToDelete) )
+              );END setq
+              (vla-delete objectToDelete)
+              (vla-get-count blk)
+            );END progn
+          );END if
+        );END if
+      );END while
+    );END progn
+  );END if
+  (princ)
+)
