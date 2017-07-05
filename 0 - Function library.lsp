@@ -1101,16 +1101,6 @@
   (get_environment targets)
   (set_custom_error)
 );END defun
-;| USE TEMPLATE
-(defun c:test (/ old_error old_sysvars)
-    (save_environment '("osmode" "angdir" "angbase"))
-
-    WRITE_HERE_YOUR_CODE
-
-    (restore_environment)
-);END defun
-|;
-; ------------------------------------------------------------------------------
 (defun DT:flatPoint( pt )
 ; Return the provided 3D point with Z=0
   (list (nth 0 pt) (nth 1 pt) 0.0)
