@@ -1707,3 +1707,29 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.12
 )
+(defun DT:Delete ( ename )
+  ; Delete entity if exists
+  ; Return T if entity exists and was removed, nil otherwise
+
+  ; Check ename argument is correct
+  (if (and ename (= 'ename (type ename)))
+    ; Check if passed entity exists
+    (if (entget ename)
+      (progn
+        (vla-delete (vlax-ename->vla-object ename))
+        ; Check if passed entity still exists
+        (if (entget ename)
+          nil ; Return nil: passed argument is an existing entity name, but it's been impossible to remove the entity
+          T   ; Return nil: passed argument is an existing entity name and has been successfuly removed
+        );END if
+      );END progn
+      nil  ; Return nil: passed argument is an entity name, but such entity doesn't exist
+    );END if
+    nil  ; Return nil: passed argument is nil or not an entity name
+  );END if
+
+  ; v0.1 - 2017.07.05 - Check if ename exists before trying to remove it
+  ; v0.0 - 2017.06.27 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.27
+)
