@@ -1511,7 +1511,6 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.31
 )
-
 (defun DT:GetLwpolyPoints ( ent_name / alternator Xcoord pointList )
   ; Return a list with LWPOLYLINE coordinates
   (if (DT:Arg 'DT:GetLwpolyPoints '((ent_name 'ename)))
