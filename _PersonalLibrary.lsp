@@ -4241,3 +4241,23 @@
   ; Author: David Torralba
   ; Last revision: 2017.06.27
 )
+(defun DT:CheckIfEntityExists ( ename / e return )
+  ; Returns T if entity name is found, otherwise returns nil
+  (if (and ename (= 'ename (type ename)))
+    (if (eq ename (setq e (entnext)))
+      T
+      (progn
+        (while (setq e (entnext e))
+          (if (eq ename e)
+            (setq return T)
+          );END if
+        );END while
+        return
+      );END progn
+    );END if
+  );END if
+
+  ; v0.0 - 2017.07.05 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.07.05
+)
