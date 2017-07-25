@@ -71,6 +71,7 @@
         "_LongitudinalSections.lsp"
         "_Viewport.lsp"
         "_ManholeSchedule.lsp"
+        "_AutoLoad.lsp"
       )
   );END setq
   (mapcar

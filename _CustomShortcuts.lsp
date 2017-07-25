@@ -264,7 +264,7 @@
   ; Author: David Torralba
   ; Last revision: 2017.06.23
 )
-(defun c:xx ( / ent_name el1 lel1 el2 )
+(defun c:EntDef ( / ent_name el1 lel1 el2 )
   ; Print entity definition data in a table
   (if (setq ent_name (car (entsel "\nSelect entity to see definition data: ")) )
     (if
