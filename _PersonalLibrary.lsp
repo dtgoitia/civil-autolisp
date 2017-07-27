@@ -2270,6 +2270,11 @@
   (defun c:33() (princ "\nSDIP: ") (c:SDIP))
   (defun c:4() (DT:AddSubstractPlotLevel (car (entsel "\nSelect level: ")) ))
   (defun c:44() (princ "\nRECALC private sewer GRADIENT") (c:UpdatePrivateDrainageLabel))
+  (defun c:5()
+    (princ "\nDRAW LINEAR DRAINAGE\n")
+    (if (not c:linearDrainage) (DT:AutoLoadFileFromCivilTemp "linearDrainage.lsp"))
+    (c:linearDrainage)
+  )
   (defun c:pa()(fbi "Parking-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
   (defun c:ra()(fbi "Road-Fall-Arrow")
     (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow")
@@ -2353,7 +2358,8 @@
         4\tPlotLevel +/-50mm
         44\tUpdate Private Sewer Gradient\n
     Create:
-        ll\tplot level
+        LL\tplot level
+        5\tlinear drainage
         pa\tparking arrow
         ra\troad arrow\n
     Environment:
