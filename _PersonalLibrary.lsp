@@ -2247,6 +2247,7 @@
       "KerbSet"   "\tKerbing setup\n"
       "SurvSet"   "\tSurvey setup\n"
       "TrackSet"  "\tTracking setup\n"
+      "ManSet"    "\tManhole schedule setup\n"
       "\n"
     );END strcat
   );END alert
@@ -2873,6 +2874,55 @@
   ; v0.0 - 2017.03.29 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.03.29
+)
+(defun c:ManSet ()
+  ; Engineering setup
+  (defun c:0()  (princ "\nMSC: build manhole schedule") (c:MSC))
+  (defun c:1()
+    (princ "\nUPDATE MANHOLE DIAGRAM\n")
+    (if (not c:UMSD) (DT:AutoLoadFileFromCivilTemp "ManholeScheduleDiagram.lsp"))
+    (c:UMSD)
+  )
+  (defun c:11() (princ "\nUPDATE MANHOLE SCHEDULE") (c:UpdateManholeSchedule))
+  (defun c:2()  (princ "\nMSCS: calculate manhole schedule (SfA 6th Edition)") (c:MSCS))
+  (defun c:22()
+    (princ "\nMSCS: calculate manhole schedule (SfA 7th Edition)\n")
+    (if (not c:MSCS7) (DT:AutoLoadFileFromCivilTemp "ManholeSchedule7Edition.lsp"))
+    (c:MSCS7)
+  )
+  (defun c:3()
+    (princ "\nOLD MANHOLE TO NEW MANHOLE:\n")
+    (if (not c:ImportManholeBlock) (DT:AutoLoadFileFromCivilTemp "ImportManholeBlocks.lsp"))
+    (c:ImportManholeBlock)
+  )
+  (defun c:4()
+    (princ "\nMANHOLE SCHEDULE: INPUT PIPE SIZE\n")
+    (if (not c:ManholeSchedulePipeSize) (DT:AutoLoadFileFromCivilTemp "ManholeScheduleUpdateValues.lsp"))
+    (c:ManholeSchedulePipeSize)
+  )
+  (defun c:44()
+    (princ "\nMANHOLE SCHEDULE: Reset hidden values to default\n")
+    (if (not c:ManholeScheduleResetHiddenValues) (DT:AutoLoadFileFromCivilTemp "ManholeScheduleUpdateValues.lsp"))
+    (c:ManholeScheduleResetHiddenValues)
+  )
+  (defun c:cheatsheet() (alert
+    "MANHOLE SCHEDULE\n
+    Create:
+        0\tManhole schedule
+        1\tUpdate manhole diagram
+        11\tUpdate manhole schedule
+        3\tOld manhole to new manhole\n
+    Calculations:
+        2\tSfA 6th Ed
+        22\tSfA 7th Ed
+        4\tInput pipe size
+        44\tReset hidden values\n
+  "))
+  (princ "\nMANHOLE SCHEDULE SETUP COMPLETED")(princ)
+
+  ; v0.0 - 2017.07.28 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.07.28
 )
 (defun DT:OffsetPartM ( ent_name / VL_ent_name p p0 p1 ang )
   ; Move Part M blocks 0.302 toward the inner part of the building (= BlockRotation - 90º)
