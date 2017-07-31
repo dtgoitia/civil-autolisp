@@ -1,3 +1,12 @@
+(defun c:xx ()
+  ; Trigger
+  (DT:AutoLoadFileFromCivil "CIVIL - Interpolate level.lsp")
+  (c:INT)
+
+  ; v0.0 - _DATE_ - First issue
+  ; Author: David Torralba
+  ; Last revision: _DATE_
+)
 (defun c:INT( /
               *error*
               set_line reference_circle1 reference_circle2
@@ -53,6 +62,7 @@
       )
     );END if
   );END if
+  (setq p1 (DT:FlatPoint p1)) ; Flatten p1 coordinates
 
   ; OPERATION - Create auxiliary data and objects
   (setq
@@ -74,6 +84,7 @@
   (if (not p2)
     (setq p2 (getpoint "\nSelect point B: "))
   );END if
+  (setq p2 (DT:FlatPoint p2)) ; Flatten p1 coordinates
 
   ; OPERATION - Create auxiliary data and objects
   (setq
@@ -195,6 +206,7 @@
   ; End without double messages
   (princ)
 
+  ; v1.4 - 2017.07.31 - Flat point added
   ; v1.3 - 2017.01.20 - Adapt messages to Dynamic Input windows
   ; v1.2 - 2016.11.21 - Remember previous point (if any)
   ; v1.1 - 2016.11.17 - Unnecesary instructions removed
@@ -217,5 +229,5 @@
   ; v0.1 - 2016.03.14 - Loop added to select multiple points to interpolate.
   ; v0.0 - 2015.12.14 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.01.20
+  ; Last revision: 2017.07.31
 )
