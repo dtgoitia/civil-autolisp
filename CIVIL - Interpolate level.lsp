@@ -1,16 +1,16 @@
-(defun c:xx ()
-  ; Trigger
-  (DT:AutoLoadFileFromCivil "CIVIL - Interpolate level.lsp")
-  (c:INT)
-
-  ; v0.0 - _DATE_ - First issue
-  ; Author: David Torralba
-  ; Last revision: _DATE_
-)
+; (defun c:xx ()
+;   ; Trigger
+;   (DT:AutoLoadFileFromCivil "CIVIL - Interpolate level.lsp")
+;   (c:INT)
+;
+;   ; v0.0 - _DATE_ - First issue
+;   ; Author: David Torralba
+;   ; Last revision: _DATE_
+; )
 (defun c:INT( /
               *error*
               set_line reference_circle1 reference_circle2
-              mode grad cota level
+              mode grad level
               p1 p2 p3 p4
               z1 z2 z3 z4
               d12 d13 d14
