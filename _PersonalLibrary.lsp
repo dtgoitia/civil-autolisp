@@ -4310,3 +4310,31 @@
   ; Author: David Torralba
   ; Last revision: 2017.07.05
 )
+(defun c:RotateOneByOne ( / ss rotation )
+  ; Rotate selected entities one by one
+  (if (setq ss (ssget))
+    (if (setq rotation (getreal "\nInput rotation angle in degrees: "))
+      (progn
+        ; Convert rotation from degrees to radians
+        (setq rotation (DT:DegToRad rotation))
+        ; Batch rotate selected objects, if possible
+        (foreach a (ssnamex ss)
+          (if (= 'ename (type (cadr a)))
+            (progn
+              (setq object (vlax-ename->vla-object (cadr a)))
+              (if (vlax-property-available-p object 'Rotation T)
+                (vlax-put-property object 'Rotation
+                  (+ rotation (vlax-get-property object 'Rotation))
+                );END vlax-put-property
+              );END if
+            );END progn
+          );END if
+        );END foreach
+      );END progn
+    );END if
+  );END if
+
+  ; v0.0 - 2017.07.31 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.07.31
+)
