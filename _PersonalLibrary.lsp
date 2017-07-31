@@ -2386,6 +2386,13 @@
   (defun c:3() (princ "\nGET MANHOLE DATA ACCORDING TO CENTRELINE: \n") (DT:ExtractManholeDataAlongCentrelines) )
   (defun c:4() (princ "\nDRAW MANHOLES ONTO LONGITUDINAL SECTION: \n") (DT:DrawExtractedManholesOnLongSection) )
   (defun c:5() (princ "\nDRAW MANHOLES' BODY ONTO LONGITUDINAL SECTION: \n") (c:DrawManholeBodyOnLongSection) )
+  (defun c:6()
+    (princ "\nKTF: Extract vertical geometry\n")
+    (if c:ktf_lsc2vld
+      (c:ktf_lsc2vld)
+      (progn (load "lsc2vld") (c:ktf_lsc2vld) )
+    );END if
+  )
   (defun c:cheatsheet() (alert
     "LONGITUDINAL SECTION CHEATSHEET\n
     Manholes to section:
@@ -2393,15 +2400,17 @@
         11\tExplode polyline
         3\tGet manholes
         4\tDraw manholes
-        5\tDraw manholes body\n
+        5\tDraw manholes body
+        6\tKFT Extract vertical geometry\n
   "))
   (princ "\nLONGITUDINAL SECTION SETUP COMPLETED")(princ)
 
+  ; v0.2 - 2017.07.31 - ktf_lsc2vld added
   ; v0.1 - 2017.05.12 - DT:DrawManholeBodyOnLongSection added
   ; v0.0 - 2017.03.16 - Add fillet and c:ep
   ;                   - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.16
+  ; Last revision: 2017.07.31
 )
 (defun c:WorkSet ()
   ; Working Drawing setup
