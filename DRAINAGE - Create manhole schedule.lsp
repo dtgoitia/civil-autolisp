@@ -526,35 +526,37 @@
 
   ; INPUT - Ask user to select Manhole Schedule block to update
   (while (not manSchedule)
-    (if (not (setq manSchedule (car (entsel "\nSelect Manhole Schedule block to update coordinates: "))))
+    (if (setq ename (car (entsel "\nSelect Manhole Schedule block to update coordinates: ")))
+      (progn
+        (princ "object selected.\n")
+        (if (= "ManScheduleBody" (LM:effectivename (vlax-ename->vla-object ename)))
+          (setq manSchedule ename)
+          (progn
+            (alert "Selected object is not a Manhole Schedule Block.")
+            (exit)
+          );END progn
+        );END if
+      );END progn
       (princ "missed. Try again.")
-      (princ "object selected.\n")
-    ); END if
+    );END if
   );END while
-
-  ; OPERATION - Check selected object is a Manhole Schedule block
-  (if (/= "ManScheduleBody" (LM:effectivename (vlax-ename->vla-object manSchedule)))
-    (progn
-      (alert "Selected object is not a Manhole Schedule Block.")
-      (exit)
-    );END progn
-  );END if
 
   ; INPUT - Ask user to select Manhole Block to update to
   (while (not manhole)
-    (if (not (setq manhole (car (entsel "\nSelect Manhole block to update coordinates to: "))))
+    (if (setq ename (car (entsel "\nSelect Manhole block to update coordinates to: ")))
+      (progn
+        (princ "object selected.\n")
+        (if (= "W-Manhole" (substr (LM:effectivename (vlax-ename->vla-object ename)) 2 9))
+          (setq manhole ename)
+          (progn
+            (alert "Selected object is not a Manhole Block.")
+            (exit)
+          );END progn
+        );END if
+      );END progn
       (princ "missed. Try again.")
-      (princ "object selected.\n")
-    ); END if
+    );END if
   );END while
-
-  ; OPERATION - Check selected object is a Manhole block
-  (if (/= "W-Manhole" (substr (LM:effectivename (vlax-ename->vla-object manhole)) 2 9))
-    (progn
-      (alert "Selected object is not a Manhole Block.")
-      (exit)
-    );END progn
-  );END if
 
   ; OPERATION - Get block "ID" attributes
   (setq
@@ -583,12 +585,13 @@
 
   (princ)
 
+  ; v0.2 - 2017.08.01 - Initial input method refactored
   ; v0.1 - 2017.05.12 - DT:SetManholeScheduleCoordinates implemented
   ;                   - DT:SetManholeScheduleCoverLevel implemented
   ;                   - Messages updated
   ; v0.0 - 2016.08.05 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.05.12
+  ; Last revision: 2017.08.01
 )
 (defun DT:SetManholeScheduleCoordinates ( manSchedule coordinates / manScheduleObject oldE oldN newE newN Eupdated Nupdated )
   ; Set the coordinate value of Manhole Schedule block
@@ -611,16 +614,20 @@
             (setq Eupdated T)
           );END progn
         );END if
-        (if (/= oldN newN)
+        (if (= oldN newN)
+          (progn
+            (princ "\n\t- E and N already match\n")
+            T
+          );END progn
           (progn
             (LM:vl-setattributevalue manScheduleObject "N" newN)
             (setq Nupdated T)
           );END progn
         );END if
         (cond
-          ((and Eupdated Nupdated) (princ "\nE and N coordinates updated.\n") T)
-          ((and Eupdated (not Nupdated)) (princ "\nE coordinate updated.\n") T)
-          ((and (not Eupdated) Nupdated) (princ "\nN coordinate updated.\n") T)
+          ((and Eupdated Nupdated) (princ "\n\t- E and N coordinates updated\n") T)
+          ((and Eupdated (not Nupdated)) (princ "\n\t- E coordinate updated\n") T)
+          ((and (not Eupdated) Nupdated) (princ "\n\t- N coordinate updated\n") T)
           (t T)
         );END cond
       );END progn
@@ -635,9 +642,10 @@
     );END cond
   );END if
 
+  ; v0.1 - 2017.08.01 - Same new and old E and N message added
   ; v0.0 - 2017.05.12 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.05.12
+  ; Last revision: 2017.08.01
 )
 (defun DT:SetManholeScheduleCoverLevel ( manSchedule coverLevel / manScheduleObject oldCoverLevel newCoverLevel )
   ; Set the cover level value of Manhole Schedule block
@@ -651,12 +659,15 @@
           oldCoverLevel (LM:vl-getattributevalue manScheduleObject "CL")
           newCoverLevel (LM:rtos coverLevel 2 3)
         )
-        (if (/= oldCoverLevel newCoverLevel)
+        (if (= oldCoverLevel newCoverLevel)
+          (progn
+            (princ "\n\t- CL already match\n")
+            T
+          );END progn
           (progn
             (LM:vl-setattributevalue manScheduleObject "CL" newCoverLevel)
-            (progn (princ "\nCL updated.\n") T)
+            (progn (princ "\n\t- CL updated\n") T)
           );END progn
-          T
         );END if
       );END progn
       (cond
@@ -670,9 +681,10 @@
     );END cond
   );END if
 
+  ; v0.1 - 2017.08.01 - Same new and old CL message added
   ; v0.0 - 2017.05.12 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.05.12
+  ; Last revision: 2017.08.01
 )
 (defun DT:DrawManholeScheduleSuperHeader ( referenceHeader string / pointList )
   ; Add Manhole Schedule Super Header
