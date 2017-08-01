@@ -3,6 +3,7 @@
 ;;    MSC: creates manhole schedule                                           ;;
 ;;    MSCS: calculates soffit, chamber size and manhole type                  ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(load "SortAlphanumeric.lsp")
 (defun get_ID ( VL_ent_name )
   (vl-some '(lambda ( att )
               (if (= "ID" (strcase (vla-get-tagstring att)))
@@ -299,8 +300,10 @@
 
 	; OPERATION - Short lists by ID
 	(setq
-		sorted_storm_ID_list (acad_strlsort storm_ID_list)
-		sorted_foul_ID_list  (acad_strlsort foul_ID_list)
+		; sorted_storm_ID_list (acad_strlsort storm_ID_list)
+		sorted_storm_ID_list (DT:SortAlphanumeric storm_ID_list)
+		; sorted_foul_ID_list  (acad_strlsort foul_ID_list)
+    sorted_foul_ID_list  (DT:SortAlphanumeric foul_ID_list)
 		sorted_storm_data_list (list "")
 		sorted_foul_data_list (list "")
 	)
@@ -329,6 +332,7 @@
 
 	(princ)
 
+  ; v0.4 - 2017.08.01 - DT:SortAlphanumeric implemented to replace acad_strlsort. Now manholes are sorted alphanumerically
   ; v0.3 - 2017.06.29 - DT:DrawManholeScheduleSuperHeader implemented as per request
   ; v0.2 - 2016.06.27 - Layer filters removed to select blocks in any layer
   ;                   - Message prompt tidy up
@@ -337,7 +341,7 @@
   ; v0.1 - 2016.05.03 - More layers added to filter
   ; v0.0 - 2016.04.10 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.06.29
+  ; Last revision: 2017.08.01
 )
 (defun c:MSCS (
                 /
