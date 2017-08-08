@@ -938,36 +938,45 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.24
 )
-(defun c:DT:move_KTF_SettingOutLabel( /
-                            ent_name VL_ent_name
-                            label_X label_Y p0 p_ins gr
+(defun c:move_KTF_SettingOutLabel ( / ename )
+  ; Command for DT:move_KTF_SettingOutLabel
+  (if (setq ename (car (entsel "\nSelect setting out block: ")) )
+    (DT:move_KTF_SettingOutLabel ename)
+  );END if
+
+
+  ; v0.0 - 2017.08.08 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.08.08
+)
+(defun DT:move_KTF_SettingOutLabel ( ename / object labelXCoord labelYCoord p0 insertionPoint gr
                             )
-  (if (= "INSERT" (cdr (assoc 0 (entget (setq ent_name (car (entsel "\nSelect setting out block: ")) )))))
+  (if (= "INSERT" (cdr (assoc 0 (entget ename))))
     (progn
       (princ "\"XY_advanced\" setting out block selected.")
-      (setq VL_ent_name (vlax-ename->vla-object ent_name))
+      (setq object (vlax-ename->vla-object ename))
       (cond
-        ((= "XY_advanced" (LM:effectivename VL_ent_name))
+        ((= "XY_advanced" (LM:effectivename object))
           (setq
-            label_X (LM:getdynpropvalue VL_ent_name "Position1 X")  ;label initial position, to block insertion point
-            label_Y (LM:getdynpropvalue VL_ent_name "Position1 Y")  ;label initial position, to block insertion point
-            p0 (cadr (grread 't))                                   ;pointer position
-            p_ins (cdr (assoc 10 (entget ent_name)))                ;block insertion point
+            labelXCoord (LM:getdynpropvalue object "Position1 X")   ; label initial position, to block insertion point
+            labelYCoord (LM:getdynpropvalue object "Position1 Y")   ; label initial position, to block insertion point
+            p0 (cadr (grread 't))                                   ; pointer position
+            insertionPoint (cdr (assoc 10 (entget ename)))          ; block insertion point
           )
           (while (= 5 (car (setq gr (grread 't 13 0))))
-            (LM:setdynpropvalue VL_ent_name "Position1 X" (+ (- (car (cadr gr)) (car p0)) label_X) )
-            (LM:setdynpropvalue VL_ent_name "Position1 Y" (+ (- (cadr (cadr gr)) (cadr p0)) label_Y) )
+            (LM:setdynpropvalue object "Position1 X" (+ (- (car (cadr gr)) (car p0)) labelXCoord) )
+            (LM:setdynpropvalue object "Position1 Y" (+ (- (cadr (cadr gr)) (cadr p0)) labelYCoord) )
           );END while
           (princ
             (strcat
               "\nLabel moved from ("
-              (LM:rtos label_X 2 3)
+              (LM:rtos labelXCoord 2 3)
               " "
-              (LM:rtos label_Y 2 3)
+              (LM:rtos labelYCoord 2 3)
               " 0.000) to ("
-              (LM:rtos (+ (- (car (cadr gr)) (car p0)) label_X) 2 3)
+              (LM:rtos (+ (- (car (cadr gr)) (car p0)) labelXCoord) 2 3)
               " "
-              (LM:rtos (+ (- (cadr (cadr gr)) (cadr p0)) label_Y) 2 3)
+              (LM:rtos (+ (- (cadr (cadr gr)) (cadr p0)) labelYCoord) 2 3)
               " 0.000)"
             );EMD strcat
           );END princ
@@ -2438,7 +2447,7 @@
   ; Setting Out setup
   (defun c:1() (princ "\nINDIVIDUAL SETTING OUT\n") (c:coord) )
   (defun c:11() (princ "\nPOLYLINE SETTING OUT\n") (c:coordp) )
-  (defun c:2() (princ "\nMOVE SETTING OUT LABEL\n") (c:DT:move_KTF_SettingOutLabel) )
+  (defun c:2() (princ "\nMOVE SETTING OUT LABEL\n") (c:move_KTF_SettingOutLabel) )
   (defun c:22( / ss ) (princ "\nRESET DIMENSTION POSITION\n") (setq ss (ssget '((0 . "DIMENSION")))) (command "_DIM1" "HOME" ss "") )
   (defun c:3() (princ "\nALIGNED DIMENSION\n") (command "_dimaligned") )
   (defun c:33() (princ "\nCONTINUE DIMENSION\n") (command "_dimcontinue") )
@@ -2460,9 +2469,10 @@
   "))
   (princ "\nSETTING OUT SETUP COMPLETED")(princ)
 
+  ; v0.1 - 2017.08.08 - move_KTF_SettingOutLabel command updated
   ; v0.0 - 2017.02.21 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.02.21
+  ; Last revision: 2017.08.08
 )
 (defun c:ModSet ()
   ; 3D Modelling setup
