@@ -4046,6 +4046,20 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.12
 )
+(defun c:et ( / text )
+  ; Edit selected text content
+  (if (setq ename (car (nentsel "\nClick on text: ")))
+    (if (setq currentText (DT:GetText ename))
+      (if (setq newText (DT:PreFilledGetString "\nWrite text (use \"\\P\" as newlines) :" currentText))
+        (DT:SetText ename newText)
+      );END if
+    );END if
+  );END if
+
+  ; v0.0 - 2017.08.11 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.08.11
+)
 (defun c:gp ( / pt )
   ; Copy point coordinates to clipboard
   (if (setq pt (getpoint "\nSelect point to copy to clipboard: "))
