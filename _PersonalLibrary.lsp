@@ -72,6 +72,7 @@
         "_Viewport.lsp"
         "_ManholeSchedule.lsp"
         "_AutoLoad.lsp"
+        "_Input.lsp"
       )
   );END setq
   (mapcar
