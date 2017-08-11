@@ -268,3 +268,40 @@
   ; Author: David Torralba
   ; Last revision: 2017.03.28
 )
+(defun c:BlockToPoint ()
+  ; Command to replace blocks for points
+  (if (setq ss (ssget '((0 . "INSERT"))))
+    (foreach a (ssnamex ss)
+      (if (= 'ename (type (cadr a)))
+        (DT:BlockToPoint (cadr a))
+      );END if
+    );END foreach
+  );END if
+
+  ; v0.0 - 2017.08.10 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.08.10
+)
+(defun DT:BlockToPoint ( ename / object insertionPoint newEname )
+  ; Replace ename block for a point in ename's insertion point
+
+  (if (DT:Arg 'DT:BlockToPoint '((ename 'ename)))
+    (if (= "INSERT" (cdr (assoc 0 (entget ename))))
+      (progn
+        (setq object (vlax-ename->vla-object ename))
+        (setq insertionPoint (vlax-safearray->list (vlax-variant-value (vlax-get-property object 'InsertionPoint))))
+        (setq newEname (entmakex (list (cons 0 "POINT") (cons 10 insertionPoint))))
+        (if newEname
+          (progn
+            (vla-delete object)
+            newEname
+          );END progn
+        );END if
+      );END progn
+    );END if
+  );END if
+
+  ; v0.0 - 2017.08.10 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.08.10
+)
