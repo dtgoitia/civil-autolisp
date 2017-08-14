@@ -1518,21 +1518,27 @@
     );END if2
   );END if
 )
-(defun DT:SetText ( ent_name txt )
+(defun DT:SetText ( ename content / object )
   ; Sets the text of the selected object, if possible
-  (if (= 'ename (type ent_name))
-    (if (vlax-property-available-p (vlax-ename->vla-object ent_name) 'TextString)
-      (progn
-        (vlax-put-property (vlax-ename->vla-object ent_name) 'TextString txt)
-        T
-      );END progn
-    );END if2
+  (if (DT:Arg 'DT:SetText '((ename 'ename)(content 'str)))
+    (progn
+      (setq object (vlax-ename->vla-object ename))
+      (if (vlax-property-available-p object 'TextString)
+        (progn
+          (vlax-put-property object 'TextString content)
+          T ; return nil if sucessfully updated, otherwise vlax-put-property will
+            ; throw an error and break
+        );END progn
+        nil ; property 'TextString is not available
+      );END if2
+    );END progn
   );END if
 
+  ; v0.2 - 2017.08.14 - Return T if property properly updated, otherwise nil
   ; v0.1 - 2017.04.20 - T retured if property available
   ; v0.0 - 2017.??.?? - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.04.20
+  ; Last revision: 2017.08.14
 )
 (defun DT:ReplaceText ( ent_name pattern newString )
   ; Replace pattern for newString in TEXTs and MTEXTs content
