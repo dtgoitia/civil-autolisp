@@ -2524,7 +2524,7 @@
     );END while
     (command ^C ^C)
     (princ)
-    
+
     ; v0.1 - 2017.08.14 - Rewrite it to print point coordinates
     ; v0.0 - 2017.0?.?? - First issue
     ; Author: David Torralba
@@ -2563,7 +2563,8 @@
     ; Author: David Torralba
     ; Last revision: 2017.03.20
   )
-  (defun c:4()
+  (defun c:4 () (princ "\nSPOT LEVEL\n") (c:3DSpotLevel) )
+  (defun c:5()
     (princ "\n3D JUNCTION\n")
     (if c:ktf_revcurve3d
       (c:ktf_revcurve3d)
@@ -2574,7 +2575,7 @@
     ; Author: David Torralba
     ; Last revision: 2017.06.22
   )
-  (defun c:44()
+  (defun c:55()
     (princ "\nMASTER STRING\n")
     (if c:ktf_pmdsdes
       (c:ktf_pmdsdes)
@@ -2589,7 +2590,8 @@
     "3D MODELLING CHEATSHEET\n
     Draw:
         1\t3dpoly
-        111\t3dpoly click\n
+        111\t3dpoly click
+        4\tspot levels\n
     Modify:
         11\tjoin
         2\tadd vertices
@@ -2597,11 +2599,12 @@
         3\t3D offset
         33\tup/down\n
     Strings:
-        4\t3d junction
-        44\tmasterstring\n
+        5\t3d junction
+        55\tmasterstring\n
   "))
   (princ "\n3D MODELLING SETUP COMPLETED")(princ)
 
+  ; v0.4 - 2017.08.14 - Spot level added
   ; v0.3 - 2017.06.22 - 4 added
   ;                   - 44 added
   ; v0.2 - 2017.03.21 - 111 added
@@ -2610,7 +2613,7 @@
   ;                   - Load KTF functions if needed
   ; v0.0 - 2017.02.24 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.06.22
+  ; Last revision: 2017.08.14
 )
 (defun c:TitSet ()
   ; Title Block setup
@@ -3010,6 +3013,27 @@
   ; v0.0 - 2017.07.28 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.07.28
+)
+(defun c:3DSpotLevel ( / escapeVariable xy z )
+  ; Draw spot level in 3D
+  (while (not escapeVariable)
+    (if (setq xy (getpoint "\nSelect XY position: "))
+      (if (setq z (DT:clic_or_type_level))
+        (entmakex
+          (list
+            (cons 0 "POINT")
+            (cons 10 (list (nth 0 xy) (nth 1 xy) z))
+          );END list
+        );END entmakex
+        (setq escapeVariable T)
+      );END if
+      (setq escapeVariable T)
+    );END if
+  );END while
+
+  ; v0.0 - 2017.08.14 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.08.14
 )
 (defun DT:OffsetPartM ( ent_name / VL_ent_name p p0 p1 ang )
   ; Move Part M blocks 0.302 toward the inner part of the building (= BlockRotation - 90º)
