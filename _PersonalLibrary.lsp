@@ -2487,11 +2487,48 @@
   ; 3D Modelling setup
   (defun c:1()  (princ "\n3D POLYLINE\n") (command "_.3dpoly" pause) (princ))
   (defun c:11() (princ "\nJOIN\n") (command "_.join" pause) (princ))
-  (defun c:111 ( / x )
+  (defun c:111 ( / escapeVariable xy z)
     (princ "\n3D POLYLINE CLICKING LEVELS\n")
     (command "_.3dpoly")
-    (while T (command (list (nth 0 (setq x (getpoint "\nSelect XY position: "))) (nth 1 x) (DT:clic_or_type_level)) ))
+    (while (not escapeVariable)
+      (command
+        (if (setq xy (getpoint "\nSelect XY position: "))
+          (progn
+            (setq return
+            (list
+              (nth 0 xy)
+              (nth 1 xy)
+              (progn
+                (if (setq z (DT:clic_or_type_level))
+                  (progn
+                    (princ (strcat "\nXY = (" (LM:rtos (nth 0 xy) 2 3) " " (LM:rtos (nth 1 xy) 2 3) ")\n z = " (LM:rtos z 2 3) "\n"))
+                    z
+                  );END progn
+                  (progn
+                    (princ "\nNo level selected! z = 0.000\n")
+                    0
+                  );END progn
+                );END if
+              );END progn
+            );END list
+            )
+            (princ "\nreturn = ")(princ return)
+            return
+          );END progn
+          (progn
+            (setq escapeVariable T)
+            ^C
+          );END progn
+        );END if
+      );END command
+    );END while
+    (command ^C ^C)
     (princ)
+    
+    ; v0.1 - 2017.08.14 - Rewrite it to print point coordinates
+    ; v0.0 - 2017.0?.?? - First issue
+    ; Author: David Torralba
+    ; Last revision: 2017.08.14
   )
   (defun c:2()
     (princ "\nADD VERTICES\n")
