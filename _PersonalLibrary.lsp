@@ -2258,10 +2258,12 @@
       "SurvSet"   "\tSurvey setup\n"
       "TrackSet"  "\tTracking setup\n"
       "ManSet"    "\tManhole schedule setup\n"
+      "CutSet"    "\tCut and fill setup\n"
       "\n"
     );END strcat
   );END alert
 
+  ; v0.7 - 2017.08.14 - Cut and fill setup added
   ; v0.6 - 2017.03.29 - Tracking setup added
   ; v0.5 - 2017.03.28 - Survey setup added
   ; v0.4 - 2017.03.21 - Kerbing setup added
@@ -2271,7 +2273,7 @@
   ; v0.1 - 2017.03.08 - Title Block setup added
   ; v0.0 - 2017.02.27 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.29
+  ; Last revision: 2017.08.14
 )
 (defun c:EngSet ()
   ; Engineering setup
@@ -2896,7 +2898,7 @@
   ; Last revision: 2017.03.29
 )
 (defun c:ManSet ()
-  ; Engineering setup
+  ; Manhole schedule setup
   (defun c:0()  (princ "\nMSC: build manhole schedule") (c:MSC))
   (defun c:1()
     (princ "\nUPDATE MANHOLE DIAGRAM\n")
@@ -2939,6 +2941,28 @@
         44\tReset hidden values\n
   "))
   (princ "\nMANHOLE SCHEDULE SETUP COMPLETED")(princ)
+
+  ; v0.0 - 2017.07.28 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.07.28
+)
+(defun c:CutSet ()
+  ; Cut and fill setup
+  (defun c:1() (princ "\nCREATE HOUSE STRINGS") (c:Create_House_Strings))
+  (defun c:2() (princ "\nCREATE GRAGE STRINGS") (c:Create_Garage_Strings))
+  (defun c:000()
+    (princ "\nRELOAD CUT AND FILL LIBRARY\n")
+    (DT:AutoLoadFileFromCivilTemp "CutAndFillSet.lsp")
+  )
+  (defun c:cheatsheet() (alert
+    "CUT AND FILL\n
+    Create:
+        1\tHouse 3D strings
+        2\tGarage 3D strings\n
+    Library:
+        0\t(re)load LSP\n
+  "))
+  (princ "\nCUT AND FILL SETUP COMPLETED")(princ)
 
   ; v0.0 - 2017.07.28 - First issue
   ; Author: David Torralba
