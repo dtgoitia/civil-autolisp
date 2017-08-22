@@ -2900,8 +2900,14 @@
 )
 (defun c:SurvSet ()
   ; Survey setup
-  (defun c:1() (princ "\nTie blocks and text AUTOMATIC\n") (c:TieSurvey))
-  (defun c:2() (princ "\nTie blocks and text MANUAL\n") (c:TieSinglePoint))
+  (defun c:1()
+    (princ "\nTie blocks and text AUTOMATIC\n")
+    (if (not c:TieSurvey) (DT:AutoLoadFileFromCivil "_Survey.lsp")) (c:TieSurvey)
+  )
+  (defun c:2()
+    (princ "\nTie blocks and text MANUAL\n")
+    (if (not c:TieSinglePoint) (DT:AutoLoadFileFromCivil "_Survey.lsp")) (c:TieSinglePoint)
+  )
   (defun c:3() (c:UpdateTextReadabilityAngle))
   (defun c:cheatsheet() (alert
     "\nSURVEY CHEATSHEET\n
@@ -2913,11 +2919,12 @@
   "))
   (princ "\nSURVEY SETUP COMPLETED")(princ)
 
+  ; v0.3 - 2017.08.22 - DT:AutoLoadFileFromCivil implemented
   ; v0.2 - 2017.04.05 - Cheatsheet text updated
   ; v0.1 - 2017.04.03 - 3 added
   ; v0.0 - 2017.02.28 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.04.05
+  ; Last revision: 2017.08.22
 )
 (defun c:TrackSet ()
   ; Tracking Setup
