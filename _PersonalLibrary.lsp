@@ -4236,13 +4236,13 @@
             (strcat
               "\n" (vl-symbol-name a)
               " [" (vl-princ-to-string (type (eval a))) "]"
-              " = " (vl-princ-to-string (eval a))
+              " = " (vl-prin1-to-string (eval a))
             );END strcat
           );END princ
           (princ
             (strcat
               "\n[" (vl-princ-to-string (type a)) "]"
-              " = " (vl-princ-to-string a)
+              " = " (vl-prin1-to-string a)
             );END strcat
           );END princ
         );END if
@@ -4253,7 +4253,7 @@
         (strcat
           "\n" (vl-symbol-name var)
           " [" (vl-princ-to-string (type (eval var))) "]"
-          " = " (vl-princ-to-string (eval var))
+          " = " (vl-prin1-to-string (eval var))
         );END strcat
       );END princ
     );END subcond
@@ -4261,16 +4261,17 @@
       (princ
         (strcat
           "\n[" (vl-princ-to-string (type var)) "]"
-          " = " (vl-princ-to-string var)
+          " = " (vl-prin1-to-string var)
         );END strcat
       );END princ
     );END subcond
   );END cond
   (princ)
 
+  ; v0.1 - 2017.08.24 - Variable value printed as prin1 instead of princ
   ; v0.0 - 2017.05.31 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.05.31
+  ; Last revision: 2017.08.24
 )
 (defun DT:RoundTo ( x r / r )
   ; Round x to the nearest r
