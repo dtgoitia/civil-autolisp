@@ -1515,8 +1515,16 @@
   (if (= 'ename (type ent_name))
     (if (vlax-property-available-p (vlax-ename->vla-object ent_name) 'TextString)
       (vlax-get-property (vlax-ename->vla-object ent_name) 'TextString)
+      (if (vlax-property-available-p (vlax-ename->vla-object ent_name) 'TextOverride)
+        (vlax-get-property (vlax-ename->vla-object ent_name) 'TextOverride)
+      );END if2
     );END if2
   );END if
+
+  ; v0.1 - 2017.08.24 - TextOverride property added
+  ; v0.0 - 2017.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.08.24
 )
 (defun DT:SetText ( ename content / object )
   ; Sets the text of the selected object, if possible
@@ -1529,11 +1537,19 @@
           T ; return nil if sucessfully updated, otherwise vlax-put-property will
             ; throw an error and break
         );END progn
-        nil ; property 'TextString is not available
+        (if (vlax-property-available-p object 'TextOverride)
+          (progn
+            (vlax-put-property object 'TextOverride content)
+            T ; return nil if sucessfully updated, otherwise vlax-put-property will
+              ; throw an error and break
+          );END progn
+          nil ; property 'TextString or 'TextOverride is not available
+        );END if2
       );END if2
     );END progn
   );END if
 
+  ; v0.3 - 2017.08.24 - TextOverride property added
   ; v0.2 - 2017.08.14 - Return T if property properly updated, otherwise nil
   ; v0.1 - 2017.04.20 - T retured if property available
   ; v0.0 - 2017.??.?? - First issue
