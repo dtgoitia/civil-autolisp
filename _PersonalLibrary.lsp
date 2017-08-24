@@ -4478,3 +4478,4 @@
   ; Author: David Torralba
   ; Last revision: 2017.07.31
 )
+(DT:AutoLoadFileFromCivilTemp "IssueReport.lsp")
