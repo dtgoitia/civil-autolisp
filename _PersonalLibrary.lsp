@@ -1832,18 +1832,47 @@
       );END cond
   );END if
 )
-(defun c:DNLA( / info infoString infoStringSize txt)
-  ; Print deep object nested block name and layer
-  (setq
-    info (NestedEntityNames (getpoint "\nSelect object to see its nested layers:"))
-    infoString (ChangeEnameForLevel info)
-    infoStringSize (GetColumnLength infoString)
-    txt (NL_GetTextFormatted infoString infoStringSize)
-  )
-  (princ txt)
-  (princ)
+(defun c:xx ()
+  ; Trigger
+  (defun *error* ( errorMessage ) (princ (strcat "n-------- ERROR: " errorMessage " --------n")) (vl-bt) (DT:ReportError))
+  (DT:AutoLoadFileFromCivilTemp "ErrorTracing.lsp")
+  (DT:AutoLoadFileFromCivil "_PersonalLibrary.lsp")
+  (princ "\n.\n.\n.")
+  (c:DNLA)
+
+  ; v0.0 - _DATE_ - First issue
+  ; Author: David Torralba
+  ; Last revision: _DATE_
 )
-(defun EntityInfo (ent_name / blockName blockType )
+(defun c:DNLA( / info infoString infoStringSize outputString )
+  ; Print deep object nested block name and layer
+  (if (setq ename (nentsel "\nSelect object to see its nested layers:"))
+    (if (setq info (DT:NestedEntityNames ename))
+      (if (setq infoString (DT:ChangeEnameForLevel info))
+        (if (setq infoStringSize (DT:GetColumnLength infoString))
+          (if (setq outputString (DT:NL_GetTextFormatted infoString infoStringSize))
+            (progn
+              (princ outputString)      ; Print nested entity report
+              (DT:CopyNestedLayer info) ; Allow user to copy a layer name
+            );END progn
+            (DT:Error 'c:DNLA "outputString = nil")
+          );END if
+          (DT:Error 'c:DNLA "infoStringSize = nil")
+        );END if
+        (DT:Error 'c:DNLA "infoString = nil")
+      );END if
+      (DT:Error 'c:DNLA "info = nil")
+    );END if
+    (DT:Error 'c:DNLA "ename = nil")
+  );END if
+  (princ)
+
+  ; v0.1 - 2017.09.18 - refactoring
+  ; v0.0 - 2016.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.09.18
+)
+(defun DT:EntityInfo (ent_name / blockName blockType )
   ; Return a list with useful information of the nested object
   ; (ename (Block/Xref Name Layer))
   (if (= 'ename (type ent_name))
@@ -1861,33 +1890,41 @@
     );END if
     nil
   );END if
+
+  ; v0.1 - 2017.09.18 - refactoring
+  ; v0.0 - 2016.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.09.18
 )
-(defun NestedEntityNames ( pt / ent_name i info )
+(defun DT:NestedEntityNames ( ename / i info )
   ; Returns a list with nested entity names, being the parent first one and deepest child last one
-  (if (= 'list (type pt)) ; if point provided, continue
-    (if (setq ent_name (nentselp pt)) ; if entity selected, continue
-      (progn
-        (setq
-          i 0
-          info (list (list "Level" "Type" "Block name" "Object layer") (EntityInfo (car ent_name)) )
-        )
-        (if (nth 3 ent_name) ; if any nested entity
-          (progn
-            (setq nestedLevels (length (nth 3 ent_name)) )
-            (foreach x (nth 3 ent_name)
-              (setq
-                i (+ i 1)
-                info (append info (list (EntityInfo x)))
-              )
-            );END foreach
-          );END progn
-        );END if
-        info
-      );END progn
-    );END if
+  (if (DT:Arg 'DT:NestedEntityNames '((ename 'list)))
+    (progn
+      (setq
+        i 0
+        info (list (list "Level" "Type" "Block name" "Object layer") (DT:EntityInfo (car ename)) )
+      )
+      (if (nth 3 ename) ; if any nested entity
+        (progn
+          (setq nestedLevels (length (nth 3 ename)) )
+          (foreach x (nth 3 ename)
+            (setq
+              i (+ i 1)
+              info (append info (list (DT:EntityInfo x)))
+            )
+          );END foreach
+        );END progn
+      );END if
+      info
+    );END progn
   );END if
+
+  ; v0.1 - 2017.09.18 - refactoring
+  ; v0.0 - 2016.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.09.18
 )
-(defun ChangeEnameForLevel ( info / i x )
+(defun DT:ChangeEnameForLevel ( info / i x )
   ; Return info replacing ename for level
   (if (= 'list (type info))
     (progn
@@ -1901,8 +1938,13 @@
       x
     );END progn
   );END if
+
+  ; v0.1 - 2017.09.18 - refactoring
+  ; v0.0 - 2016.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.09.18
 )
-(defun GetColumnLength ( infoString / q col )
+(defun DT:GetColumnLength ( infoString / q col )
   ; Return list with the biggest length needed on each column
   (if (= 'list (type infoString))
     (progn
@@ -1923,8 +1965,13 @@
       col
     );END progn
   );END if
+
+  ; v0.1 - 2017.09.18 - refactoring
+  ; v0.0 - 2016.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.09.18
 )
-(defun NL_GetTextFormatted ( infoString infoStringSize / txt s )
+(defun DT:NL_GetTextFormatted ( infoString infoStringSize / txt s )
   ; Format text correctly and concatenate it
   (setq txt "\n")
   (mapcar
@@ -1944,6 +1991,59 @@
     infoString
   );END mapcar
   txt
+
+  ; v0.1 - 2017.09.18 - refactoring
+  ; v0.0 - 2016.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.09.18
+)
+(defun DT:CopyNestedLayer ( info / i layerName optionList options ans )
+  (if (DT:Arg 'DT:CopyNestedLayer '((info 'list)))
+    (progn
+      ; Get layer names in a list
+      (setq i -1)
+      (foreach item info
+        (if (> i -1)
+          (progn
+            (setq layerName (nth 3 item))
+            (setq optionList (append optionList (list (list i layerName))))
+            (setq i (1+ i))
+          );END progn
+          (setq i (1+ i))
+        );END if
+      );END foreach
+
+      ; Create the list of options for the user
+      (mapcar '(lambda (x) (cond
+          ((= (car x) 0) (setq options "0"))
+          ((> (car x) 0) (setq options (strcat options " " (itoa (car x)))))
+        ))
+        optionList
+      );END mapcar
+
+      ; Offer the user the list of options:
+      (initget 0 options)
+      (if (setq ans (getkword (strcat "\nSelect layer to copy to clipboard [" options "]")))
+        (progn
+          (setq ans (atoi ans))
+          ; Retrieve selected layer and copy it to the clipboard
+          (mapcar '(lambda (option)
+            (if (= (car option) ans)
+              (progn
+                (CopyToClipboard (nth 1 option))
+                (princ (strcat "\n >> Copied to clipboard: " (nth 1 option) ))
+              );END progn
+            ))
+            optionList
+          );END mapcar
+        );END progn
+      );END if
+    );END progn
+  );END if
+
+  ; v0.0 - 2017.09.18 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.09.18
 )
 (defun c:Convert3DpolyTo2Dpoly ( / old_error old_sysvars iSuccess iFail )
   ; Convert multiple 3Dpolylines to 2Dpolylines
@@ -3682,9 +3782,9 @@
         (progn
           (setq
             ; Get column width: measure the nth element of each row and get the maximum
-            maxColumnLength (GetColumnLength lst)
+            maxColumnLength (DT:GetColumnLength lst)
             ; Get list values as a table formated string
-            stringTable (NL_GetTextFormatted lst maxColumnLength)
+            stringTable (DT:NL_GetTextFormatted lst maxColumnLength)
           )
         );END progn
         (progn (princ "\nERROR @ DT:ListToTable > lst doesn't have table format\n") nil)
