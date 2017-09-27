@@ -1267,12 +1267,12 @@
 	; Author: David Torralba
 	; Last revision: 2016.08.12
 )
-(defun c:CS(
-            /
-            s s_str
-            )
-; Choose Scale
-  (if (setq s (getint "\nSelect scale: 1:"))
+(defun c:CS( / s s_str )
+  ; Choose Scale
+  (if (setq currentScale (strcat "1:"(LM:rtos (/ 1000 (DT:GetActiveViewportScale)) 2 0)))
+    single_function
+  );END if
+  (if (setq s (getint (strcat "\nCurrent viewport scale: " currentScale "\nSelect scale: 1:")))
     (progn
       (setq s_str (strcat (LM:rtos (/ 1000 (float s) ) 2 2) "xp") )
       (command "zoom" "S" s_str)
@@ -1281,9 +1281,11 @@
     (princ "\nNothing introduced. Routine finished with no viewport scale change.")
   );END if
   (princ)
+
+	; v0.1 - 2017.09.27 - Print current scale
 	; v0.0 - 2016.08.15 - First issue
 	; Author: David Torralba
-	; Last revision: 2016.08.15
+	; Last revision: 2017.09.27
 )
 (defun DT:GetActiveViewportScale ()
   ; Get active viewport scale
