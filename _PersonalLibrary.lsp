@@ -4581,3 +4581,24 @@
   ; Last revision: 2017.07.31
 )
 (DT:AutoLoadFileFromCivilTemp "IssueReport.lsp")
+(defun c:gradient ( / p1 p2 dX dY dZ dXY d )
+  ; Return the gradient between two points
+  (if (setq p1 (getpoint "\nSelect first point:"))
+    (if (setq p2 (getpoint "\nSelect second point:"))
+      (progn
+        (setq dX (abs (- (nth 0 p1) (nth 0 p2))))
+        (setq dY (abs (- (nth 1 p1) (nth 1 p2))))
+        (setq dZ (abs (- (nth 2 p1) (nth 2 p2))))
+        (setq dXY (sqrt (+ (* dX dX) (* dY dY)) ))
+        (setq d (sqrt (+ (* dXY dXY) (* dZ dZ)) ))
+
+        (if (= dZ 0)
+          (princ "\nGradient = flat")
+          (princ (strcat "\nGradient = 1/" (LM:rtos (/ dXY dZ) 2 0)))
+        );END if
+        (princ)
+
+      );END progn
+    );END if
+  );END if
+)
