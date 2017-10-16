@@ -1751,3 +1751,38 @@
   ; Author: David Torralba
   ; Last revision: 2017.06.27
 )
+(defun DT:req ( a b / return )
+  ; recursive eq
+  ; Compares a list recursivelly along all its nested levels
+
+  ; (req
+  ;   (list "1" (list "1s"  (list "1s") 4 (list "1s" 2)))
+  ;   (list "1" (list "1s"  (list "1s") 4 (list "1s" 2)))
+  ; )
+  ; RETURNS: T
+
+  ; (req
+  ;   (list "1" (list "1s"  (list "1s") 43 (list "1s" 2)))
+  ;   (list "1" (list "1s"  (list "1s") 4 (list "1s" 2)))
+  ; )
+  ; RETURNS: nil
+  (if (and a b)
+    (if (= (type a) (type b))
+      (if (/= 'list (type a))
+        (eq a b)
+        (progn
+          (setq return T)
+          (mapcar
+            '(lambda (aa bb) (if return (setq return (req aa bb))) )
+            a b
+          );END mapcar
+          return
+        );END progn
+      );END if
+    );END if
+  );END if
+
+  ; v0.0 - 2017.10.16 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.10.16
+)
