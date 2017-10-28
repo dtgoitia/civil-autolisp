@@ -63,8 +63,21 @@
 )
 (defun c:ci()	(command "_.circle")(princ))
 (defun c:n() (command "_.NCOPY" pause "" "" ""))
-(defun c:xu() (command "_-xref" "u" "*")(alert "Xref Unload finished!")(princ)) ;Unload all Xrefs
-(defun c:xr() (command "_-xref" "r" "*")(alert "Xref Reload finished!")(princ)) ;Reload all Xrefs
+(defun c:xr ()
+  ; Open and close External Reference pannel
+  (if (= 0 (getvar "ERState"))
+    ; Open External Reference pannel
+    (command "ExternalReferences")
+    ; Close External Reference pannel
+    (command "ExternalReferencesClose")
+  );END if
+
+  (princ)
+
+  ; v0.0 - 2017.06.28 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.28
+)
 (defun c:t () (command "_.textedit" "M" "S" pause))
 (defun c:pp()(command "_.publish"))
 (defun c:las() (command "_.layerstate")(princ))
@@ -236,6 +249,39 @@
   ; v0.0 - 2017.05.12 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.05.12
+)
+(defun c:entget ( / ent_name )
+  ; Print entity definition data
+  (if (setq ent_name (car (entsel "\nSelect entity to see definition data: ")) )
+    (progn
+      (princ "\n")
+      (princ (entget ent_name))
+    );END progn
+  );END if
+  (princ)
+
+  ; v0.0 - 2017.06.23 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.23
+)
+(defun c:EntDef ( / ent_name el1 lel1 el2 )
+  ; Print entity definition data in a table
+  (if (setq ent_name (car (entsel "\nSelect entity to see definition data: ")) )
+    (if
+      (setq tableList
+        (mapcar
+          '(lambda (x) (list (car x) (cdr x) (type (cdr x)) ) )
+          (entget ent_name)
+        );END mapcar
+      )
+      (princ (DT:ListToTable (DT:StringifyTableList tableList)))
+    );END if
+  );END if
+  (princ)
+
+  ; v0.0 - 2017.06.23 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.23
 )
 (defun c:v1 () (command "-vports" "si") )
 (defun c:v2 () (command "-vports" "2" "v") )

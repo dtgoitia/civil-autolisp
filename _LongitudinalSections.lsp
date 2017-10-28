@@ -505,3 +505,46 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.12
 )
+(defun c:purgeManholeHiddenData ( / ss )
+  (princ "\nSelect manholes to purge:\n")
+  (if (setq ss (ssget '((0 . "INSERT")) ))
+    (foreach a (ssnamex ss)
+      (if (= 'ename (type (cadr a)))
+        (DT:purgeManholeHiddenData (vlax-ename->vla-object (cadr a)))
+      );END if
+    );END foreach
+  );END if
+
+  ; v0.0 - 2017.10.16 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.10.16
+)
+(defun DT:purgeManholeHiddenData ( object / visibilityState resetILs checkReturn resetAtts )
+  ; Clean the IL values not shown settting them back to "000.000"
+  (if (DT:Arg 'DT:purgeManholeHiddenData '((object 'vla-object)))
+    (progn
+      (setq visibilityState (LM:GetVisibilityState object))
+      (cond
+        ((= visibilityState "1") (setq resetILs (list 2 3 4) checkReturn (list "000.000" "000.000" "000.000") ))
+        ((= visibilityState "2") (setq resetILs (list   3 4) checkReturn (list "000.000" "000.000"          ) ))
+        ((= visibilityState "3") (setq resetILs (list     4) checkReturn (list "000.000"                    ) ))
+        ((= visibilityState "4") (setq resetILs nil                                                           ))
+      );END cond
+      (if (and resetILs checkReturn)
+        (if (setq resetAtts (mapcar '(lambda (n) (strcat "IL" (itoa n))) resetILs) )
+          (DT:req
+            checkReturn
+            (mapcar
+              '(lambda (attributeTag) (LM:vl-setattributevalue object attributeTag "000.000"))
+              resetAtts
+            );END mapcar
+          );END DT:req
+        );END if
+      );END if
+    );END progn
+  );END if
+
+  ; v0.0 - 2017.10.16 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.10.16
+)

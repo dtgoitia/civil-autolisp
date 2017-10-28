@@ -71,6 +71,8 @@
         "_LongitudinalSections.lsp"
         "_Viewport.lsp"
         "_ManholeSchedule.lsp"
+        "_AutoLoad.lsp"
+        "_Input.lsp"
       )
   );END setq
   (mapcar
@@ -937,36 +939,45 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.24
 )
-(defun c:DT:move_KTF_SettingOutLabel( /
-                            ent_name VL_ent_name
-                            label_X label_Y p0 p_ins gr
+(defun c:move_KTF_SettingOutLabel ( / ename )
+  ; Command for DT:move_KTF_SettingOutLabel
+  (if (setq ename (car (entsel "\nSelect setting out block: ")) )
+    (DT:move_KTF_SettingOutLabel ename)
+  );END if
+
+
+  ; v0.0 - 2017.08.08 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.08.08
+)
+(defun DT:move_KTF_SettingOutLabel ( ename / object labelXCoord labelYCoord p0 insertionPoint gr
                             )
-  (if (= "INSERT" (cdr (assoc 0 (entget (setq ent_name (car (entsel "\nSelect setting out block: ")) )))))
+  (if (= "INSERT" (cdr (assoc 0 (entget ename))))
     (progn
       (princ "\"XY_advanced\" setting out block selected.")
-      (setq VL_ent_name (vlax-ename->vla-object ent_name))
+      (setq object (vlax-ename->vla-object ename))
       (cond
-        ((= "XY_advanced" (LM:effectivename VL_ent_name))
+        ((= "XY_advanced" (LM:effectivename object))
           (setq
-            label_X (LM:getdynpropvalue VL_ent_name "Position1 X")  ;label initial position, to block insertion point
-            label_Y (LM:getdynpropvalue VL_ent_name "Position1 Y")  ;label initial position, to block insertion point
-            p0 (cadr (grread 't))                                   ;pointer position
-            p_ins (cdr (assoc 10 (entget ent_name)))                ;block insertion point
+            labelXCoord (LM:getdynpropvalue object "Position1 X")   ; label initial position, to block insertion point
+            labelYCoord (LM:getdynpropvalue object "Position1 Y")   ; label initial position, to block insertion point
+            p0 (cadr (grread 't))                                   ; pointer position
+            insertionPoint (cdr (assoc 10 (entget ename)))          ; block insertion point
           )
           (while (= 5 (car (setq gr (grread 't 13 0))))
-            (LM:setdynpropvalue VL_ent_name "Position1 X" (+ (- (car (cadr gr)) (car p0)) label_X) )
-            (LM:setdynpropvalue VL_ent_name "Position1 Y" (+ (- (cadr (cadr gr)) (cadr p0)) label_Y) )
+            (LM:setdynpropvalue object "Position1 X" (+ (- (car (cadr gr)) (car p0)) labelXCoord) )
+            (LM:setdynpropvalue object "Position1 Y" (+ (- (cadr (cadr gr)) (cadr p0)) labelYCoord) )
           );END while
           (princ
             (strcat
               "\nLabel moved from ("
-              (LM:rtos label_X 2 3)
+              (LM:rtos labelXCoord 2 3)
               " "
-              (LM:rtos label_Y 2 3)
+              (LM:rtos labelYCoord 2 3)
               " 0.000) to ("
-              (LM:rtos (+ (- (car (cadr gr)) (car p0)) label_X) 2 3)
+              (LM:rtos (+ (- (car (cadr gr)) (car p0)) labelXCoord) 2 3)
               " "
-              (LM:rtos (+ (- (cadr (cadr gr)) (cadr p0)) label_Y) 2 3)
+              (LM:rtos (+ (- (cadr (cadr gr)) (cadr p0)) labelYCoord) 2 3)
               " 0.000)"
             );EMD strcat
           );END princ
@@ -1256,12 +1267,12 @@
 	; Author: David Torralba
 	; Last revision: 2016.08.12
 )
-(defun c:CS(
-            /
-            s s_str
-            )
-; Choose Scale
-  (if (setq s (getint "\nSelect scale: 1:"))
+(defun c:CS( / s s_str )
+  ; Choose Scale
+  (if (setq currentScale (strcat "1:"(LM:rtos (/ 1000 (DT:GetActiveViewportScale)) 2 0)))
+    single_function
+  );END if
+  (if (setq s (getint (strcat "\nCurrent viewport scale: " currentScale "\nSelect scale: 1:")))
     (progn
       (setq s_str (strcat (LM:rtos (/ 1000 (float s) ) 2 2) "xp") )
       (command "zoom" "S" s_str)
@@ -1270,9 +1281,11 @@
     (princ "\nNothing introduced. Routine finished with no viewport scale change.")
   );END if
   (princ)
+
+	; v0.1 - 2017.09.27 - Print current scale
 	; v0.0 - 2016.08.15 - First issue
 	; Author: David Torralba
-	; Last revision: 2016.08.15
+	; Last revision: 2017.09.27
 )
 (defun DT:GetActiveViewportScale ()
   ; Get active viewport scale
@@ -1504,24 +1517,46 @@
   (if (= 'ename (type ent_name))
     (if (vlax-property-available-p (vlax-ename->vla-object ent_name) 'TextString)
       (vlax-get-property (vlax-ename->vla-object ent_name) 'TextString)
-    );END if2
-  );END if
-)
-(defun DT:SetText ( ent_name txt )
-  ; Sets the text of the selected object, if possible
-  (if (= 'ename (type ent_name))
-    (if (vlax-property-available-p (vlax-ename->vla-object ent_name) 'TextString)
-      (progn
-        (vlax-put-property (vlax-ename->vla-object ent_name) 'TextString txt)
-        T
-      );END progn
+      (if (vlax-property-available-p (vlax-ename->vla-object ent_name) 'TextOverride)
+        (vlax-get-property (vlax-ename->vla-object ent_name) 'TextOverride)
+      );END if2
     );END if2
   );END if
 
+  ; v0.1 - 2017.08.24 - TextOverride property added
+  ; v0.0 - 2017.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.08.24
+)
+(defun DT:SetText ( ename content / object )
+  ; Sets the text of the selected object, if possible
+  (if (DT:Arg 'DT:SetText '((ename 'ename)(content 'str)))
+    (progn
+      (setq object (vlax-ename->vla-object ename))
+      (if (vlax-property-available-p object 'TextString)
+        (progn
+          (vlax-put-property object 'TextString content)
+          T ; return nil if sucessfully updated, otherwise vlax-put-property will
+            ; throw an error and break
+        );END progn
+        (if (vlax-property-available-p object 'TextOverride)
+          (progn
+            (vlax-put-property object 'TextOverride content)
+            T ; return nil if sucessfully updated, otherwise vlax-put-property will
+              ; throw an error and break
+          );END progn
+          nil ; property 'TextString or 'TextOverride is not available
+        );END if2
+      );END if2
+    );END progn
+  );END if
+
+  ; v0.3 - 2017.08.24 - TextOverride property added
+  ; v0.2 - 2017.08.14 - Return T if property properly updated, otherwise nil
   ; v0.1 - 2017.04.20 - T retured if property available
   ; v0.0 - 2017.??.?? - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.04.20
+  ; Last revision: 2017.08.14
 )
 (defun DT:ReplaceText ( ent_name pattern newString )
   ; Replace pattern for newString in TEXTs and MTEXTs content
@@ -1799,18 +1834,47 @@
       );END cond
   );END if
 )
-(defun c:DNLA( / info infoString infoStringSize txt)
-  ; Print deep object nested block name and layer
-  (setq
-    info (NestedEntityNames (getpoint "\nSelect object to see its nested layers:"))
-    infoString (ChangeEnameForLevel info)
-    infoStringSize (GetColumnLength infoString)
-    txt (NL_GetTextFormatted infoString infoStringSize)
-  )
-  (princ txt)
-  (princ)
+(defun c:xx ()
+  ; Trigger
+  (defun *error* ( errorMessage ) (princ (strcat "n-------- ERROR: " errorMessage " --------n")) (vl-bt) (DT:ReportError))
+  (DT:AutoLoadFileFromCivilTemp "ErrorTracing.lsp")
+  (DT:AutoLoadFileFromCivil "_PersonalLibrary.lsp")
+  (princ "\n.\n.\n.")
+  (c:DNLA)
+
+  ; v0.0 - _DATE_ - First issue
+  ; Author: David Torralba
+  ; Last revision: _DATE_
 )
-(defun EntityInfo (ent_name / blockName blockType )
+(defun c:DNLA( / info infoString infoStringSize outputString )
+  ; Print deep object nested block name and layer
+  (if (setq ename (nentsel "\nSelect object to see its nested layers:"))
+    (if (setq info (DT:NestedEntityNames ename))
+      (if (setq infoString (DT:ChangeEnameForLevel info))
+        (if (setq infoStringSize (DT:GetColumnLength infoString))
+          (if (setq outputString (DT:NL_GetTextFormatted infoString infoStringSize))
+            (progn
+              (princ outputString)      ; Print nested entity report
+              (DT:CopyNestedLayer info) ; Allow user to copy a layer name
+            );END progn
+            (DT:Error 'c:DNLA "outputString = nil")
+          );END if
+          (DT:Error 'c:DNLA "infoStringSize = nil")
+        );END if
+        (DT:Error 'c:DNLA "infoString = nil")
+      );END if
+      (DT:Error 'c:DNLA "info = nil")
+    );END if
+    (DT:Error 'c:DNLA "ename = nil")
+  );END if
+  (princ)
+
+  ; v0.1 - 2017.09.18 - refactoring
+  ; v0.0 - 2016.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.09.18
+)
+(defun DT:EntityInfo (ent_name / blockName blockType )
   ; Return a list with useful information of the nested object
   ; (ename (Block/Xref Name Layer))
   (if (= 'ename (type ent_name))
@@ -1828,33 +1892,41 @@
     );END if
     nil
   );END if
+
+  ; v0.1 - 2017.09.18 - refactoring
+  ; v0.0 - 2016.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.09.18
 )
-(defun NestedEntityNames ( pt / ent_name i info )
+(defun DT:NestedEntityNames ( ename / i info )
   ; Returns a list with nested entity names, being the parent first one and deepest child last one
-  (if (= 'list (type pt)) ; if point provided, continue
-    (if (setq ent_name (nentselp pt)) ; if entity selected, continue
-      (progn
-        (setq
-          i 0
-          info (list (list "Level" "Type" "Block name" "Object layer") (EntityInfo (car ent_name)) )
-        )
-        (if (nth 3 ent_name) ; if any nested entity
-          (progn
-            (setq nestedLevels (length (nth 3 ent_name)) )
-            (foreach x (nth 3 ent_name)
-              (setq
-                i (+ i 1)
-                info (append info (list (EntityInfo x)))
-              )
-            );END foreach
-          );END progn
-        );END if
-        info
-      );END progn
-    );END if
+  (if (DT:Arg 'DT:NestedEntityNames '((ename 'list)))
+    (progn
+      (setq
+        i 0
+        info (list (list "Level" "Type" "Block name" "Object layer") (DT:EntityInfo (car ename)) )
+      )
+      (if (nth 3 ename) ; if any nested entity
+        (progn
+          (setq nestedLevels (length (nth 3 ename)) )
+          (foreach x (nth 3 ename)
+            (setq
+              i (+ i 1)
+              info (append info (list (DT:EntityInfo x)))
+            )
+          );END foreach
+        );END progn
+      );END if
+      info
+    );END progn
   );END if
+
+  ; v0.1 - 2017.09.18 - refactoring
+  ; v0.0 - 2016.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.09.18
 )
-(defun ChangeEnameForLevel ( info / i x )
+(defun DT:ChangeEnameForLevel ( info / i x )
   ; Return info replacing ename for level
   (if (= 'list (type info))
     (progn
@@ -1868,8 +1940,13 @@
       x
     );END progn
   );END if
+
+  ; v0.1 - 2017.09.18 - refactoring
+  ; v0.0 - 2016.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.09.18
 )
-(defun GetColumnLength ( infoString / q col )
+(defun DT:GetColumnLength ( infoString / q col )
   ; Return list with the biggest length needed on each column
   (if (= 'list (type infoString))
     (progn
@@ -1890,8 +1967,13 @@
       col
     );END progn
   );END if
+
+  ; v0.1 - 2017.09.18 - refactoring
+  ; v0.0 - 2016.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.09.18
 )
-(defun NL_GetTextFormatted ( infoString infoStringSize / txt s )
+(defun DT:NL_GetTextFormatted ( infoString infoStringSize / txt s )
   ; Format text correctly and concatenate it
   (setq txt "\n")
   (mapcar
@@ -1911,6 +1993,59 @@
     infoString
   );END mapcar
   txt
+
+  ; v0.1 - 2017.09.18 - refactoring
+  ; v0.0 - 2016.??.?? - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.09.18
+)
+(defun DT:CopyNestedLayer ( info / i layerName optionList options ans )
+  (if (DT:Arg 'DT:CopyNestedLayer '((info 'list)))
+    (progn
+      ; Get layer names in a list
+      (setq i -1)
+      (foreach item info
+        (if (> i -1)
+          (progn
+            (setq layerName (nth 3 item))
+            (setq optionList (append optionList (list (list i layerName))))
+            (setq i (1+ i))
+          );END progn
+          (setq i (1+ i))
+        );END if
+      );END foreach
+
+      ; Create the list of options for the user
+      (mapcar '(lambda (x) (cond
+          ((= (car x) 0) (setq options "0"))
+          ((> (car x) 0) (setq options (strcat options " " (itoa (car x)))))
+        ))
+        optionList
+      );END mapcar
+
+      ; Offer the user the list of options:
+      (initget 0 options)
+      (if (setq ans (getkword (strcat "\nSelect layer to copy to clipboard [" options "]")))
+        (progn
+          (setq ans (atoi ans))
+          ; Retrieve selected layer and copy it to the clipboard
+          (mapcar '(lambda (option)
+            (if (= (car option) ans)
+              (progn
+                (CopyToClipboard (nth 1 option))
+                (princ (strcat "\n >> Copied to clipboard: " (nth 1 option) ))
+              );END progn
+            ))
+            optionList
+          );END mapcar
+        );END progn
+      );END if
+    );END progn
+  );END if
+
+  ; v0.0 - 2017.09.18 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.09.18
 )
 (defun c:Convert3DpolyTo2Dpoly ( / old_error old_sysvars iSuccess iFail )
   ; Convert multiple 3Dpolylines to 2Dpolylines
@@ -2246,10 +2381,13 @@
       "KerbSet"   "\tKerbing setup\n"
       "SurvSet"   "\tSurvey setup\n"
       "TrackSet"  "\tTracking setup\n"
+      "ManSet"    "\tManhole schedule setup\n"
+      "CutSet"    "\tCut and fill setup\n"
       "\n"
     );END strcat
   );END alert
 
+  ; v0.7 - 2017.08.14 - Cut and fill setup added
   ; v0.6 - 2017.03.29 - Tracking setup added
   ; v0.5 - 2017.03.28 - Survey setup added
   ; v0.4 - 2017.03.21 - Kerbing setup added
@@ -2259,7 +2397,7 @@
   ; v0.1 - 2017.03.08 - Title Block setup added
   ; v0.0 - 2017.02.27 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.29
+  ; Last revision: 2017.08.14
 )
 (defun c:EngSet ()
   ; Engineering setup
@@ -2269,6 +2407,11 @@
   (defun c:33() (princ "\nSDIP: ") (c:SDIP))
   (defun c:4() (DT:AddSubstractPlotLevel (car (entsel "\nSelect level: ")) ))
   (defun c:44() (princ "\nRECALC private sewer GRADIENT") (c:UpdatePrivateDrainageLabel))
+  (defun c:5()
+    (princ "\nDRAW LINEAR DRAINAGE\n")
+    (if (not c:linearDrainage) (DT:AutoLoadFileFromCivilTemp "linearDrainage.lsp"))
+    (c:linearDrainage)
+  )
   (defun c:pa()(fbi "Parking-Fall-Arrow") (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow") )
   (defun c:ra()(fbi "Road-Fall-Arrow")
     (vlax-put-property (vlax-ename->vla-object (entlast)) 'Layer "e-road-fall-arrow")
@@ -2352,7 +2495,8 @@
         4\tPlotLevel +/-50mm
         44\tUpdate Private Sewer Gradient\n
     Create:
-        ll\tplot level
+        LL\tplot level
+        5\tlinear drainage
         pa\tparking arrow
         ra\troad arrow\n
     Environment:
@@ -2378,6 +2522,13 @@
   (defun c:3() (princ "\nGET MANHOLE DATA ACCORDING TO CENTRELINE: \n") (DT:ExtractManholeDataAlongCentrelines) )
   (defun c:4() (princ "\nDRAW MANHOLES ONTO LONGITUDINAL SECTION: \n") (DT:DrawExtractedManholesOnLongSection) )
   (defun c:5() (princ "\nDRAW MANHOLES' BODY ONTO LONGITUDINAL SECTION: \n") (c:DrawManholeBodyOnLongSection) )
+  (defun c:6()
+    (princ "\nKTF: Extract vertical geometry\n")
+    (if c:ktf_lsc2vld
+      (c:ktf_lsc2vld)
+      (progn (load "lsc2vld") (c:ktf_lsc2vld) )
+    );END if
+  )
   (defun c:cheatsheet() (alert
     "LONGITUDINAL SECTION CHEATSHEET\n
     Manholes to section:
@@ -2385,15 +2536,17 @@
         11\tExplode polyline
         3\tGet manholes
         4\tDraw manholes
-        5\tDraw manholes body\n
+        5\tDraw manholes body
+        6\tKFT Extract vertical geometry\n
   "))
   (princ "\nLONGITUDINAL SECTION SETUP COMPLETED")(princ)
 
+  ; v0.2 - 2017.07.31 - ktf_lsc2vld added
   ; v0.1 - 2017.05.12 - DT:DrawManholeBodyOnLongSection added
   ; v0.0 - 2017.03.16 - Add fillet and c:ep
   ;                   - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.16
+  ; Last revision: 2017.07.31
 )
 (defun c:WorkSet ()
   ; Working Drawing setup
@@ -2421,7 +2574,7 @@
   ; Setting Out setup
   (defun c:1() (princ "\nINDIVIDUAL SETTING OUT\n") (c:coord) )
   (defun c:11() (princ "\nPOLYLINE SETTING OUT\n") (c:coordp) )
-  (defun c:2() (princ "\nMOVE SETTING OUT LABEL\n") (c:DT:move_KTF_SettingOutLabel) )
+  (defun c:2() (princ "\nMOVE SETTING OUT LABEL\n") (c:move_KTF_SettingOutLabel) )
   (defun c:22( / ss ) (princ "\nRESET DIMENSTION POSITION\n") (setq ss (ssget '((0 . "DIMENSION")))) (command "_DIM1" "HOME" ss "") )
   (defun c:3() (princ "\nALIGNED DIMENSION\n") (command "_dimaligned") )
   (defun c:33() (princ "\nCONTINUE DIMENSION\n") (command "_dimcontinue") )
@@ -2443,19 +2596,57 @@
   "))
   (princ "\nSETTING OUT SETUP COMPLETED")(princ)
 
+  ; v0.1 - 2017.08.08 - move_KTF_SettingOutLabel command updated
   ; v0.0 - 2017.02.21 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.02.21
+  ; Last revision: 2017.08.08
 )
 (defun c:ModSet ()
   ; 3D Modelling setup
   (defun c:1()  (princ "\n3D POLYLINE\n") (command "_.3dpoly" pause) (princ))
   (defun c:11() (princ "\nJOIN\n") (command "_.join" pause) (princ))
-  (defun c:111 ( / x )
+  (defun c:111 ( / escapeVariable xy z)
     (princ "\n3D POLYLINE CLICKING LEVELS\n")
     (command "_.3dpoly")
-    (while T (command (list (nth 0 (setq x (getpoint "\nSelect XY position: "))) (nth 1 x) (DT:clic_or_type_level)) ))
+    (while (not escapeVariable)
+      (command
+        (if (setq xy (getpoint "\nSelect XY position: "))
+          (progn
+            (setq return
+            (list
+              (nth 0 xy)
+              (nth 1 xy)
+              (progn
+                (if (setq z (DT:clic_or_type_level))
+                  (progn
+                    (princ (strcat "\nXY = (" (LM:rtos (nth 0 xy) 2 3) " " (LM:rtos (nth 1 xy) 2 3) ")\n z = " (LM:rtos z 2 3) "\n"))
+                    z
+                  );END progn
+                  (progn
+                    (princ "\nNo level selected! z = 0.000\n")
+                    0
+                  );END progn
+                );END if
+              );END progn
+            );END list
+            )
+            (princ "\nreturn = ")(princ return)
+            return
+          );END progn
+          (progn
+            (setq escapeVariable T)
+            ^C
+          );END progn
+        );END if
+      );END command
+    );END while
+    (command ^C ^C)
     (princ)
+
+    ; v0.1 - 2017.08.14 - Rewrite it to print point coordinates
+    ; v0.0 - 2017.0?.?? - First issue
+    ; Author: David Torralba
+    ; Last revision: 2017.08.14
   )
   (defun c:2()
     (princ "\nADD VERTICES\n")
@@ -2490,27 +2681,57 @@
     ; Author: David Torralba
     ; Last revision: 2017.03.20
   )
+  (defun c:4 () (princ "\nSPOT LEVEL\n") (c:3DSpotLevel) )
+  (defun c:5()
+    (princ "\n3D JUNCTION\n")
+    (if c:ktf_revcurve3d
+      (c:ktf_revcurve3d)
+      (progn (load "revcurve3d") (c:ktf_revcurve3d) )
+    );END if
+
+    ; v0.0 - 2017.06.22 - First issue
+    ; Author: David Torralba
+    ; Last revision: 2017.06.22
+  )
+  (defun c:55()
+    (princ "\nMASTER STRING\n")
+    (if c:ktf_pmdsdes
+      (c:ktf_pmdsdes)
+      (progn (load "pmdsdes") (c:ktf_pmdsdes) )
+    );END if
+
+    ; v0.0 - 2017.06.22 - First issue
+    ; Author: David Torralba
+    ; Last revision: 2017.06.22
+  )
   (defun c:cheatsheet() (alert
     "3D MODELLING CHEATSHEET\n
     Draw:
         1\t3dpoly
-        111\t3dpoly click\n
+        111\t3dpoly click
+        4\tspot levels\n
     Modify:
         11\tjoin
         2\tadd vertices
         22\tedit vertice level
         3\t3D offset
         33\tup/down\n
+    Strings:
+        5\t3d junction
+        55\tmasterstring\n
   "))
   (princ "\n3D MODELLING SETUP COMPLETED")(princ)
 
+  ; v0.4 - 2017.08.14 - Spot level added
+  ; v0.3 - 2017.06.22 - 4 added
+  ;                   - 44 added
   ; v0.2 - 2017.03.21 - 111 added
   ;                   - 33 added
   ; v0.1 - 2017.03.20 - c:3dpt added
   ;                   - Load KTF functions if needed
   ; v0.0 - 2017.02.24 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.21
+  ; Last revision: 2017.08.14
 )
 (defun c:TitSet ()
   ; Title Block setup
@@ -2797,8 +3018,14 @@
 )
 (defun c:SurvSet ()
   ; Survey setup
-  (defun c:1() (princ "\nTie blocks and text AUTOMATIC\n") (c:TieSurvey))
-  (defun c:2() (princ "\nTie blocks and text MANUAL\n") (c:TieSinglePoint))
+  (defun c:1()
+    (princ "\nTie blocks and text AUTOMATIC\n")
+    (if (not c:TieSurvey) (DT:AutoLoadFileFromCivil "_Survey.lsp")) (c:TieSurvey)
+  )
+  (defun c:2()
+    (princ "\nTie blocks and text MANUAL\n")
+    (if (not c:TieSinglePoint) (DT:AutoLoadFileFromCivil "_Survey.lsp")) (c:TieSinglePoint)
+  )
   (defun c:3() (c:UpdateTextReadabilityAngle))
   (defun c:cheatsheet() (alert
     "\nSURVEY CHEATSHEET\n
@@ -2810,11 +3037,12 @@
   "))
   (princ "\nSURVEY SETUP COMPLETED")(princ)
 
+  ; v0.3 - 2017.08.22 - DT:AutoLoadFileFromCivil implemented
   ; v0.2 - 2017.04.05 - Cheatsheet text updated
   ; v0.1 - 2017.04.03 - 3 added
   ; v0.0 - 2017.02.28 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.04.05
+  ; Last revision: 2017.08.22
 )
 (defun c:TrackSet ()
   ; Tracking Setup
@@ -2839,6 +3067,98 @@
   ; v0.0 - 2017.03.29 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.03.29
+)
+(defun c:ManSet ()
+  ; Manhole schedule setup
+  (defun c:0()  (princ "\nMSC: build manhole schedule") (c:MSC))
+  (defun c:1()
+    (princ "\nUPDATE MANHOLE DIAGRAM\n")
+    (if (not c:UMSD) (DT:AutoLoadFileFromCivilTemp "ManholeScheduleDiagram.lsp"))
+    (c:UMSD)
+  )
+  (defun c:11() (princ "\nUPDATE MANHOLE SCHEDULE") (c:UpdateManholeSchedule))
+  (defun c:2()  (princ "\nMSCS: calculate manhole schedule (SfA 6th Edition)") (c:MSCS))
+  (defun c:22()
+    (princ "\nMSCS: calculate manhole schedule (SfA 7th Edition)\n")
+    (if (not c:MSCS7) (DT:AutoLoadFileFromCivilTemp "ManholeSchedule7Edition.lsp"))
+    (c:MSCS7)
+  )
+  (defun c:3()
+    (princ "\nOLD MANHOLE TO NEW MANHOLE:\n")
+    (if (not c:ImportManholeBlock) (DT:AutoLoadFileFromCivilTemp "ImportManholeBlocks.lsp"))
+    (c:ImportManholeBlock)
+  )
+  (defun c:4()
+    (princ "\nMANHOLE SCHEDULE: INPUT PIPE SIZE\n")
+    (if (not c:ManholeSchedulePipeSize) (DT:AutoLoadFileFromCivilTemp "ManholeScheduleUpdateValues.lsp"))
+    (c:ManholeSchedulePipeSize)
+  )
+  (defun c:44()
+    (princ "\nMANHOLE SCHEDULE: Reset hidden values to default\n")
+    (if (not c:ManholeScheduleResetHiddenValues) (DT:AutoLoadFileFromCivilTemp "ManholeScheduleUpdateValues.lsp"))
+    (c:ManholeScheduleResetHiddenValues)
+  )
+  (defun c:cheatsheet() (alert
+    "MANHOLE SCHEDULE\n
+    Create:
+        0\tManhole schedule
+        1\tUpdate manhole diagram
+        11\tUpdate manhole schedule
+        3\tOld manhole to new manhole\n
+    Calculations:
+        2\tSfA 6th Ed
+        22\tSfA 7th Ed
+        4\tInput pipe size
+        44\tReset hidden values\n
+  "))
+  (princ "\nMANHOLE SCHEDULE SETUP COMPLETED")(princ)
+
+  ; v0.0 - 2017.07.28 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.07.28
+)
+(defun c:CutSet ()
+  ; Cut and fill setup
+  (defun c:1() (princ "\nCREATE HOUSE STRINGS") (c:Create_House_Strings))
+  (defun c:2() (princ "\nCREATE GRAGE STRINGS") (c:Create_Garage_Strings))
+  (defun c:000()
+    (princ "\nRELOAD CUT AND FILL LIBRARY\n")
+    (DT:AutoLoadFileFromCivilTemp "CutAndFillSet.lsp")
+  )
+  (defun c:cheatsheet() (alert
+    "CUT AND FILL\n
+    Create:
+        1\tHouse 3D strings
+        2\tGarage 3D strings\n
+    Library:
+        0\t(re)load LSP\n
+  "))
+  (princ "\nCUT AND FILL SETUP COMPLETED")(princ)
+
+  ; v0.0 - 2017.07.28 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.07.28
+)
+(defun c:3DSpotLevel ( / escapeVariable xy z )
+  ; Draw spot level in 3D
+  (while (not escapeVariable)
+    (if (setq xy (getpoint "\nSelect XY position: "))
+      (if (setq z (DT:clic_or_type_level))
+        (entmakex
+          (list
+            (cons 0 "POINT")
+            (cons 10 (list (nth 0 xy) (nth 1 xy) z))
+          );END list
+        );END entmakex
+        (setq escapeVariable T)
+      );END if
+      (setq escapeVariable T)
+    );END if
+  );END while
+
+  ; v0.0 - 2017.08.14 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.08.14
 )
 (defun DT:OffsetPartM ( ent_name / VL_ent_name p p0 p1 ang )
   ; Move Part M blocks 0.302 toward the inner part of the building (= BlockRotation - 90º)
@@ -3402,17 +3722,18 @@
           ; Return result
           (if found found 0)
         );END progn
-        ;0
-        "nothing found"
+        ; Return not found value if ss=nil
+        0
       );END if
       (progn (princ "\nERROR @ DT:GetLayoutStatus > tab is not a string\n") nil)
     );END if
     (progn (princ "\nERROR @ DT:GetLayoutStatus > tab = nil\n") nil)
   );END if
 
+  ; v0.1 - 2017.06.12 - Return value if ss=nil updated to be zero (0, as integer)
   ; v0.0 - 2017.03.28 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.28
+  ; Last revision: 2017.06.12
 )
 (defun DT:GetTabInformation ( tab / tabRevision tabStatus )
   ; Return a list with tab name, status (issued or not), and last revision
@@ -3420,7 +3741,7 @@
     (if (= 'str (type tab))
       (progn
         ; Get last revision
-        (if (not (setq tabRevision (DT:GetLayoutLatestRevision tabName)))
+        (if (not (setq tabRevision (DT:GetLayoutLatestRevision tab)))
           (setq tabRevision "??")
         );END if
 
@@ -3449,10 +3770,11 @@
     (progn (princ "\nERROR @ DT:GetTabInformation > tab = nil\n") nil)
   );END if
 
+  ; v0.2 - 2017.06.14 - Minor bug fixed on DT:GetLayoutLatestRevision implementation
   ; v0.1 - 2017.03.29 - DT:GetLayoutLatestRevision implemented
   ; v0.0 - 2017.03.28 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.03.29
+  ; Last revision: 2017.06.14
 )
 (defun DT:ListToTable ( lst / maxColumnLength stringTable )
   ; Return the provided list as a table
@@ -3462,9 +3784,9 @@
         (progn
           (setq
             ; Get column width: measure the nth element of each row and get the maximum
-            maxColumnLength (GetColumnLength lst)
+            maxColumnLength (DT:GetColumnLength lst)
             ; Get list values as a table formated string
-            stringTable (NL_GetTextFormatted lst maxColumnLength)
+            stringTable (DT:NL_GetTextFormatted lst maxColumnLength)
           )
         );END progn
         (progn (princ "\nERROR @ DT:ListToTable > lst doesn't have table format\n") nil)
@@ -3940,6 +4262,20 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.12
 )
+(defun c:et ( / text )
+  ; Edit selected text content
+  (if (setq ename (car (nentsel "\nClick on text: ")))
+    (if (setq currentText (DT:GetText ename))
+      (if (setq newText (DT:PreFilledGetString "\nWrite text (use \"\\P\" as newlines) :" currentText))
+        (DT:SetText ename newText)
+      );END if
+    );END if
+  );END if
+
+  ; v0.0 - 2017.08.11 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.08.11
+)
 (defun c:gp ( / pt )
   ; Copy point coordinates to clipboard
   (if (setq pt (getpoint "\nSelect point to copy to clipboard: "))
@@ -4018,13 +4354,13 @@
             (strcat
               "\n" (vl-symbol-name a)
               " [" (vl-princ-to-string (type (eval a))) "]"
-              " = " (vl-princ-to-string (eval a))
+              " = " (vl-prin1-to-string (eval a))
             );END strcat
           );END princ
           (princ
             (strcat
               "\n[" (vl-princ-to-string (type a)) "]"
-              " = " (vl-princ-to-string a)
+              " = " (vl-prin1-to-string a)
             );END strcat
           );END princ
         );END if
@@ -4035,7 +4371,7 @@
         (strcat
           "\n" (vl-symbol-name var)
           " [" (vl-princ-to-string (type (eval var))) "]"
-          " = " (vl-princ-to-string (eval var))
+          " = " (vl-prin1-to-string (eval var))
         );END strcat
       );END princ
     );END subcond
@@ -4043,16 +4379,17 @@
       (princ
         (strcat
           "\n[" (vl-princ-to-string (type var)) "]"
-          " = " (vl-princ-to-string var)
+          " = " (vl-prin1-to-string var)
         );END strcat
       );END princ
     );END subcond
   );END cond
   (princ)
 
+  ; v0.1 - 2017.08.24 - Variable value printed as prin1 instead of princ
   ; v0.0 - 2017.05.31 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.05.31
+  ; Last revision: 2017.08.24
 )
 (defun DT:RoundTo ( x r / r )
   ; Round x to the nearest r
@@ -4171,4 +4508,97 @@
   ; v0.0 - 2017.05.31 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.05.31
+)
+(defun DT:StringifyTableList ( tableList )
+  ; Convert all elements withing the list in strings
+  (if (DT:Arg 'DT:StringifyTableList '((tableList 'list)))
+    (mapcar
+      '(lambda (x) (mapcar 'vl-princ-to-string x))
+      tableList
+    );END mapcar
+  );END if
+
+  ; v0.0 - 2017.06.23 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.23
+)
+(defun DT:EntityType ( ent_name )
+  ; Return a string with "ent_name" entity type
+  (if (DT:Arg 'DT:EntityType '((ent_name 'ename)))
+    (cdr (assoc 0 (entget ent_name)))
+  );END if
+
+  ; v0.0 - 2017.06.27 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.27
+)
+(defun DT:CheckIfEntityExists ( ename / e return )
+  ; Returns T if entity name is found, otherwise returns nil
+  (if (and ename (= 'ename (type ename)))
+    (if (eq ename (setq e (entnext)))
+      T
+      (progn
+        (while (setq e (entnext e))
+          (if (eq ename e)
+            (setq return T)
+          );END if
+        );END while
+        return
+      );END progn
+    );END if
+  );END if
+
+  ; v0.0 - 2017.07.05 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.07.05
+)
+(defun c:RotateOneByOne ( / ss rotation )
+  ; Rotate selected entities one by one
+  (if (setq ss (ssget))
+    (if (setq rotation (getreal "\nInput rotation angle in degrees: "))
+      (progn
+        ; Convert rotation from degrees to radians
+        (setq rotation (DT:DegToRad rotation))
+        ; Batch rotate selected objects, if possible
+        (foreach a (ssnamex ss)
+          (if (= 'ename (type (cadr a)))
+            (progn
+              (setq object (vlax-ename->vla-object (cadr a)))
+              (if (vlax-property-available-p object 'Rotation T)
+                (vlax-put-property object 'Rotation
+                  (+ rotation (vlax-get-property object 'Rotation))
+                );END vlax-put-property
+              );END if
+            );END progn
+          );END if
+        );END foreach
+      );END progn
+    );END if
+  );END if
+
+  ; v0.0 - 2017.07.31 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.07.31
+)
+(DT:AutoLoadFileFromCivilTemp "IssueReport.lsp")
+(defun c:gradient ( / p1 p2 dX dY dZ dXY d )
+  ; Return the gradient between two points
+  (if (setq p1 (getpoint "\nSelect first point:"))
+    (if (setq p2 (getpoint "\nSelect second point:"))
+      (progn
+        (setq dX (abs (- (nth 0 p1) (nth 0 p2))))
+        (setq dY (abs (- (nth 1 p1) (nth 1 p2))))
+        (setq dZ (abs (- (nth 2 p1) (nth 2 p2))))
+        (setq dXY (sqrt (+ (* dX dX) (* dY dY)) ))
+        (setq d (sqrt (+ (* dXY dXY) (* dZ dZ)) ))
+
+        (if (= dZ 0)
+          (princ "\nGradient = flat")
+          (princ (strcat "\nGradient = 1/" (LM:rtos (/ dXY dZ) 2 0)))
+        );END if
+        (princ)
+
+      );END progn
+    );END if
+  );END if
 )

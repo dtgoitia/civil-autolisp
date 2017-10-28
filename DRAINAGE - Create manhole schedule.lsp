@@ -3,6 +3,7 @@
 ;;    MSC: creates manhole schedule                                           ;;
 ;;    MSCS: calculates soffit, chamber size and manhole type                  ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(load "SortAlphanumeric.lsp")
 (defun get_ID ( VL_ent_name )
   (vl-some '(lambda ( att )
               (if (= "ID" (strcase (vla-get-tagstring att)))
@@ -270,7 +271,9 @@
 
   ; OPERATION - Insert Manhole Schedule Header blocks
 	(command "._insert" "ManScheduleHeader" pS0 "1" "1" "0")
+  (DT:DrawManholeScheduleSuperHeader (entlast) "STORM MANHOLE SCHEDULE")
 	(command "._insert" "ManScheduleHeader" pF0 "1" "1" "0")
+  (DT:DrawManholeScheduleSuperHeader (entlast) "FOUL MANHOLE SCHEDULE")
 
 	; OPERATION - Run though all existing manhole blocks
 	(foreach e (ssnamex ss)
@@ -297,8 +300,10 @@
 
 	; OPERATION - Short lists by ID
 	(setq
-		sorted_storm_ID_list (acad_strlsort storm_ID_list)
-		sorted_foul_ID_list  (acad_strlsort foul_ID_list)
+		; sorted_storm_ID_list (acad_strlsort storm_ID_list)
+		sorted_storm_ID_list (DT:SortAlphanumeric storm_ID_list)
+		; sorted_foul_ID_list  (acad_strlsort foul_ID_list)
+    sorted_foul_ID_list  (DT:SortAlphanumeric foul_ID_list)
 		sorted_storm_data_list (list "")
 		sorted_foul_data_list (list "")
 	)
@@ -326,6 +331,9 @@
 	);END foreach
 
 	(princ)
+
+  ; v0.4 - 2017.08.01 - DT:SortAlphanumeric implemented to replace acad_strlsort. Now manholes are sorted alphanumerically
+  ; v0.3 - 2017.06.29 - DT:DrawManholeScheduleSuperHeader implemented as per request
   ; v0.2 - 2016.06.27 - Layer filters removed to select blocks in any layer
   ;                   - Message prompt tidy up
   ;                   - Update local variables
@@ -333,7 +341,7 @@
   ; v0.1 - 2016.05.03 - More layers added to filter
   ; v0.0 - 2016.04.10 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.06.27
+  ; Last revision: 2017.08.01
 )
 (defun c:MSCS (
                 /
@@ -518,35 +526,37 @@
 
   ; INPUT - Ask user to select Manhole Schedule block to update
   (while (not manSchedule)
-    (if (not (setq manSchedule (car (entsel "\nSelect Manhole Schedule block to update coordinates: "))))
+    (if (setq ename (car (entsel "\nSelect Manhole Schedule block to update coordinates: ")))
+      (progn
+        (princ "object selected.\n")
+        (if (= "ManScheduleBody" (LM:effectivename (vlax-ename->vla-object ename)))
+          (setq manSchedule ename)
+          (progn
+            (alert "Selected object is not a Manhole Schedule Block.")
+            (exit)
+          );END progn
+        );END if
+      );END progn
       (princ "missed. Try again.")
-      (princ "object selected.\n")
-    ); END if
+    );END if
   );END while
-
-  ; OPERATION - Check selected object is a Manhole Schedule block
-  (if (/= "ManScheduleBody" (LM:effectivename (vlax-ename->vla-object manSchedule)))
-    (progn
-      (alert "Selected object is not a Manhole Schedule Block.")
-      (exit)
-    );END progn
-  );END if
 
   ; INPUT - Ask user to select Manhole Block to update to
   (while (not manhole)
-    (if (not (setq manhole (car (entsel "\nSelect Manhole block to update coordinates to: "))))
+    (if (setq ename (car (entsel "\nSelect Manhole block to update coordinates to: ")))
+      (progn
+        (princ "object selected.\n")
+        (if (= "W-Manhole" (substr (LM:effectivename (vlax-ename->vla-object ename)) 2 9))
+          (setq manhole ename)
+          (progn
+            (alert "Selected object is not a Manhole Block.")
+            (exit)
+          );END progn
+        );END if
+      );END progn
       (princ "missed. Try again.")
-      (princ "object selected.\n")
-    ); END if
+    );END if
   );END while
-
-  ; OPERATION - Check selected object is a Manhole block
-  (if (/= "W-Manhole" (substr (LM:effectivename (vlax-ename->vla-object manhole)) 2 9))
-    (progn
-      (alert "Selected object is not a Manhole Block.")
-      (exit)
-    );END progn
-  );END if
 
   ; OPERATION - Get block "ID" attributes
   (setq
@@ -575,12 +585,13 @@
 
   (princ)
 
+  ; v0.2 - 2017.08.01 - Initial input method refactored
   ; v0.1 - 2017.05.12 - DT:SetManholeScheduleCoordinates implemented
   ;                   - DT:SetManholeScheduleCoverLevel implemented
   ;                   - Messages updated
   ; v0.0 - 2016.08.05 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.05.12
+  ; Last revision: 2017.08.01
 )
 (defun DT:SetManholeScheduleCoordinates ( manSchedule coordinates / manScheduleObject oldE oldN newE newN Eupdated Nupdated )
   ; Set the coordinate value of Manhole Schedule block
@@ -603,16 +614,20 @@
             (setq Eupdated T)
           );END progn
         );END if
-        (if (/= oldN newN)
+        (if (= oldN newN)
+          (progn
+            (princ "\n\t- E and N already match\n")
+            T
+          );END progn
           (progn
             (LM:vl-setattributevalue manScheduleObject "N" newN)
             (setq Nupdated T)
           );END progn
         );END if
         (cond
-          ((and Eupdated Nupdated) (princ "\nE and N coordinates updated.\n") T)
-          ((and Eupdated (not Nupdated)) (princ "\nE coordinate updated.\n") T)
-          ((and (not Eupdated) Nupdated) (princ "\nN coordinate updated.\n") T)
+          ((and Eupdated Nupdated) (princ "\n\t- E and N coordinates updated\n") T)
+          ((and Eupdated (not Nupdated)) (princ "\n\t- E coordinate updated\n") T)
+          ((and (not Eupdated) Nupdated) (princ "\n\t- N coordinate updated\n") T)
           (t T)
         );END cond
       );END progn
@@ -627,9 +642,10 @@
     );END cond
   );END if
 
+  ; v0.1 - 2017.08.01 - Same new and old E and N message added
   ; v0.0 - 2017.05.12 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.05.12
+  ; Last revision: 2017.08.01
 )
 (defun DT:SetManholeScheduleCoverLevel ( manSchedule coverLevel / manScheduleObject oldCoverLevel newCoverLevel )
   ; Set the cover level value of Manhole Schedule block
@@ -643,12 +659,15 @@
           oldCoverLevel (LM:vl-getattributevalue manScheduleObject "CL")
           newCoverLevel (LM:rtos coverLevel 2 3)
         )
-        (if (/= oldCoverLevel newCoverLevel)
+        (if (= oldCoverLevel newCoverLevel)
+          (progn
+            (princ "\n\t- CL already match\n")
+            T
+          );END progn
           (progn
             (LM:vl-setattributevalue manScheduleObject "CL" newCoverLevel)
-            (progn (princ "\nCL updated.\n") T)
+            (progn (princ "\n\t- CL updated\n") T)
           );END progn
-          T
         );END if
       );END progn
       (cond
@@ -662,7 +681,43 @@
     );END cond
   );END if
 
+  ; v0.1 - 2017.08.01 - Same new and old CL message added
   ; v0.0 - 2017.05.12 - First issue
   ; Author: David Torralba
-  ; Last revision: 2017.05.12
+  ; Last revision: 2017.08.01
+)
+(defun DT:DrawManholeScheduleSuperHeader ( referenceHeader string / pointList )
+  ; Add Manhole Schedule Super Header
+  (setq pointList (list (cdr (assoc 10 (entget referenceHeader)))))
+  (setq pointList (append pointList (list (polar (nth 0 pointList) (* 0.5 pi) 8))) )
+  (setq pointList (append pointList (list (polar (nth 1 pointList) 0 156.4537693901))) )
+  (setq pointList (append pointList (list (polar (nth 2 pointList) (* -0.5 pi) 8))) )
+  (entmakex
+    (append
+      (list
+        (cons   0 "LWPOLYLINE")         ; Object type
+        (cons 100 "AcDbEntity")
+        (cons 100 "AcDbPolyline")
+        (cons  70 0)                  ; Open(0)/Closed(1)
+        (cons  90 (length pointList)) ; Number of vertices
+      )
+      (mapcar
+        '(lambda (pt) (cons 10 pt) )
+        pointList
+      );END mapcar
+    );END append
+  )
+  (entmakex
+    (list
+      (cons 0 "TEXT")
+      (cons 1 string)
+      (cons 10 (polar (nth 0 pointList) (* 0.25 pi) 4))
+      (cons 40 2.5)
+      (cons 7 "ROMANS")
+    );END list
+  );END entmakex
+
+  ; v0.0 - 2017.06.29 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.29
 )

@@ -734,6 +734,19 @@
   (setq i -1)
   (mapcar '(lambda ( x ) (if (= (setq i (1+ i)) n) a x)) l)
 )
+(defun LM:sublst ( lst idx len )
+  ;; Sublst  -  Lee Mac
+  ;; The list analog of the substr function
+  ;; lst - [lst] List from which sublist is to be returned
+  ;; idx - [int] Zero-based index at which to start the sublist
+  ;; len - [int] Length of the sublist or nil to return all items following idx
+  (cond
+    ((null lst) nil)
+    ((< 0  idx) (LM:sublst (cdr lst) (1- idx) len))
+    ((null len) lst)
+    ((< 0  len) (cons (car lst) (LM:sublst (cdr lst) idx (1- len))))
+  )
+)
 (defun invm ( m / c f p r )
   ;; Matrix Inverse  -  gile & Lee Mac
   ;; Uses Gauss-Jordan Elimination to return the inverse of a non-singular nxn matrix.
@@ -824,62 +837,80 @@
   );END repeat
   (setq p (list (/ x (/ (length c) 2)) (/ y (/ (length c) 2)) 0.0 ) )
 )
-(defun c:beo () (DT:beo (car (entsel)) ) )
-(defun DT:beo ( ent_name / VL_ent_name ans)
+(defun c:beo () (DT:beo (car (entsel)) T) )
+(defun DT:beo ( ename askOption / VL_ename ans)
   ; Block Explode Option
   ; This routine allows to enable/disable explodable option at selected block.
+  ; ename [ename]    - entity to explode
+  ; askOption [bool] - if T, asks the user whether to explode or not before exploding, if nil explodes straight away
 
-  ; OPERATION - Mark selected object
-  (sssetfirst nil (ssadd ent_name))
   ;OPERATION - Check if it is a block
-  (if (= "INSERT" (cdr (assoc 0 (entget ent_name))))
+  (if (= "INSERT" (cdr (assoc 0 (entget ename))))
     (progn
       ; OPERATION - Get objects VLA block name
-      (setq VL_ent_name (vla-item (vla-get-blocks (vla-get-activedocument (vlax-get-acad-object))) (cdr (assoc 2 (entget ent_name)))) )
+      (setq VL_ename (vla-item (vla-get-blocks (vla-get-activedocument (vlax-get-acad-object))) (cdr (assoc 2 (entget ename)))) )
       ; OPERATION - Check if EXPLODABLE property exists at the selected object
-      (if (vlax-property-available-p VL_ent_name 'explodable)
-        (cond
-          ((= (vlax-get-property VL_ent_name 'explodable) :vlax-true)
-            (princ "\nSelected block's explode option is ON.")
-            (initget "Yes No")
-            (setq ans (getkword " Do you want to disable it? [Yes/No] <No>:"))
-            (if (not ans) (setq ans "No"))
-            (if (= ans "Yes")
-              (progn
-                (vlax-put-property VL_ent_name 'explodable :vlax-false)
-                ; OPERATION - Check if it's been changed correctly
-                (if (= (vlax-get-property VL_ent_name 'explodable) :vlax-true) (princ "\nSorry, it was impossible to disable explode option.") )
-              );END progn
-            );END if ans
-          );END subcond
-          ((= (vlax-get-property VL_ent_name 'explodable) :vlax-false)
-            (princ "\nSelected block's explode option is OFF.")
-            (initget "Yes No")
-            (setq ans (getkword " Do you want to enable it? [Yes/No] <No>:"))
-            (if (not ans) (setq ans "No"))
-            (if (= ans "Yes")
-              (progn
-                (vlax-put-property VL_ent_name 'explodable :vlax-true)
-                ; OPERATION - Check if it's been changed correctly
-                (if (= (vlax-get-property VL_ent_name 'explodable) :vlax-false) (princ "\nSorry, it was impossible to disable explode option.") )
-              );END progn
-            );END if ans
-          );END subcond
-        );END cond
+      (if (vlax-property-available-p VL_ename 'explodable)
+        (if (= T askOption)
+          (progn
+            ; OPERATION - Mark selected object
+            (sssetfirst nil (ssadd ename))
+
+            (cond
+              ((= (vlax-get-property VL_ename 'explodable) :vlax-true)
+                (princ "\nSelected block's explode option is ON.")
+                (initget "Yes No")
+                (setq ans (getkword " Do you want to disable it? [Yes/No] <No>:"))
+                (if (not ans) (setq ans "No"))
+                (if (= ans "Yes")
+                  (progn
+                    (vlax-put-property VL_ename 'explodable :vlax-false)
+                    ; OPERATION - Check if it's been changed correctly
+                    (if (= (vlax-get-property VL_ename 'explodable) :vlax-true) (princ "\nSorry, it was impossible to disable explode option.") )
+                  );END progn
+                );END if ans
+              );END subcond
+              ((= (vlax-get-property VL_ename 'explodable) :vlax-false)
+                (princ "\nSelected block's explode option is OFF.")
+                (initget "Yes No")
+                (setq ans (getkword " Do you want to enable it? [Yes/No] <No>:"))
+                (if (not ans) (setq ans "No"))
+                (if (= ans "Yes")
+                  (progn
+                    (vlax-put-property VL_ename 'explodable :vlax-true)
+                    ; OPERATION - Check if it's been changed correctly
+                    (if (= (vlax-get-property VL_ename 'explodable) :vlax-false) (princ "\nSorry, it was impossible to disable explode option.") )
+                  );END progn
+                );END if ans
+              );END subcond
+            );END cond
+
+            ; OPERATION - Ungrip selected object
+            (sssetfirst nil nil)
+          );END progn
+          (progn
+            (cond
+              ((= (vlax-get-property VL_ename 'explodable) :vlax-true)
+                (vlax-put-property VL_ename 'explodable :vlax-false)
+              );END subcond
+              ((= (vlax-get-property VL_ename 'explodable) :vlax-false)
+                (vlax-put-property VL_ename 'explodable :vlax-true)
+              );END subcond
+            );END cond
+          );END progn
+        );END if
       );END if property available
     );END progn
-    (alert "This is not a block!")
   );END if
-
-  ; OPERATION - Ungrip selected object
-  (sssetfirst nil nil)
 
   (princ)
 
+  ; v0.1 - 2017.08.01 - Automatic mode added for batch processing
   ; v0.0 - 2016.08.11 - First issue
   ; Author: David Torralba
-  ; Last revision: 2016.08.11
+  ; Last revision: 2017.08.01
 )
+
 (defun c:egurre( / filePath)
   ; Descarga mi libreria personal
   (setq filePath "C:/_PersonalLibrary.lsp")
@@ -1088,16 +1119,6 @@
   (get_environment targets)
   (set_custom_error)
 );END defun
-;| USE TEMPLATE
-(defun c:test (/ old_error old_sysvars)
-    (save_environment '("osmode" "angdir" "angbase"))
-
-    WRITE_HERE_YOUR_CODE
-
-    (restore_environment)
-);END defun
-|;
-; ------------------------------------------------------------------------------
 (defun DT:flatPoint( pt )
 ; Return the provided 3D point with Z=0
   (list (nth 0 pt) (nth 1 pt) 0.0)
@@ -1498,7 +1519,6 @@
   ; Author: David Torralba
   ; Last revision: 2017.05.31
 )
-
 (defun DT:GetLwpolyPoints ( ent_name / alternator Xcoord pointList )
   ; Return a list with LWPOLYLINE coordinates
   (if (DT:Arg 'DT:GetLwpolyPoints '((ent_name 'ename)))
@@ -1704,4 +1724,65 @@
   ; v0.0 - 2017.05.12 - First issue
   ; Author: David Torralba
   ; Last revision: 2017.05.12
+)
+(defun DT:Delete ( ename )
+  ; Delete entity if exists
+  ; Return T if entity exists and was removed, nil otherwise
+
+  ; Check ename argument is correct
+  (if (and ename (= 'ename (type ename)))
+    ; Check if passed entity exists
+    (if (entget ename)
+      (progn
+        (vla-delete (vlax-ename->vla-object ename))
+        ; Check if passed entity still exists
+        (if (entget ename)
+          nil ; Return nil: passed argument is an existing entity name, but it's been impossible to remove the entity
+          T   ; Return nil: passed argument is an existing entity name and has been successfuly removed
+        );END if
+      );END progn
+      nil  ; Return nil: passed argument is an entity name, but such entity doesn't exist
+    );END if
+    nil  ; Return nil: passed argument is nil or not an entity name
+  );END if
+
+  ; v0.1 - 2017.07.05 - Check if ename exists before trying to remove it
+  ; v0.0 - 2017.06.27 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.06.27
+)
+(defun DT:req ( a b / return )
+  ; recursive eq
+  ; Compares a list recursivelly along all its nested levels
+
+  ; (req
+  ;   (list "1" (list "1s"  (list "1s") 4 (list "1s" 2)))
+  ;   (list "1" (list "1s"  (list "1s") 4 (list "1s" 2)))
+  ; )
+  ; RETURNS: T
+
+  ; (req
+  ;   (list "1" (list "1s"  (list "1s") 43 (list "1s" 2)))
+  ;   (list "1" (list "1s"  (list "1s") 4 (list "1s" 2)))
+  ; )
+  ; RETURNS: nil
+  (if (and a b)
+    (if (= (type a) (type b))
+      (if (/= 'list (type a))
+        (eq a b)
+        (progn
+          (setq return T)
+          (mapcar
+            '(lambda (aa bb) (if return (setq return (req aa bb))) )
+            a b
+          );END mapcar
+          return
+        );END progn
+      );END if
+    );END if
+  );END if
+
+  ; v0.0 - 2017.10.16 - First issue
+  ; Author: David Torralba
+  ; Last revision: 2017.10.16
 )

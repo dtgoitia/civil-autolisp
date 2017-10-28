@@ -154,7 +154,7 @@
   )
 
   ; CHANGE INITIAL SETTINGS - "osmode" and "cmdecho"
-  (setvar "osmode" 0)
+  ;(setvar "osmode" 0)
   (setvar "cmdecho" 0)
   (setvar "attdia" 0)
   (setvar "attreq" 1)
@@ -200,7 +200,9 @@
           txt_IL (LM:rtos IL 2 3)
         )
       ); END if
-  	  (setq p_ins (getpoint "\nSelect point to insert manhole: "))
+  	  (if (setq p_ins (getpoint "\nSelect point to insert manhole: "))
+  	    (setvar "osmode" 0)
+  	  );END if
 
   	  ; OPERATION - Change layer and insert manhole block
   	  (cond
@@ -424,6 +426,7 @@
   ; End without double messages
   (princ)
 
+  ; v0.4 - 2017.08.23 - Fix buggy behaviour of point insertion input and OSMODE
   ; v0.3 - 2016.04.10 - Code tidy up and translation.
   ;                   - Reformat typed levels.
   ;                   - getkword variables renamed to avoid possible errors.
@@ -432,7 +435,7 @@
   ; v0.1 - 2016.03.02 - Cursor text font updated to Arial style.
   ; v0.0 - 2016.03.01
   ; Author: David Torralba
-  ; Last revision: 2016.04.10
+  ; Last revision: 2017.08.23
 
   ; PENDIENTE:  configurar la rutina como cuando creas una polilínea, un click continuo para introducir la siguiente.
   ;             o que recuerde la ultima arqueta creada, y empiece a partir de ahi

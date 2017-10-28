@@ -43,14 +43,13 @@
     (if (setq pt (getpoint "\nSelect point to Co-ordinate (press Esc to exit):"))
       (progn
         (DT:InsertSettingOutLabel pt)
-        (setq pt nil)
       );END progn
-      (exit)
     );END if
   );END while
 
   (princ)
 
+  ; v0.3 - 2017.08.08 - Loop for block insertion updated
   ; v0.2 - 2017.01.31 - Code split up and DT:InsertSettingOutLabel implementation.
   ;                   - Function renamed to avoid conflicts, and shortcut kept to avoid transition problems.
   ; v0.1 - 2016.09.02 - Add loop to pick points.
@@ -59,7 +58,7 @@
   ;                   - Merge code into a single file.
   ; v0.0 - 2016.03.03 - First issue.
   ; Author: David Torralba
-  ; Last revision: 2017.01.31
+  ; Last revision: 2017.08.08
 )
 (defun c:COORDP() (c:InsertSettingOutLabelAlongPolyline) )
 (defun c:SOU (/ ans ss i)
