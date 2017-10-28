@@ -25,8 +25,6 @@ Another option is to add a directory to *Trusted Locations*. This way, any file 
 
 ## Executing
 
-NOTE: following paragraph aim is far from being an AutoLISP tutorial.
-
 Open the `.lsp` file with a text editor and look for `(defun c:`. The characters immediately after this are the triggers of the command.
 
 Let's suppose that you load an hypothetical `hello.lsp` file which looks like this:
@@ -36,6 +34,14 @@ Let's suppose that you load an hypothetical `hello.lsp` file which looks like th
 );END defun
 ```
 Once loaded, go to the command line and type `greeting`. If everything is correct, *AutoCAD* should suggest you the `GREETING` command even before you finish typing it. Hit ENTER to execute it.
+
+## To-do
+
+- [ ] Tidy up dump folder.
+- [ ] Map all dependencies.
+- [ ] Reorganize the whole repository.
+  - [ ] Keep core scripts in `master` branch.
+  - [ ] Move extra features to `testing` branches.
 
 ## Author
 

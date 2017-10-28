@@ -1,0 +1,6 @@
+(defun c:zz ( / paths )
+  (DT:GetTrustedPaths)
+  ;(DT:StringToList "a" ".")
+  ;(DT:StringToList "...a.a...a..." ".")
+  ;(DT:StringToList ".hi.I am.splitted.and..very properly.splitted.....a...a." ".")
+)
